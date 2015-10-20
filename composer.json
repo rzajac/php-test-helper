@@ -1,0 +1,20 @@
+{
+  "name": "rzajac/TestHelpers",
+  "description": "Tools and classes helping with unit tests",
+  "keywords": ["unit test", "testing"],
+  "type": "library",
+  "license": "Apache License 2.0",
+  "require": {
+    "php": ">=5.5",
+    "phpunit/phpunit": "*",
+    "rzajac/phptools": "0.2.*"
+  },
+  "require-dev": {
+  },
+  "autoload": {
+    "psr-4": {
+      "Kicaj\\Test\\Helper\\": "src/",
+      "Kicaj\\Test\\TestHelperTest\\": "test/"
+    }
+  }
+}
