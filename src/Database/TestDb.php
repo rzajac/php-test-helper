@@ -17,31 +17,15 @@
 namespace Kicaj\Test\Helper\Database;
 
 use Kicaj\Tools\Exception;
-use Kicaj\Tools\Itf\Error;
+use Kicaj\Tools\Itf\DbConnect;
 
 /**
  * Database interface.
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-interface TestDb extends Error
+interface TestDb extends DbConnect
 {
-    /**
-     * Configure database.
-     *
-     * @param array $config The database configuration
-     *
-     * @return TestDb
-     */
-    public function dbSetup(array $config);
-
-    /**
-     * Connect to database.
-     *
-     * @return bool Returns true on success.
-     */
-    public function dbConnect();
-
     /**
      * Drop table.
      *

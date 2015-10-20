@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "51cc56c7b230a93dbcad5e697e5b1b4d",
-    "content-hash": "a934b4ab95c06d93fff909c3633dcc70",
+    "hash": "2b19c70d6dabf0b0f23bf2ab90be9723",
+    "content-hash": "4339703729747a6093b138076e44c04d",
     "packages": [
         {
             "name": "doctrine/instantiator",
@@ -540,16 +540,16 @@
         },
         {
             "name": "rzajac/phptools",
-            "version": "0.2.7",
+            "version": "0.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rzajac/phptools.git",
-                "reference": "7b678009f3b9e5b69927e4a841b9daaf9d5df638"
+                "reference": "976a758217791e9d7ca420c38c8efdf8c5513b20"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rzajac/phptools/zipball/7b678009f3b9e5b69927e4a841b9daaf9d5df638",
-                "reference": "7b678009f3b9e5b69927e4a841b9daaf9d5df638",
+                "url": "https://api.github.com/repos/rzajac/phptools/zipball/976a758217791e9d7ca420c38c8efdf8c5513b20",
+                "reference": "976a758217791e9d7ca420c38c8efdf8c5513b20",
                 "shasum": ""
             },
             "require": {
@@ -578,48 +578,7 @@
                 }
             ],
             "description": "Collection of utility classes",
-            "time": "2015-10-20 09:55:04"
-        },
-        {
-            "name": "rzajac/schemaexporter",
-            "version": "0.2.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/rzajac/schemaexporter.git",
-                "reference": "7cf70ea023b4132f3ef121157d49d9157af8c16d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/rzajac/schemaexporter/zipball/7cf70ea023b4132f3ef121157d49d9157af8c16d",
-                "reference": "7cf70ea023b4132f3ef121157d49d9157af8c16d",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.5",
-                "rzajac/phptools": "0.2.*"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "*"
-            },
-            "bin": [
-                "schemaexporter"
-            ],
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Kicaj\\Database\\Schema\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache License 2.0"
-            ],
-            "description": "Database schema exporter",
-            "keywords": [
-                "database",
-                "schema"
-            ],
-            "time": "2015-10-16 20:47:00"
+            "time": "2015-10-20 21:36:15"
         },
         {
             "name": "sebastian/comparator",
