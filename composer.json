@@ -1,5 +1,5 @@
 {
-  "name": "rzajac/TestHelpers",
+  "name": "rzajac/PhpTestHelper",
   "description": "Tools and classes helping with unit tests",
   "keywords": ["unit test", "testing"],
   "type": "library",
