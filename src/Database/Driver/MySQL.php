@@ -184,17 +184,20 @@ class MySQL implements TestDb
      *
      * @throws Exception
      *
-     * @return bool
+     * @return bool|\mysqli_result
      */
     public function runQuery($query)
     {
         $queries = is_array($query) ? $query : [$query];
 
+        $resp = false;
         foreach ($queries as $sql) {
             $resp = $this->mysql->query($sql);
             if (!$resp) {
                 throw new Exception($this->mysql->error);
             }
         }
+
+        return $resp;
     }
 }

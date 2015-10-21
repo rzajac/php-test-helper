@@ -15,27 +15,27 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\Test\TestHelperTest\DbTestCase;
+namespace Kicaj\Test\TestHelperTest\TestCase;
 
-use Kicaj\Test\TestHelperTest\BaseTest;
+use Kicaj\Test\Helper\TestCase\FixtureTestCase;
 
 /**
- * Class DbTestCase_Test.
+ * Tests for FixtureTestCase class.
  *
- * @coversDefaultClass Kicaj\Test\Helper\DbTestCase
+ * @coversDefaultClass Kicaj\Test\Helper\TestCase\FixtureTestCase
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class Fixtures_Test extends DbTestCaseBase
+class FixtureTestCase_Test extends FixtureTestCase
 {
-    protected $fixtures = ['test4.sql'];
-
     /**
-     * @covers ::setUp
+     * @covers ::setUpBeforeClass
      */
     public function test_setUpBeforeClass()
     {
-        $this->assertSame(0, BaseTest::getTableRowCount('test1'));
-        $this->assertSame(2, BaseTest::getTableRowCount('test2'));
+        self::$fixtureLoader = null;
+        self::setUpBeforeClass();
+
+        $this->assertNotNull(self::$fixtureLoader);
     }
 }

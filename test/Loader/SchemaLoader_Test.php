@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -15,27 +14,27 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\Test\TestHelperTest;
+namespace Kicaj\Test\TestHelperTest\Loader;
 
-use Kicaj\Test\Helper\TestCase\FixtureTestCase;
+use Kicaj\Test\Helper\Loader\SchemaLoader;
+use Kicaj\Test\TestHelperTest\BaseTest;
 
 /**
- * Tests for FixtureTestCase class.
+ * Tests for SchemaLoader class.
  *
- * @coversDefaultClass Kicaj\Test\Helper\Loader\FixtureTestCase
+ * @coversDefaultClass Kicaj\Test\Helper\Loader\SchemaLoader
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class FixtureTestCase_Test extends FixtureTestCase
+class SchemaLoader_Test extends BaseTest
 {
     /**
-     * @covers ::setUpBeforeClass
+     * @covers ::__construct
      */
-    public function test_setUpBeforeClass()
+    public function test___construct()
     {
-        self::$fixtureLoader = null;
-        self::setUpBeforeClass();
+        $schemaLoader = new SchemaLoader();
 
-        $this->assertNotNull(self::$fixtureLoader);
+        $this->assertNotNull($schemaLoader);
     }
 }

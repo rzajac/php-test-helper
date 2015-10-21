@@ -15,11 +15,12 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\Test\TestHelperTest;
+namespace Kicaj\Test\TestHelperTest\Loader;
 
 use Kicaj\Test\Helper\Database\TestDb;
 use Kicaj\Test\Helper\Database\DbGet;
 use Kicaj\Test\Helper\Loader\FixtureLoader;
+use Kicaj\Test\TestHelperTest\BaseTest;
 use Kicaj\Tools\Exception;
 use Kicaj\Tools\Helper\Str;
 

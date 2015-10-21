@@ -15,32 +15,28 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\Test\TestHelperTest\DbTestCase;
+namespace Kicaj\Test\TestHelperTest\TestCase;
 
-use Kicaj\Test\Helper\TestCase\DbTestCase;
 use Kicaj\Test\TestHelperTest\BaseTest;
 
 /**
  * Class DbTestCase_Test.
  *
- * @coversDefaultClass Kicaj\Test\Helper\DbTestCase
+ * @coversDefaultClass Kicaj\Test\Helper\TestCase\DbTestCase
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-abstract class DbTestCaseBase extends DbTestCase
+class SetUpBeforeClass_Test extends DbTestCaseBase
 {
-    public static function setUpBeforeClass()
+    /**
+     * @covers ::setUpBeforeClass
+     */
+    public function test_setUpBeforeClass()
     {
-        BaseTest::connectToDb();
-        BaseTest::resetTestDb();
-        BaseTest::truncateTestTables();
+        $this->assertInstanceOf('\Kicaj\Test\Helper\Database\TestDb', self::$db);
+        $this->assertInstanceOf('\Kicaj\Test\Helper\Loader\FixtureLoader', self::$fixtureLoader);
 
-        parent::setUpBeforeClass();
-    }
-
-    public static function tearDownAfterClass()
-    {
-        parent::tearDownAfterClass();
-        BaseTest::disconnectFromDb();
+        $this->assertSame(0, BaseTest::getTableRowCount('test1'));
+        $this->assertSame(0, BaseTest::getTableRowCount('test2'));
     }
 }

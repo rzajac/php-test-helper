@@ -15,28 +15,44 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\Test\TestHelperTest\DbTestCase;
+namespace Kicaj\Test\TestHelperTest\TestCase;
 
 use Kicaj\Test\TestHelperTest\BaseTest;
 
 /**
  * Class DbTestCase_Test.
  *
- * @coversDefaultClass Kicaj\Test\Helper\DbTestCase
+ * @coversDefaultClass Kicaj\Test\Helper\TestCase\DbTestCase
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class SetUpBeforeClass_Test extends DbTestCaseBase
+class ResidentFixtures_Test extends DbTestCaseBase
 {
+    protected static $residentFixtures = ['test4.sql'];
+
     /**
      * @covers ::setUpBeforeClass
+     * @covers ::loadSQLFixtures
      */
-    public function test_setUpBeforeClass()
+    public function test_residentFixtures()
     {
-        $this->assertInstanceOf('\Kicaj\Test\Helper\Database\TestDb', self::$db);
-        $this->assertInstanceOf('\Kicaj\Test\Helper\FixtureLoader', self::$fixtureLoader);
+        // We do it to have test coverage.
+        self::$db = null;
+        self::$fixtureLoader = null;
+        static::setUpBeforeClass();
+
+        static::loadSQLFixtures('test5.sql');
 
         $this->assertSame(0, BaseTest::getTableRowCount('test1'));
-        $this->assertSame(0, BaseTest::getTableRowCount('test2'));
+        $this->assertSame(3, BaseTest::getTableRowCount('test2'));
+
+        $gotData = BaseTest::getTableData('test2');
+        $expData = [
+            ['id' => '1', 'col2' => '400'],
+            ['id' => '2', 'col2' => '404'],
+            ['id' => '3', 'col2' => '500'],
+        ];
+
+        $this->assertSame($expData, $gotData);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -14,26 +15,27 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\Test\TestHelperTest;
+namespace Kicaj\Test\TestHelperTest\TestCase;
 
-use Kicaj\Test\Helper\Loader\SchemaLoader;
+use Kicaj\Test\TestHelperTest\BaseTest;
 
 /**
- * Tests for SchemaLoader class.
+ * Class DbTestCase_Test.
  *
- * @coversDefaultClass Kicaj\Test\Helper\Loader\SchemaLoader
+ * @coversDefaultClass Kicaj\Test\Helper\TestCase\DbTestCase
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class SchemaLoader_Test extends BaseTest
+class Fixtures_Test extends DbTestCaseBase
 {
-    /**
-     * @covers ::__construct
-     */
-    public function test___construct()
-    {
-        $schemaLoader = new SchemaLoader();
+    protected $fixtures = ['test4.sql'];
 
-        $this->assertNotNull($schemaLoader);
+    /**
+     * @covers ::setUp
+     */
+    public function test_setUp()
+    {
+        $this->assertSame(0, BaseTest::getTableRowCount('test1'));
+        $this->assertSame(2, BaseTest::getTableRowCount('test2'));
     }
 }

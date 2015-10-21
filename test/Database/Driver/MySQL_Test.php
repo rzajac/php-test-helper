@@ -19,6 +19,7 @@ namespace Kicaj\Test\TestHelperTest\Database\Driver;
 
 use Kicaj\Test\Helper\Database\Driver\MySQL;
 use Kicaj\Test\TestHelperTest\BaseTest;
+use Kicaj\Tools\Exception;
 
 /**
  * DbGet tests.
@@ -193,4 +194,46 @@ class MySQL_Test extends BaseTest
 
         $this->assertSame(0, count(static::getTableNames()));
     }
+
+    /**
+     * @dataProvider runQueryProvider
+     *
+     * @covers ::runQuery
+     *
+     * @param string $sql
+     * @param string $expMsg
+     */
+    public function test_runQuery($sql, $expMsg)
+    {
+        $resp = null;
+
+        try {
+            $resp = $this->myMySQL->runQuery($sql);
+            $thrown = false;
+            $gotMsg = '';
+        } catch (Exception $e) {
+            $thrown = true;
+            $gotMsg = $e->getMessage();
+        }
+
+        if ($expMsg) {
+            $this->assertTrue($thrown);
+            $this->assertContains($expMsg, $gotMsg);
+        } else {
+            $this->assertFalse($thrown);
+            $this->assertNotFalse($resp);
+            $this->assertSame('', $gotMsg);
+        }
+    }
+
+    public function runQueryProvider()
+    {
+        return [
+            ['SELECT * FROM test2', ''],
+            [ ['SELECT * FROM test2', 'SELECT * FROM test2'], ''],
+            ['SELECT BAD * FROM test2', 'You have an error in your SQL syntax'],
+            [ ['SELECT * FROM test2', 'SELECT BAD * FROM test2'], 'You have an error in your SQL syntax'],
+        ];
+    }
+
 }

@@ -85,7 +85,7 @@ interface TestDb extends DbConnect
      *
      * @throws Exception
      *
-     * @return bool
+     * @return mixed
      */
     public function runQuery($query);
 }
