@@ -1,6 +1,6 @@
 ## PHP Test helper classes
 
-Unit testing helper classes:
+Unit testing helper classes.
 
 ## What does it help with?
 
