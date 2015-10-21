@@ -17,11 +17,8 @@
  */
 namespace Kicaj\Test\Helper;
 
-use Exception;
 use Kicaj\Test\Helper\Database\TestDb;
 use Kicaj\Test\Helper\Database\DbGet;
-use PHPUnit_Framework_TestCase;
-use RuntimeException;
 
 /**
  * Database test case.
@@ -75,20 +72,8 @@ abstract class DbTestCase extends FixtureTestCase
     public function setUp()
     {
         // Drop all tables from fixtures
-        self::dropTables($this->fixtures);
+        self::$db->dropDbTables($this->fixtures);
         self::loadSQLFixtures($this->fixtures);
-    }
-
-    /**
-     * Drop tables by name.
-     *
-     * @param string[] $tableNames
-     *
-     * @return bool
-     */
-    private static function dropTables(array $tableNames)
-    {
-        return self::$db->dropDbTables($tableNames);
     }
 
     /**
@@ -103,29 +88,5 @@ abstract class DbTestCase extends FixtureTestCase
         }
 
         self::$fixtureLoader->loadFixtures($fixtureNames);
-    }
-
-    /**
-     * Return number of rows in given table.
-     *
-     * @param string $tableName
-     *
-     * @return int
-     */
-    protected function dbCountRows($tableName)
-    {
-        return self::$db->countDbTableRows($tableName);
-    }
-
-    /**
-     * Truncate table by name.
-     *
-     * @param string $tableName
-     *
-     * @return bool
-     */
-    protected function dbTruncate($tableName)
-    {
-        return self::$db->truncateDbTable($tableName);
     }
 }

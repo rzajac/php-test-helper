@@ -20,25 +20,22 @@ namespace Kicaj\Test\TestHelperTest\DbTestCase;
 use Kicaj\Test\TestHelperTest\BaseTest;
 
 /**
- * Class DbTestCase_Test
+ * Class DbTestCase_Test.
  *
  * @coversDefaultClass Kicaj\Test\Helper\DbTestCase
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class DbTestCase2_Test extends DbTestCase1_Test
+class Fixtures_Test extends DbTestCaseBase
 {
+    protected $fixtures = ['test4.sql'];
+
     /**
-     * @covers ::setUpBeforeClass
+     * @covers ::setUp
      */
     public function test_setUpBeforeClass()
     {
-        $this->assertInstanceOf('\Kicaj\Test\Helper\Database\TestDb', self::$db);
-        $this->assertInstanceOf('\Kicaj\Test\Helper\FixtureLoader', self::$fixtureLoader);
-
         $this->assertSame(0, BaseTest::getTableRowCount('test1'));
-        $this->assertSame(0, BaseTest::getTableRowCount('test2'));
+        $this->assertSame(2, BaseTest::getTableRowCount('test2'));
     }
-
-
 }

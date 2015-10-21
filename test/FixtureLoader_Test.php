@@ -47,7 +47,6 @@ class FixtureLoader_Test extends BaseTest
     protected $fixtureLoader;
 
     /**
-     *
      * @throws Exception
      */
     protected function setUp()
@@ -56,17 +55,39 @@ class FixtureLoader_Test extends BaseTest
 
         $this->db = DbGet::factory(static::$defDbConfig);
         $this->fixtureLoader = new FixtureLoader($this->db, FIXTURE_PATH);
+
+        static::connectToDb();
+        static::resetTestDb();
     }
 
     /**
      * @covers ::__construct
+     * @covers ::setDb
      */
     public function test___construct()
+    {
+        $fixtureLoader = new FixtureLoader(null, FIXTURE_PATH);
+        $this->assertNotNull($fixtureLoader);
+
+        $db = DbGet::factory(static::$defDbConfig);
+        $fixtureLoader->setDb($db);
+    }
+
+    /**
+     * @covers ::setDb
+     *
+     * @expectedException Exception
+     * @expectedExceptionMessage cannot set database twice
+     */
+    public function test_setDbErr()
     {
         $db = DbGet::factory(static::$defDbConfig);
         $fixtureLoader = new FixtureLoader($db, FIXTURE_PATH);
 
         $this->assertNotNull($fixtureLoader);
+
+        // Set already set database
+        $fixtureLoader->setDb($db);
     }
 
     /**
@@ -131,7 +152,7 @@ class FixtureLoader_Test extends BaseTest
      * @covers ::loadSql
      *
      * @param string $fixtureName
-     * @param mixed $expected
+     * @param mixed  $expected
      */
     public function test_loadFixtureFile($fixtureName, $expected)
     {
@@ -142,8 +163,8 @@ class FixtureLoader_Test extends BaseTest
     public function loadFixtureFileProvider()
     {
         return [
-            ['test1.json', ['key1' => 'val1'] ],
-            ['test1.sql', ['SELECT * FROM test1;', 'SELECT * FROM test2;']]
+            ['test1.json', ['key1' => 'val1']],
+            ['test1.sql', ['SELECT * FROM test1;', 'SELECT * FROM test2;']],
         ];
     }
 
@@ -186,12 +207,36 @@ class FixtureLoader_Test extends BaseTest
      */
     public function test_loadFixture()
     {
-        static::connectToDb();
-        static::resetTestDb();
-
         $this->fixtureLoader->loadFixture('test2.sql');
 
-        $this->assertSame(4, static::getTableRowCount('test2'));
+        $this->assertSame(2, static::getTableRowCount('test2'));
+
+        $gotData = BaseTest::getTableData('test2');
+        $expData = [
+            ['id' => '1', 'col2' => '200'],
+            ['id' => '2', 'col2' => '202'],
+        ];
+
+        $this->assertSame($expData, $gotData);
+    }
+
+    /**
+     * @covers ::loadFixtures
+     */
+    public function test_loadFixtures()
+    {
+        $this->fixtureLoader->loadFixtures(['test2.sql', 'test5.sql']);
+
+        $this->assertSame(3, static::getTableRowCount('test2'));
+
+        $gotData = BaseTest::getTableData('test2');
+        $expData = [
+            ['id' => '1', 'col2' => '200'],
+            ['id' => '2', 'col2' => '202'],
+            ['id' => '3', 'col2' => '500'],
+        ];
+
+        $this->assertSame($expData, $gotData);
     }
 
     /**
@@ -239,7 +284,7 @@ class FixtureLoader_Test extends BaseTest
     public function loadFixtureErrProvider()
     {
         return [
-            ['test3.sql', 'You have an error in your SQL syntax'],
+            ['bad.sql', 'You have an error in your SQL syntax'],
         ];
     }
 }

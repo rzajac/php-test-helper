@@ -17,30 +17,26 @@
  */
 namespace Kicaj\Test\TestHelperTest\DbTestCase;
 
-use Kicaj\Test\Helper\DbTestCase;
 use Kicaj\Test\TestHelperTest\BaseTest;
 
 /**
- * Class DbTestCase_Test
+ * Class DbTestCase_Test.
  *
  * @coversDefaultClass Kicaj\Test\Helper\DbTestCase
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-abstract class DbTestCase1_Test extends DbTestCase
+class SetUpBeforeClass_Test extends DbTestCaseBase
 {
-    public static function setUpBeforeClass()
+    /**
+     * @covers ::setUpBeforeClass
+     */
+    public function test_setUpBeforeClass()
     {
-        BaseTest::connectToDb();
-        BaseTest::resetTestDb();
-        BaseTest::truncateTestTables();
+        $this->assertInstanceOf('\Kicaj\Test\Helper\Database\TestDb', self::$db);
+        $this->assertInstanceOf('\Kicaj\Test\Helper\FixtureLoader', self::$fixtureLoader);
 
-        parent::setUpBeforeClass();
-    }
-
-    public static function tearDownAfterClass()
-    {
-        parent::tearDownAfterClass();
-        BaseTest::disconnectFromDb();
+        $this->assertSame(0, BaseTest::getTableRowCount('test1'));
+        $this->assertSame(0, BaseTest::getTableRowCount('test2'));
     }
 }

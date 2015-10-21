@@ -17,7 +17,6 @@
  */
 namespace Kicaj\Test\TestHelperTest\Database;
 
-
 use Kicaj\Test\Helper\Database\DbGet;
 use Kicaj\Tools\Exception;
 use Kicaj\Tools\Itf\DbConnect;
@@ -27,11 +26,10 @@ use Kicaj\Tools\Itf\DbConnect;
  *
  * @coversDefaultClass Kicaj\Test\Helper\Database\DbGet
  *
- * @author             Rafal Zajac <rzajac@gmail.com>
+ * @author Rafal Zajac <rzajac@gmail.com>
  */
 class DbGet_Test extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * Database configuration.
      *
@@ -49,7 +47,7 @@ class DbGet_Test extends \PHPUnit_Framework_TestCase
             'password' => '',
             'host' => '127.0.0.1',
             'port' => '3306',
-            'database' => 'test'
+            'database' => 'test',
         ];
     }
 
@@ -62,7 +60,7 @@ class DbGet_Test extends \PHPUnit_Framework_TestCase
      * @param bool   $throws
      * @param string $errorMsgExp
      */
-    public function test_factory($driverName, $throws, $errorMsgExp = '')
+    public function test_factory($driverName, $throws, $errorMsgExp)
     {
         $this->dbConfig['driver'] = $driverName;
 
@@ -84,9 +82,8 @@ class DbGet_Test extends \PHPUnit_Framework_TestCase
     public function factoryProvider()
     {
         return [
-            [DbConnect::DB_DRIVER_MYSQL, false],
+            [DbConnect::DB_DRIVER_MYSQL, false, ''],
             ['unknown', true, 'unknown database driver name: unknown'],
         ];
     }
-
 }

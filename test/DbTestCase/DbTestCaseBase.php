@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -14,26 +15,32 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\Test\TestHelperTest;
+namespace Kicaj\Test\TestHelperTest\DbTestCase;
 
-use Kicaj\Test\Helper\SchemaLoader;
+use Kicaj\Test\Helper\DbTestCase;
+use Kicaj\Test\TestHelperTest\BaseTest;
 
 /**
- * Tests for SchemaLoader class.
+ * Class DbTestCase_Test.
  *
- * @coversDefaultClass Kicaj\Test\Helper\SchemaLoader
+ * @coversDefaultClass Kicaj\Test\Helper\DbTestCase
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class SchemaLoader_Test extends BaseTest
+abstract class DbTestCaseBase extends DbTestCase
 {
-    /**
-     * @covers ::__construct
-     */
-    public function test___construct()
+    public static function setUpBeforeClass()
     {
-        $schemaLoader = new SchemaLoader();
+        BaseTest::connectToDb();
+        BaseTest::resetTestDb();
+        BaseTest::truncateTestTables();
 
-        $this->assertNotNull($schemaLoader);
+        parent::setUpBeforeClass();
+    }
+
+    public static function tearDownAfterClass()
+    {
+        parent::tearDownAfterClass();
+        BaseTest::disconnectFromDb();
     }
 }

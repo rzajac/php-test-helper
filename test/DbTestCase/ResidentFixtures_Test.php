@@ -20,44 +20,39 @@ namespace Kicaj\Test\TestHelperTest\DbTestCase;
 use Kicaj\Test\TestHelperTest\BaseTest;
 
 /**
- * Class DbTestCase_Test
+ * Class DbTestCase_Test.
  *
  * @coversDefaultClass Kicaj\Test\Helper\DbTestCase
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class DbTestCase3_Test extends DbTestCase1_Test
+class ResidentFixtures_Test extends DbTestCaseBase
 {
     protected static $residentFixtures = ['test4.sql'];
 
     /**
+     * @covers ::setUpBeforeClass
      * @covers ::loadSQLFixtures
      */
-    public function test_setUpBeforeClass()
+    public function test_residentFixtures()
     {
+        // We do it to have test coverage.
+        self::$db = null;
+        self::$fixtureLoader = null;
+        static::setUpBeforeClass();
+
         static::loadSQLFixtures('test5.sql');
 
         $this->assertSame(0, BaseTest::getTableRowCount('test1'));
         $this->assertSame(3, BaseTest::getTableRowCount('test2'));
-    }
 
-    /**
-     * @covers ::dbCountRows
-     */
-    public function test_dbCountRows()
-    {
-        $this->assertSame(3, static::dbCountRows('test2'));
-    }
+        $gotData = BaseTest::getTableData('test2');
+        $expData = [
+            ['id' => '1', 'col2' => '400'],
+            ['id' => '2', 'col2' => '404'],
+            ['id' => '3', 'col2' => '500'],
+        ];
 
-    /**
-     * @covers ::dbTruncate
-     *
-     * @depends test_dbCountRows
-     */
-    public function test_dbTruncate()
-    {
-        static::dbTruncate('test2');
-
-        $this->assertSame(0, BaseTest::getTableRowCount('test2'));
+        $this->assertSame($expData, $gotData);
     }
 }

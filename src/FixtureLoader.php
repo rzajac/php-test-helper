@@ -65,9 +65,15 @@ class FixtureLoader
      * Set database.
      *
      * @param TestDb $db
+     *
+     * @throws Exception
      */
     public function setDb($db)
     {
+        if ($this->db) {
+            throw new Exception('cannot set database twice');
+        }
+
         $this->db = $db;
     }
 

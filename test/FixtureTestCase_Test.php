@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -16,24 +17,25 @@
  */
 namespace Kicaj\Test\TestHelperTest;
 
-use Kicaj\Test\Helper\SchemaLoader;
+use Kicaj\Test\Helper\FixtureTestCase;
 
 /**
- * Tests for SchemaLoader class.
+ * Tests for FixtureTestCase class.
  *
- * @coversDefaultClass Kicaj\Test\Helper\SchemaLoader
+ * @coversDefaultClass Kicaj\Test\Helper\FixtureTestCase
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class SchemaLoader_Test extends BaseTest
+class FixtureTestCase_Test extends FixtureTestCase
 {
     /**
-     * @covers ::__construct
+     * @covers ::setUpBeforeClass
      */
-    public function test___construct()
+    public function test_setUpBeforeClass()
     {
-        $schemaLoader = new SchemaLoader();
+        self::$fixtureLoader = null;
+        self::setUpBeforeClass();
 
-        $this->assertNotNull($schemaLoader);
+        $this->assertNotNull(self::$fixtureLoader);
     }
 }

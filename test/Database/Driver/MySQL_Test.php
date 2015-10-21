@@ -30,7 +30,7 @@ use Kicaj\Test\TestHelperTest\BaseTest;
 class MySQL_Test extends BaseTest
 {
     /**
-     * Database driver.
+     * Database driver we are testing.
      *
      * @var MySQL
      */
@@ -40,11 +40,12 @@ class MySQL_Test extends BaseTest
     {
         parent::setUp();
 
-        $this->myMySQL = new MySQL;
+        $this->myMySQL = new MySQL();
         $this->myMySQL->dbSetup(static::$defDbConfig)->dbConnect();
 
         static::connectToDb();
         static::resetTestDb();
+        static::loadTestData();
     }
 
     /**
@@ -69,7 +70,7 @@ class MySQL_Test extends BaseTest
             'username' => $username,
             'password' => $password,
             'database' => $database,
-            'port' => $port
+            'port' => $port,
         ];
 
         $myMySQL = new MySQL();
@@ -192,5 +193,4 @@ class MySQL_Test extends BaseTest
 
         $this->assertSame(0, count(static::getTableNames()));
     }
-
 }

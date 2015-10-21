@@ -50,7 +50,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             'password' => $GLOBALS['DB_PASSWORD'],
             'host' => $GLOBALS['DB_HOST'],
             'port' => $GLOBALS['DB_PORT'],
-            'database' => $GLOBALS['DB_DATABASE']
+            'database' => $GLOBALS['DB_DATABASE'],
         ];
     }
 
@@ -64,7 +64,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             'password' => $GLOBALS['DB_PASSWORD'],
             'host' => $GLOBALS['DB_HOST'],
             'port' => $GLOBALS['DB_PORT'],
-            'database' => $GLOBALS['DB_DATABASE']
+            'database' => $GLOBALS['DB_DATABASE'],
         ];
     }
 
@@ -81,20 +81,39 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      *
      * @return string[]
      */
-    protected static function getTableNames()
+    public static function getTableNames()
     {
         $resp = static::$coreMySQL->query('SHOW TABLES');
 
         $tableNames = [];
         while ($row = $resp->fetch_assoc()) {
-            $tableNames[] = $row['Tables_in_' . static::$defDbConfig['database']];
+            $tableNames[] = $row['Tables_in_'.static::$defDbConfig['database']];
         }
 
         return $tableNames;
     }
 
     /**
-     * Get number of rows in the given table.
+     * Get database table data.
+     *
+     * @param string $tableName The database table name
+     *
+     * @return array
+     */
+    public static function getTableData($tableName)
+    {
+        $resp = static::$coreMySQL->query('SELECT * FROM '.$tableName);
+
+        $data = [];
+        while ($row = $resp->fetch_assoc()) {
+            $data[] = $row;
+        }
+
+        return $data;
+    }
+
+    /**
+     * Get number of rows in the given database table.
      *
      * @param string $tableName The database table name
      *
@@ -104,7 +123,6 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     {
         $resp = static::$coreMySQL->query('SELECT COUNT(1) AS c FROM '.$tableName);
         if ($resp === false) {
-            //var_dump(static::$coreMySQL->error);
             return -1;
         }
 
@@ -148,12 +166,17 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         // Create tables
         static::$coreMySQL->query('CREATE TABLE `test1` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT, `col1` int(11) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB');
         static::$coreMySQL->query('CREATE TABLE `test2` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT, `col2` int(11) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB');
+    }
 
-        // Insert data
-        static::$coreMySQL->query("INSERT INTO `test1` (`id`, `col1`) VALUES (NULL, '7')");
+    /**
+     * Load test data to database.
+     */
+    public static function loadTestData()
+    {
+        static::$coreMySQL->query("INSERT INTO `test1` (`id`, `col1`) VALUES (NULL, '1')");
 
-        static::$coreMySQL->query("INSERT INTO `test2` (`id`, `col2`) VALUES (NULL, '8')");
-        static::$coreMySQL->query("INSERT INTO `test2` (`id`, `col2`) VALUES (NULL, '9')");
+        static::$coreMySQL->query("INSERT INTO `test2` (`id`, `col2`) VALUES (NULL, '2')");
+        static::$coreMySQL->query("INSERT INTO `test2` (`id`, `col2`) VALUES (NULL, '22')");
     }
 
     /**
@@ -161,8 +184,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      */
     public static function truncateTestTables()
     {
-        static::$coreMySQL->query("TRUNCATE `test1`");
-        static::$coreMySQL->query("TRUNCATE `test2`");
+        static::$coreMySQL->query('TRUNCATE `test1`');
+        static::$coreMySQL->query('TRUNCATE `test2`');
     }
 }
-
