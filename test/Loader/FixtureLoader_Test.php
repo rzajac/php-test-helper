@@ -244,7 +244,7 @@ class FixtureLoader_Test extends BaseTest
      * @covers ::loadFixture
      *
      * @expectedException Exception
-     * @expectedExceptionMessage mysqli::mysqli(): (HY000/1045): Access denied for user 'unitTest'@'localhost' (using password: YES)
+     * @expectedExceptionMessageRegExp /.*Access denied for user.+/
      */
     public function test_loadFixtureDbConnectionError()
     {

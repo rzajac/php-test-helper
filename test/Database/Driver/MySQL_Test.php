@@ -61,9 +61,9 @@ class MySQL_Test extends BaseTest
      * @param string $database
      * @param string $port
      * @param bool   $connect
-     * @param string $errorMsg
+     * @param string $expMsg
      */
-    public function test_connection($host, $username, $password, $database, $port, $connect, $errorMsg)
+    public function test_connection($host, $username, $password, $database, $port, $connect, $expMsg)
     {
         // Database config
         $dbConfig = [
@@ -79,20 +79,21 @@ class MySQL_Test extends BaseTest
 
         $this->assertSame($connect, $connected);
 
-        if (!$connect) {
-            $gotMsg = $myMySQL->getError()->getMessage();
-        } else {
-            $gotMsg = '';
-        }
+        $error = $gotMsg = $myMySQL->getError();
 
-        $this->assertSame($errorMsg, $gotMsg);
+        if ($connect) {
+            $this->assertNull($error);
+        } else {
+            $gotMsg = $error->getMessage();
+            $this->assertContains($expMsg, $gotMsg);
+        }
     }
 
     public function connectionProvider()
     {
         return [
             ['127.0.0.1', 'root', '', 'test', 3306, true, ''],
-            ['127.0.0.1', 'root', '', 'test2', 3306, false, "mysqli::mysqli(): (HY000/1049): Unknown database 'test2'"],
+            ['127.0.0.1', 'root', '', 'test2', 3306, false, "Unknown database 'test2'"],
         ];
     }
 
