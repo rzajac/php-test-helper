@@ -17,7 +17,7 @@
  */
 namespace Kicaj\Test\TestHelperTest\DbTestCase;
 
-use Kicaj\Test\Helper\DbTestCase;
+use Kicaj\Test\Helper\TestCase\DbTestCase;
 use Kicaj\Test\TestHelperTest\BaseTest;
 
 /**

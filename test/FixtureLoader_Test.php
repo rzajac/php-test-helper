@@ -19,14 +19,14 @@ namespace Kicaj\Test\TestHelperTest;
 
 use Kicaj\Test\Helper\Database\TestDb;
 use Kicaj\Test\Helper\Database\DbGet;
-use Kicaj\Test\Helper\FixtureLoader;
+use Kicaj\Test\Helper\Loader\FixtureLoader;
 use Kicaj\Tools\Exception;
 use Kicaj\Tools\Helper\Str;
 
 /**
  * Tests for FixtureLoader class.
  *
- * @coversDefaultClass Kicaj\Test\Helper\FixtureLoader
+ * @coversDefaultClass Kicaj\Test\Helper\Loader\FixtureLoader
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */

@@ -15,13 +15,9 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\Test\Helper;
+namespace Kicaj\Test\Helper\TestCase;
 
-use Exception;
-use Kicaj\Test\Helper\Database\TestDb;
-use Kicaj\Test\Helper\Database\DbGet;
-use PHPUnit_Framework_TestCase;
-use RuntimeException;
+use Kicaj\Test\Helper\Loader\FixtureLoader;
 
 /**
  * Test case with fixtures.

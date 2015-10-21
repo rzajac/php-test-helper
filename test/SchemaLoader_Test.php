@@ -16,12 +16,12 @@
  */
 namespace Kicaj\Test\TestHelperTest;
 
-use Kicaj\Test\Helper\SchemaLoader;
+use Kicaj\Test\Helper\Loader\SchemaLoader;
 
 /**
  * Tests for SchemaLoader class.
  *
- * @coversDefaultClass Kicaj\Test\Helper\SchemaLoader
+ * @coversDefaultClass Kicaj\Test\Helper\Loader\SchemaLoader
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */

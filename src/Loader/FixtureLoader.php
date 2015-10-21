@@ -15,7 +15,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\Test\Helper;
+namespace Kicaj\Test\Helper\Loader;
 
 use Kicaj\Test\Helper\Database\TestDb;
 use Kicaj\Tools\Api\JSON;
@@ -53,11 +53,11 @@ class FixtureLoader
      * Constructor.
      *
      * @param TestDb|null $database         The database connection
-     * @param string   $fixturesRootPath The path to fixture files
+     * @param string      $fixturesRootPath The path to fixture files
      */
     public function __construct($database, $fixturesRootPath)
     {
-        $this->db               = $database;
+        $this->db = $database;
         $this->fixturesRootPath = $fixturesRootPath;
     }
 
@@ -105,7 +105,7 @@ class FixtureLoader
      */
     public function loadFixtures(array $fixtureNames)
     {
-        foreach($fixtureNames as $fixtureName) {
+        foreach ($fixtureNames as $fixtureName) {
             $this->loadFixture($fixtureName);
         }
     }
@@ -121,9 +121,9 @@ class FixtureLoader
      */
     public function loadFixtureFile($fixtureName)
     {
-        $fixturePath = $this->fixturesRootPath . '/' . $fixtureName;
-        $format      = $this->detectFormat($fixtureName);
-        $ret         = null;
+        $fixturePath = $this->fixturesRootPath.'/'.$fixtureName;
+        $format = $this->detectFormat($fixtureName);
+        $ret = null;
 
         switch ($format) {
             case self::FORMAT_JSON:
@@ -149,7 +149,7 @@ class FixtureLoader
      */
     public function detectFormat($fixturePath)
     {
-        $info      = new SplFileInfo($fixturePath);
+        $info = new SplFileInfo($fixturePath);
         $extension = $info->getExtension();
 
         switch ($extension) {
@@ -162,7 +162,7 @@ class FixtureLoader
                 break;
 
             default:
-                throw new Exception('unknown format: ' . $extension);
+                throw new Exception('unknown format: '.$extension);
         }
 
         return $format;

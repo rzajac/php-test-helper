@@ -17,12 +17,12 @@
  */
 namespace Kicaj\Test\TestHelperTest;
 
-use Kicaj\Test\Helper\FixtureTestCase;
+use Kicaj\Test\Helper\TestCase\FixtureTestCase;
 
 /**
  * Tests for FixtureTestCase class.
  *
- * @coversDefaultClass Kicaj\Test\Helper\FixtureTestCase
+ * @coversDefaultClass Kicaj\Test\Helper\Loader\FixtureTestCase
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */

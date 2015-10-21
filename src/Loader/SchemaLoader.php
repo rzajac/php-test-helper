@@ -15,9 +15,8 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\Test\Helper;
+namespace Kicaj\Test\Helper\Loader;
 
-use Kicaj\Test\Helper\Database\TestDb;
 use Kicaj\Tools\Helper\Fn;
 
 /**
