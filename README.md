@@ -4,11 +4,11 @@ Unit testing helper classes.
 
 ## What does it help with?
 
-- Load file fixtures (sql, json).
+- Load file fixtures (`sql`, `json`).
 - Tests where you interact with database.
-- Load database fixtures (sql).
+- Load database fixtures (`sql`).
 - Optimize database tearDown and setUp by introducing fixtures and residentFixtures. Where resident fixtures are loaded once pest test class.
-- Database helper methods (see database interface)[src/Database/TestDb.php].
+- Database helper methods [see database interface](src/Database/TestDb.php).
 
 ## Install
 
