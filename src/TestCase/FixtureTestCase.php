@@ -36,20 +36,6 @@ abstract class FixtureTestCase extends TestCase
     protected static $fixtureLoader;
 
     /**
-     * Fixtures to load and tear down for each test.
-     *
-     * @var array
-     */
-    protected $fixtures = [];
-
-    /**
-     * Fixtures to load once per TestCase class.
-     *
-     * @var array
-     */
-    protected static $residentFixtures = [];
-
-    /**
      * Things that need to be done before each TestCase.
      */
     public static function setUpBeforeClass()

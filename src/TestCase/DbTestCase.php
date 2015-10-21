@@ -37,6 +37,20 @@ abstract class DbTestCase extends FixtureTestCase
     protected static $db;
 
     /**
+     * Fixtures to load and tear down for each test.
+     *
+     * @var array
+     */
+    protected $fixtures = [];
+
+    /**
+     * Fixtures to load once per DbTestCase class.
+     *
+     * @var array
+     */
+    protected static $residentFixtures = [];
+
+    /**
      * Things that need to be done before each TestCase.
      */
     public static function setUpBeforeClass()

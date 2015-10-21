@@ -1,6 +1,32 @@
 ## PHP Test helper classes
 
-Collection of classes to help with unit testing
+Unit testing helper classes:
+
+## What does it help with?
+
+- Load file fixtures (sql, json).
+- Tests where you interact with database.
+- Load database fixtures (sql).
+- Optimize database tearDown and setUp by introducing fixtures and residentFixtures. Where resident fixtures are loaded once pest test class.
+- Database helper methods (see database interface)[src/Database/TestDb.php].
+
+## Install
+
+```json
+{
+    "require": {
+        "rzajac/php-test-helper": "0.1.*"
+    }
+}
+```
+
+## Run unit tests
+
+Yes! The package has it's own unit tests.
+
+```
+$ vendor/bin/phpunit --coverage-html=./coverage 
+```
 
 ## Setup test database
 
