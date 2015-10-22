@@ -35,6 +35,9 @@ class FixtureLoader
     /** SQL format */
     const FORMAT_SQL = 'sql';
 
+    /** TXT format */
+    const FORMAT_TXT = 'txt';
+
     /**
      * Database connection.
      *
@@ -134,6 +137,10 @@ class FixtureLoader
                 $ret = JSON::decode(file_get_contents($fixturePath));
                 break;
 
+            case self::FORMAT_TXT:
+                $ret = file_get_contents($fixturePath);
+                break;
+
             case self::FORMAT_SQL:
                 $ret = $this->loadSql($fixturePath);
                 break;
@@ -159,6 +166,10 @@ class FixtureLoader
         switch ($extension) {
             case self::FORMAT_JSON:
                 $format = self::FORMAT_JSON;
+                break;
+
+            case self::FORMAT_TXT:
+                $format = self::FORMAT_TXT;
                 break;
 
             case self::FORMAT_SQL:
