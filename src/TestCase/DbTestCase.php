@@ -132,6 +132,17 @@ abstract class DbTestCase extends FixtureTestCase
     }
 
     /**
+     * Drop all database tables.
+     *
+     * @return bool true if all tables were dropped
+     */
+    public function dbDropAllTables()
+    {
+        $tableNames = $this->dbGetTableNames();
+        return $this->dbDropTables($tableNames);
+    }
+
+    /**
      * Truncate database table.
      *
      * @param string $tableName The database table name
@@ -176,7 +187,7 @@ abstract class DbTestCase extends FixtureTestCase
     /**
      * Return database table names.
      *
-     * @return int
+     * @return string[]
      */
     public function dbGetTableNames()
     {

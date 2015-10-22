@@ -17,6 +17,7 @@
 namespace Kicaj\Test\TestHelperTest\Loader;
 
 use Kicaj\Test\Helper\Loader\SchemaLoader;
+use Kicaj\Test\TestHelperTest\Helper;
 
 /**
  * Tests for SchemaLoader class.
@@ -27,6 +28,12 @@ use Kicaj\Test\Helper\Loader\SchemaLoader;
  */
 class SchemaLoader_Test extends \PHPUnit_Framework_TestCase
 {
+    public static function setUpBeforeClass()
+    {
+        Helper::make()->dbDropAllTables();
+        parent::setUpBeforeClass();
+    }
+
     /**
      * @covers ::__construct
      */

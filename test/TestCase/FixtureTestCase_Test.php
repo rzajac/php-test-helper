@@ -17,7 +17,6 @@
  */
 namespace Kicaj\Test\TestHelperTest\TestCase;
 
-use Kicaj\Test\Helper\Database\Driver\MySQL;
 use Kicaj\Test\Helper\TestCase\FixtureTestCase;
 use Kicaj\Test\TestHelperTest\Helper;
 
@@ -37,15 +36,17 @@ class FixtureTestCase_Test extends FixtureTestCase
      */
     protected $helper;
 
+    public static function setUpBeforeClass()
+    {
+        Helper::make()->dbDropAllTables();
+        parent::setUpBeforeClass();
+    }
+
     protected function setUp()
     {
         parent::setUp();
 
-        $db = new MySQL;
-        $db->dbSetup(Helper::getDbConfig())->dbConnect();
-        //$this->setFixtureDb($db); // TODO ??
-
-        $this->helper = Helper::make()->resetTestDb();
+        $this->helper = Helper::make()->dbResetTestDbatabase();
     }
 
     /**
@@ -53,10 +54,10 @@ class FixtureTestCase_Test extends FixtureTestCase
      */
     public function test_loadDbFixtures()
     {
-        $this->assertSame(0, $this->helper->getTableRowCount('test2'));
+        $this->assertSame(0, $this->helper->dbGetTableRowCount('test2'));
 
         $this->dbLoadFixtures(['test2.sql']);
 
-        $this->assertSame(2, $this->helper->getTableRowCount('test2'));
+        $this->assertSame(2, $this->helper->dbGetTableRowCount('test2'));
     }
 }

@@ -31,6 +31,12 @@ use Kicaj\Tools\Itf\DbConnect;
  */
 class DbGet_Test extends \PHPUnit_Framework_TestCase
 {
+    public static function setUpBeforeClass()
+    {
+        Helper::make()->dbDropAllTables();
+        parent::setUpBeforeClass();
+    }
+
     /**
      * @dataProvider factoryProvider
      *

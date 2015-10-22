@@ -41,8 +41,8 @@ class ResidentFixtures_Test extends DbTestCase
 
     public static function setUpBeforeClass()
     {
-        Helper::make()->resetTestDb();
-
+        Helper::make()->dbDropAllTables();
+        Helper::make()->dbResetTestDbatabase();
         parent::setUpBeforeClass();
     }
 
@@ -61,10 +61,10 @@ class ResidentFixtures_Test extends DbTestCase
     {
         $this->dbLoadFixtures(['test5.sql']);
 
-        $this->assertSame(0, $this->helper->getTableRowCount('test1'));
-        $this->assertSame(3, $this->helper->getTableRowCount('test2'));
+        $this->assertSame(0, $this->helper->dbGetTableRowCount('test1'));
+        $this->assertSame(3, $this->helper->dbGetTableRowCount('test2'));
 
-        $gotData = $this->helper->getTableData('test2');
+        $gotData = $this->helper->dbGetTableData('test2');
         $expData = [
             ['id' => '1', 'col2' => '400'],
             ['id' => '2', 'col2' => '404'],

@@ -17,6 +17,7 @@
  */
 namespace Kicaj\Test\TestHelperTest;
 
+use Kicaj\Tools\Helper\Fn;
 use mysqli;
 
 /**
@@ -85,7 +86,7 @@ class Helper
      *
      * @return string[]
      */
-    public function getTableNames()
+    public function dbGetTableNames()
     {
         $databaseName = self::dbGetConfig()['database'];
 
@@ -104,9 +105,9 @@ class Helper
      *
      * @return int
      */
-    public function getTableCount()
+    public function dbGetTableCount()
     {
-        return count($this->getTableNames());
+        return count($this->dbGetTableNames());
     }
 
     /**
@@ -116,7 +117,7 @@ class Helper
      *
      * @return array
      */
-    public function getTableData($tableName)
+    public function dbGetTableData($tableName)
     {
         $resp = $this->driver->query('SELECT * FROM ' . $tableName);
 
@@ -135,7 +136,7 @@ class Helper
      *
      * @return int
      */
-    public function getTableRowCount($tableName)
+    public function dbGetTableRowCount($tableName)
     {
         $resp = $this->driver->query('SELECT COUNT(1) AS c FROM ' . $tableName);
         if ($resp === false) {
@@ -150,7 +151,7 @@ class Helper
      *
      * @return bool
      */
-    public function closeDb()
+    public function dbClose()
     {
         return @$this->driver->close();
     }
@@ -160,7 +161,7 @@ class Helper
      *
      * @return Helper
      */
-    public function resetTestDb()
+    public function dbResetTestDbatabase()
     {
         $this->driver->query('DROP TABLE IF EXISTS test1');
         $this->driver->query('DROP TABLE IF EXISTS test2');
@@ -177,7 +178,7 @@ class Helper
      *
      * @return Helper
      */
-    public function loadTestData()
+    public function dbLoadTestData()
     {
         $this->driver->query("INSERT INTO `test1` (`id`, `col1`) VALUES (NULL, '1')");
 
@@ -192,7 +193,7 @@ class Helper
      *
      * @return Helper
      */
-    public function truncateTestTables()
+    public function dbTruncateTestTables()
     {
         $this->driver->query('TRUNCATE `test1`');
         $this->driver->query('TRUNCATE `test2`');
@@ -207,8 +208,38 @@ class Helper
      *
      * @return bool
      */
-    public function dropDbTable($tableName)
+    public function dbDropTable($tableName)
     {
         return (bool) $this->driver->query("DROP TABLE $tableName");
+    }
+
+    /**
+     * Drop database tables.
+     *
+     * @param array $tableNames
+     *
+     * @return bool
+     */
+    public function dbDropTables(array $tableNames)
+    {
+        $ret = false;
+
+        foreach ($tableNames as $tableName) {
+            $result = $this->dbDropTable($tableName);
+            $ret = Fn::returnIfNot($ret, false, $result);
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Drop all database tables.
+     *
+     * @return bool
+     */
+    public function dbDropAllTables()
+    {
+        $tableNames = $this->dbGetTableNames();
+        return $this->dbDropTables($tableNames);
     }
 }

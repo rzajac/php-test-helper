@@ -31,6 +31,12 @@ class Fixtures_Test extends DbTestCase
 {
     protected $fixtures = ['test4.sql'];
 
+    public static function setUpBeforeClass()
+    {
+        Helper::make()->dbDropAllTables();
+        parent::setUpBeforeClass();
+    }
+
     /**
      * Database helper.
      *
@@ -40,7 +46,7 @@ class Fixtures_Test extends DbTestCase
 
     public function setUp()
     {
-        $this->helper = Helper::make()->resetTestDb();
+        $this->helper = Helper::make()->dbResetTestDbatabase();
 
         parent::setUp();
     }
@@ -50,7 +56,7 @@ class Fixtures_Test extends DbTestCase
      */
     public function test_setUp()
     {
-        $this->assertSame(0, $this->helper->getTableRowCount('test1'));
-        $this->assertSame(2, $this->helper->getTableRowCount('test2'));
+        $this->assertSame(0, $this->helper->dbGetTableRowCount('test1'));
+        $this->assertSame(2, $this->helper->dbGetTableRowCount('test2'));
     }
 }

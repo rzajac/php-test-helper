@@ -46,6 +46,12 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
      */
     protected $helper;
 
+    public static function setUpBeforeClass()
+    {
+        Helper::make()->dbDropAllTables();
+        parent::setUpBeforeClass();
+    }
+
     /**
      * @throws Exception
      */
@@ -57,7 +63,7 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
         $this->fixtureLoader = new FixtureLoader($db, FIXTURE_PATH);
 
         $this->helper = Helper::make();
-        $this->helper->resetTestDb();
+        $this->helper->dbResetTestDbatabase();
     }
 
     /**
@@ -210,9 +216,9 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     {
         $this->fixtureLoader->dbLoadFixture('test2.sql');
 
-        $this->assertSame(2, $this->helper->getTableRowCount('test2'));
+        $this->assertSame(2, $this->helper->dbGetTableRowCount('test2'));
 
-        $gotData = $this->helper->getTableData('test2');
+        $gotData = $this->helper->dbGetTableData('test2');
         $expData = [
             ['id' => '1', 'col2' => '200'],
             ['id' => '2', 'col2' => '202'],
@@ -228,9 +234,9 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     {
         $this->fixtureLoader->dbLoadFixtures(['test2.sql', 'test5.sql']);
 
-        $this->assertSame(3, $this->helper->getTableRowCount('test2'));
+        $this->assertSame(3, $this->helper->dbGetTableRowCount('test2'));
 
-        $gotData = $this->helper->getTableData('test2');
+        $gotData = $this->helper->dbGetTableData('test2');
         $expData = [
             ['id' => '1', 'col2' => '200'],
             ['id' => '2', 'col2' => '202'],

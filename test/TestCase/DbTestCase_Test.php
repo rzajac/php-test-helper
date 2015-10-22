@@ -36,11 +36,27 @@ class DbTestCase_Test extends DbTestCase
      */
     protected $helper;
 
+    public static function setUpBeforeClass()
+    {
+        Helper::make()->dbDropAllTables();
+        parent::setUpBeforeClass();
+    }
+
     public function setUp()
     {
         parent::setUp();
 
-        $this->helper = Helper::make()->resetTestDb();
+        $this->helper = Helper::make()->dbResetTestDbatabase();
+    }
+
+    /**
+     * @covers ::dbGetConfig
+     */
+    public function test_dbGetConfig()
+    {
+        $dbConfig = self::dbGetConfig();
+        $expKeys = ['host', 'username', 'password', 'database', 'port', 'driver'];
+        $this->assertSame($expKeys, array_keys($dbConfig));
     }
 
     /**
@@ -49,12 +65,25 @@ class DbTestCase_Test extends DbTestCase
      */
     public function test_dropTables()
     {
-        $this->assertSame(2, $this->helper->getTableCount());
+        $this->assertSame(2, $this->helper->dbGetTableCount());
 
         $ret = $this->dbDropTables(['test1', 'test2']);
         $this->assertTrue($ret);
 
-        $this->assertSame(0, $this->helper->getTableCount());
+        $this->assertSame(0, $this->helper->dbGetTableCount());
+    }
+
+    /**
+     * @covers ::dbDropAllTables
+     */
+    public function test_dropAllTables()
+    {
+        $this->assertSame(2, $this->helper->dbGetTableCount());
+
+        $ret = $this->dbDropAllTables();
+        $this->assertTrue($ret);
+
+        $this->assertSame(0, $this->helper->dbGetTableCount());
     }
 
     /**
@@ -76,16 +105,16 @@ class DbTestCase_Test extends DbTestCase
      */
     public function test_dbTruncateTable()
     {
-        $this->helper->loadTestData();
+        $this->helper->dbLoadTestData();
 
-        $this->assertSame(1, $this->helper->getTableRowCount('test1'));
-        $this->assertSame(2, $this->helper->getTableRowCount('test2'));
+        $this->assertSame(1, $this->helper->dbGetTableRowCount('test1'));
+        $this->assertSame(2, $this->helper->dbGetTableRowCount('test2'));
 
         $ret = $this->dbTruncateTables(['test1', 'test2']);
         $this->assertTrue($ret);
 
-        $this->assertSame(0, $this->helper->getTableRowCount('test1'));
-        $this->assertSame(0, $this->helper->getTableRowCount('test2'));
+        $this->assertSame(0, $this->helper->dbGetTableRowCount('test1'));
+        $this->assertSame(0, $this->helper->dbGetTableRowCount('test2'));
     }
 
     /**
@@ -106,7 +135,7 @@ class DbTestCase_Test extends DbTestCase
         $got = $this->dbGetTableNames();
         $this->assertSame(['test1', 'test2'], $got);
 
-        $this->helper->dropDbTable('test2');
+        $this->helper->dbDropTable('test2');
 
         $got = $this->dbGetTableNames();
         $this->assertSame(['test1'], $got);
@@ -117,7 +146,7 @@ class DbTestCase_Test extends DbTestCase
      */
     public function test_dbCountTableRows()
     {
-        $this->helper->loadTestData();
+        $this->helper->dbLoadTestData();
 
         $this->assertSame(2, $this->dbCountTableRows('test2'));
         $this->assertSame(1, $this->dbCountTableRows('test1'));

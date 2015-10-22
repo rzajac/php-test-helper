@@ -44,11 +44,17 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     protected $helper;
 
+    public static function setUpBeforeClass()
+    {
+        Helper::make()->dbDropAllTables();
+        parent::setUpBeforeClass();
+    }
+
     public function setUp()
     {
         parent::setUp();
 
-        $this->helper = Helper::make()->resetTestDb();
+        $this->helper = Helper::make()->dbResetTestDbatabase();
 
         $this->testedDrv = new MySQL();
         $this->testedDrv->dbSetup(Helper::dbGetConfig())->dbConnect();
@@ -116,7 +122,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_countTableRows()
     {
-        $this->helper->loadTestData();
+        $this->helper->dbLoadTestData();
 
         $t1Rows = $this->testedDrv->dbCountTableRows('test1');
         $this->assertSame(1, $t1Rows);
@@ -135,7 +141,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_truncateTable()
     {
-        $this->helper->loadTestData();
+        $this->helper->dbLoadTestData();
 
         $ret = $this->testedDrv->dbTruncateTable('test2');
         $this->assertTrue($ret);
@@ -154,7 +160,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_truncateTables()
     {
-        $this->helper->loadTestData();
+        $this->helper->dbLoadTestData();
 
         $ret = $this->testedDrv->dbTruncateTables([]);
         $this->assertTrue($ret);
@@ -180,19 +186,19 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_dropDbTable()
     {
-        $this->assertSame(2, $this->helper->getTableCount());
+        $this->assertSame(2, $this->helper->dbGetTableCount());
 
         $ret = $this->testedDrv->dbDropTable('test1');
         $this->assertTrue($ret);
-        $this->assertSame(1, $this->helper->getTableCount());
+        $this->assertSame(1, $this->helper->dbGetTableCount());
 
         $ret = $this->testedDrv->dbDropTable('test2');
         $this->assertTrue($ret);
-        $this->assertSame(0, $this->helper->getTableCount());
+        $this->assertSame(0, $this->helper->dbGetTableCount());
 
         $ret = $this->testedDrv->dbDropTable('notExisting');
         $this->assertFalse($ret);
-        $this->assertSame(0, $this->helper->getTableCount());
+        $this->assertSame(0, $this->helper->dbGetTableCount());
     }
 
     /**
@@ -200,11 +206,11 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_dropTables()
     {
-        $this->assertSame(2, $this->helper->getTableCount());
+        $this->assertSame(2, $this->helper->dbGetTableCount());
 
         $this->testedDrv->dbDropTables(['test1', 'test2']);
 
-        $this->assertSame(0, $this->helper->getTableCount());
+        $this->assertSame(0, $this->helper->dbGetTableCount());
     }
 
     /**
