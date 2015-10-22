@@ -44,7 +44,7 @@ class Helper
 
     private function __construct()
     {
-        $dbConfig = self::getDbConfig();
+        $dbConfig = self::dbGetConfig();
 
         $this->driver = new mysqli(
             $dbConfig['host'],
@@ -68,7 +68,7 @@ class Helper
      *
      * @return array
      */
-    public static function getDbConfig()
+    public static function dbGetConfig()
     {
         return [
             'driver' => $GLOBALS['DB_DRIVER'],
@@ -87,7 +87,7 @@ class Helper
      */
     public function getTableNames()
     {
-        $databaseName = self::getDbConfig()['database'];
+        $databaseName = self::dbGetConfig()['database'];
 
         $resp = $this->driver->query('SHOW TABLES');
 

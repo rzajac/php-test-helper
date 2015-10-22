@@ -53,7 +53,7 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $db = DbGet::factory(Helper::getDbConfig());
+        $db = DbGet::factory(Helper::dbGetConfig());
         $this->fixtureLoader = new FixtureLoader($db, FIXTURE_PATH);
 
         $this->helper = Helper::make();
@@ -69,7 +69,7 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
         $fixtureLoader = new FixtureLoader(null, FIXTURE_PATH);
         $this->assertNotNull($fixtureLoader);
 
-        $db = DbGet::factory(Helper::getDbConfig());
+        $db = DbGet::factory(Helper::dbGetConfig());
         $fixtureLoader->setDb($db);
     }
 
@@ -81,7 +81,7 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_setDbErr()
     {
-        $db = DbGet::factory(Helper::getDbConfig());
+        $db = DbGet::factory(Helper::dbGetConfig());
         $fixtureLoader = new FixtureLoader($db, FIXTURE_PATH);
 
         $this->assertNotNull($fixtureLoader);
@@ -248,7 +248,7 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_loadFixtureDbConnectionError()
     {
-        $dbConfig = Helper::getDbConfig();
+        $dbConfig = Helper::dbGetConfig();
         $dbConfig['password'] = 'wrongOne';
 
         $db = DbGet::factory($dbConfig);

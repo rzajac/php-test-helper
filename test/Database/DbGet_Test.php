@@ -41,7 +41,7 @@ class DbGet_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_factory($driverName, $expErrorMsg)
     {
-        $dbConfig = Helper::getDbConfig();
+        $dbConfig = Helper::dbGetConfig();
         $dbConfig['driver'] = $driverName;
 
         $mysql = null;
@@ -75,8 +75,8 @@ class DbGet_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_factory_sameInstance()
     {
-        $db1 = DbGet::factory(Helper::getDbConfig());
-        $db2 = DbGet::factory(Helper::getDbConfig());
+        $db1 = DbGet::factory(Helper::dbGetConfig());
+        $db2 = DbGet::factory(Helper::dbGetConfig());
 
         $this->assertSame($db1, $db2);
     }

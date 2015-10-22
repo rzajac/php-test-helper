@@ -51,7 +51,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
         $this->helper = Helper::make()->resetTestDb();
 
         $this->testedDrv = new MySQL();
-        $this->testedDrv->dbSetup(Helper::getDbConfig())->dbConnect();
+        $this->testedDrv->dbSetup(Helper::dbGetConfig())->dbConnect();
     }
 
     /**
