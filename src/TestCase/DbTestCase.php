@@ -89,7 +89,7 @@ abstract class DbTestCase extends FixtureTestCase
      *
      * @return array
      */
-    public static function dbGetConfig()
+    public static final function dbGetConfig()
     {
         return [
             'host' => $GLOBALS['DB_HOST'],
@@ -108,7 +108,7 @@ abstract class DbTestCase extends FixtureTestCase
      *
      * @return bool true on success
      */
-    public function dbDropTable($tableName)
+    public static function dbDropTable($tableName)
     {
         return self::$db->dbDropTable($tableName);
     }
@@ -120,11 +120,11 @@ abstract class DbTestCase extends FixtureTestCase
      *
      * @return bool true if all tables were dropped
      */
-    public function dbDropTables(array $tableNames)
+    public static function dbDropTables(array $tableNames)
     {
         $ret = true;
         foreach ($tableNames as $tableName) {
-            $result = $this->dbDropTable($tableName);
+            $result = self::dbDropTable($tableName);
             $ret = Fn::returnIfNot($ret, false, $result);
         }
 
@@ -136,10 +136,10 @@ abstract class DbTestCase extends FixtureTestCase
      *
      * @return bool true if all tables were dropped
      */
-    public function dbDropAllTables()
+    public static function dbDropAllTables()
     {
-        $tableNames = $this->dbGetTableNames();
-        return $this->dbDropTables($tableNames);
+        $tableNames = self::dbGetTableNames();
+        return self::dbDropTables($tableNames);
     }
 
     /**
@@ -149,7 +149,7 @@ abstract class DbTestCase extends FixtureTestCase
      *
      * @return bool true on success
      */
-    public function dbTruncateTable($tableName)
+    public static function dbTruncateTable($tableName)
     {
         return self::$db->dbTruncateTable($tableName);
     }
@@ -161,11 +161,11 @@ abstract class DbTestCase extends FixtureTestCase
      *
      * @return bool true if all tables were dropped
      */
-    public function dbTruncateTables(array $tableNames)
+    public static function dbTruncateTables(array $tableNames)
     {
         $ret = true;
         foreach ($tableNames as $tableName) {
-            $result = $this->dbTruncateTable($tableName);
+            $result = self::dbTruncateTable($tableName);
             $ret = Fn::returnIfNot($ret, false, $result);
         }
 
@@ -179,7 +179,7 @@ abstract class DbTestCase extends FixtureTestCase
      *
      * @return int
      */
-    public function dbCountTableRows($tableName)
+    public static function dbCountTableRows($tableName)
     {
         return self::$db->dbCountTableRows($tableName);
     }
@@ -189,7 +189,7 @@ abstract class DbTestCase extends FixtureTestCase
      *
      * @return string[]
      */
-    public function dbGetTableNames()
+    public static function dbGetTableNames()
     {
         return self::$db->dbGetTableNames();
     }

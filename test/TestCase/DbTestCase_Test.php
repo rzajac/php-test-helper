@@ -67,7 +67,7 @@ class DbTestCase_Test extends DbTestCase
     {
         $this->assertSame(2, $this->helper->dbGetTableCount());
 
-        $ret = $this->dbDropTables(['test1', 'test2']);
+        $ret = self::dbDropTables(['test1', 'test2']);
         $this->assertTrue($ret);
 
         $this->assertSame(0, $this->helper->dbGetTableCount());
@@ -80,7 +80,7 @@ class DbTestCase_Test extends DbTestCase
     {
         $this->assertSame(2, $this->helper->dbGetTableCount());
 
-        $ret = $this->dbDropAllTables();
+        $ret = self::dbDropAllTables();
         $this->assertTrue($ret);
 
         $this->assertSame(0, $this->helper->dbGetTableCount());
@@ -92,10 +92,10 @@ class DbTestCase_Test extends DbTestCase
      */
     public function test_dropTablesErr()
     {
-        $ret = $this->dbDropTables(['test2']);
+        $ret = self::dbDropTables(['test2']);
         $this->assertTrue($ret);
 
-        $ret = $this->dbDropTables(['test1', 'test2']);
+        $ret = self::dbDropTables(['test1', 'test2']);
         $this->assertFalse($ret);
     }
 
@@ -110,7 +110,7 @@ class DbTestCase_Test extends DbTestCase
         $this->assertSame(1, $this->helper->dbGetTableRowCount('test1'));
         $this->assertSame(2, $this->helper->dbGetTableRowCount('test2'));
 
-        $ret = $this->dbTruncateTables(['test1', 'test2']);
+        $ret = self::dbTruncateTables(['test1', 'test2']);
         $this->assertTrue($ret);
 
         $this->assertSame(0, $this->helper->dbGetTableRowCount('test1'));
@@ -123,7 +123,7 @@ class DbTestCase_Test extends DbTestCase
      */
     public function test_dbTruncateTableErr()
     {
-        $ret = $this->dbTruncateTables(['test1', 'notThere']);
+        $ret = self::dbTruncateTables(['test1', 'notThere']);
         $this->assertFalse($ret);
     }
 
@@ -132,12 +132,12 @@ class DbTestCase_Test extends DbTestCase
      */
     public function test_dbGetTableNames()
     {
-        $got = $this->dbGetTableNames();
+        $got = self::dbGetTableNames();
         $this->assertSame(['test1', 'test2'], $got);
 
         $this->helper->dbDropTable('test2');
 
-        $got = $this->dbGetTableNames();
+        $got = self::dbGetTableNames();
         $this->assertSame(['test1'], $got);
     }
 
@@ -148,8 +148,8 @@ class DbTestCase_Test extends DbTestCase
     {
         $this->helper->dbLoadTestData();
 
-        $this->assertSame(2, $this->dbCountTableRows('test2'));
-        $this->assertSame(1, $this->dbCountTableRows('test1'));
-        $this->assertSame(-1, $this->dbCountTableRows('notExisting'));
+        $this->assertSame(2, self::dbCountTableRows('test2'));
+        $this->assertSame(1, self::dbCountTableRows('test1'));
+        $this->assertSame(-1, self::dbCountTableRows('notExisting'));
     }
 }
