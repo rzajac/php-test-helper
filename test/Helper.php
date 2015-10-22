@@ -37,7 +37,7 @@ class Helper
     protected $driver;
 
     /**
-     * Singleton
+     * Singleton.
      *
      * @var Helper
      */
@@ -58,7 +58,7 @@ class Helper
     public static function make()
     {
         if (!self::$instance) {
-            self::$instance = new self;
+            self::$instance = new self();
         }
 
         return self::$instance;
@@ -119,7 +119,7 @@ class Helper
      */
     public function dbGetTableData($tableName)
     {
-        $resp = $this->driver->query('SELECT * FROM ' . $tableName);
+        $resp = $this->driver->query('SELECT * FROM '.$tableName);
 
         $data = [];
         while ($row = $resp->fetch_assoc()) {
@@ -138,7 +138,7 @@ class Helper
      */
     public function dbGetTableRowCount($tableName)
     {
-        $resp = $this->driver->query('SELECT COUNT(1) AS c FROM ' . $tableName);
+        $resp = $this->driver->query('SELECT COUNT(1) AS c FROM '.$tableName);
         if ($resp === false) {
             return -1;
         }
@@ -240,6 +240,7 @@ class Helper
     public function dbDropAllTables()
     {
         $tableNames = $this->dbGetTableNames();
+
         return $this->dbDropTables($tableNames);
     }
 }

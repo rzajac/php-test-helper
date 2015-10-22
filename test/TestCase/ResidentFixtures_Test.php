@@ -17,7 +17,6 @@
  */
 namespace Kicaj\Test\TestHelperTest\TestCase;
 
-use Kicaj\Test\Helper\Database\Driver\MySQL;
 use Kicaj\Test\Helper\TestCase\DbTestCase;
 use Kicaj\Test\TestHelperTest\Helper;
 

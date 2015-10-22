@@ -100,7 +100,7 @@ abstract class DbTestCase extends FixtureTestCase
      *
      * @return array
      */
-    public static final function dbGetConfig()
+    final public static function dbGetConfig()
     {
         return [
             'host' => $GLOBALS['DB_HOST'],
@@ -150,6 +150,7 @@ abstract class DbTestCase extends FixtureTestCase
     public static function dbDropAllTables()
     {
         $tableNames = self::dbGetTableNames();
+
         return self::dbDropTables($tableNames);
     }
 
