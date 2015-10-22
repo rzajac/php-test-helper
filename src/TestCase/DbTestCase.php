@@ -19,6 +19,7 @@ namespace Kicaj\Test\Helper\TestCase;
 
 use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\Database\DbGet;
+use Kicaj\Tools\Exception;
 use Kicaj\Tools\Helper\Fn;
 
 /**
@@ -61,16 +62,26 @@ abstract class DbTestCase extends FixtureTestCase
 
         // Connect to database
         if (self::$db === null) {
-            self::$db = DbGet::factory(self::dbGetConfig());
-            self::$db->dbConnect();
-
-            // Setup fixture loader with database
-            parent::setFixtureDb(self::$db);
+            self::setupDb();
         }
 
         // Load resident fixtures
         self::$db->dbTruncateTables(static::$residentFixtures);
         self::dbLoadFixtures(static::$residentFixtures);
+    }
+
+    /**
+     * Setup test database connection.
+     *
+     * @throws Exception
+     */
+    protected static function setupDb()
+    {
+        self::$db = DbGet::factory(self::dbGetConfig());
+        self::$db->dbConnect();
+
+        // Setup fixture loader with database
+        parent::setFixtureDb(self::$db);
     }
     // @codeCoverageIgnoreEnd
 
