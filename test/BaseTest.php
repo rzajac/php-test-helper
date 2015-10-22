@@ -22,7 +22,7 @@ use mysqli;
 /**
  * Base unit test class.
  *
- * @author             Rafal Zajac <rzajac@gmail.com>
+ * @author Rafal Zajac <rzajac@gmail.com>
  */
 abstract class BaseTest extends \PHPUnit_Framework_TestCase
 {
@@ -54,7 +54,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    protected function setUp()
+    public function setUp()
     {
         parent::setUp();
 
