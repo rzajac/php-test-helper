@@ -61,16 +61,7 @@ abstract class DbTestCase extends FixtureTestCase
 
         // Connect to database
         if (self::$db === null) {
-            $dbConfig = [
-                'host' => $GLOBALS['DB_HOST'],
-                'username' => $GLOBALS['DB_USERNAME'],
-                'password' => $GLOBALS['DB_PASSWORD'],
-                'database' => $GLOBALS['DB_DATABASE'],
-                'port' => $GLOBALS['DB_PORT'],
-                'driver' => $GLOBALS['DB_DRIVER'],
-            ];
-
-            self::$db = DbGet::factory($dbConfig);
+            self::$db = DbGet::factory(self::dbGetConfig());
             self::$db->dbConnect();
 
             // Setup fixture loader with database
@@ -91,6 +82,23 @@ abstract class DbTestCase extends FixtureTestCase
         // Drop all tables from fixtures
         self::$db->dbDropTables($this->fixtures);
         self::dbLoadFixtures($this->fixtures);
+    }
+
+    /**
+     * Returns database configuration.
+     *
+     * @return array
+     */
+    public static function dbGetConfig()
+    {
+        return [
+            'host' => $GLOBALS['DB_HOST'],
+            'username' => $GLOBALS['DB_USERNAME'],
+            'password' => $GLOBALS['DB_PASSWORD'],
+            'database' => $GLOBALS['DB_DATABASE'],
+            'port' => $GLOBALS['DB_PORT'],
+            'driver' => $GLOBALS['DB_DRIVER'],
+        ];
     }
 
     /**
