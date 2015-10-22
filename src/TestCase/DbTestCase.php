@@ -80,7 +80,7 @@ abstract class DbTestCase extends FixtureTestCase
             self::$db->dbConnect();
 
             // Setup fixture loader with database
-            parent::setFixtureDb(self::$db);
+            self::setFixtureDb(self::$db);
         }
     }
     // @codeCoverageIgnoreEnd

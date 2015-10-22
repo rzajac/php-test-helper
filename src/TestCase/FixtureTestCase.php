@@ -84,6 +84,18 @@ abstract class FixtureTestCase extends TestCase
     }
 
     /**
+     * Load fixture.
+     *
+     * @param array $fixtureName The fixture file name
+     *
+     * @throws Exception
+     */
+    protected static function dbLoadFixture($fixtureName)
+    {
+        self::$fixtureLoader->dbLoadFixture($fixtureName);
+    }
+
+    /**
      * Load fixture from file.
      *
      * @param string $fixtureName The fixture file name

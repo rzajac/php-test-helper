@@ -50,13 +50,25 @@ class FixtureTestCase_Test extends FixtureTestCase
     }
 
     /**
+     * @covers ::dbLoadFixture
+     */
+    public function test_loadDbFixture()
+    {
+        $this->assertSame(0, $this->helper->dbGetTableRowCount('test2'));
+
+        self::dbLoadFixture('test2.sql');
+
+        $this->assertSame(2, $this->helper->dbGetTableRowCount('test2'));
+    }
+
+    /**
      * @covers ::dbLoadFixtures
      */
     public function test_loadDbFixtures()
     {
         $this->assertSame(0, $this->helper->dbGetTableRowCount('test2'));
 
-        $this->dbLoadFixtures(['test2.sql']);
+        self::dbLoadFixtures(['test2.sql']);
 
         $this->assertSame(2, $this->helper->dbGetTableRowCount('test2'));
     }
@@ -66,7 +78,7 @@ class FixtureTestCase_Test extends FixtureTestCase
      */
     public function test_loadFileFixture()
     {
-        $gotContents = $this->loadFileFixture('test1.sql');
+        $gotContents = self::loadFileFixture('test1.sql');
         $expContents = ['SELECT * FROM test1;', 'SELECT * FROM test2;'];
 
         $this->assertSame($expContents, $gotContents);

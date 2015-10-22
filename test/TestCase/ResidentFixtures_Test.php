@@ -58,7 +58,7 @@ class ResidentFixtures_Test extends DbTestCase
      */
     public function test_residentFixtures()
     {
-        $this->dbLoadFixtures(['test5.sql']);
+        self::dbLoadFixtures(['test5.sql']);
 
         $this->assertSame(0, $this->helper->dbGetTableRowCount('test1'));
         $this->assertSame(3, $this->helper->dbGetTableRowCount('test2'));
