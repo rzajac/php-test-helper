@@ -50,7 +50,7 @@ class FixtureLoader_Test extends BaseTest
     /**
      * @throws Exception
      */
-    protected function setUp()
+    public function setUp()
     {
         parent::setUp();
 
@@ -166,6 +166,7 @@ class FixtureLoader_Test extends BaseTest
         return [
             ['test1.json', ['key1' => 'val1']],
             ['test1.sql', ['SELECT * FROM test1;', 'SELECT * FROM test2;']],
+            ['multi_line.sql', ["INSERT INTO `test2`\n  (`id`, `col2`) VALUES (NULL, '200');", "INSERT INTO `test2`\n  (`id`, `col2`)\n  VALUES\n  (NULL, '202');"]],
         ];
     }
 

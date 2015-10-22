@@ -57,7 +57,7 @@ class FixtureLoader
      */
     public function __construct($database, $fixturesRootPath)
     {
-        $this->db = $database;
+        $this->db               = $database;
         $this->fixturesRootPath = $fixturesRootPath;
     }
 
@@ -121,9 +121,9 @@ class FixtureLoader
      */
     public function loadFixtureFile($fixtureName)
     {
-        $fixturePath = $this->fixturesRootPath.'/'.$fixtureName;
-        $format = $this->detectFormat($fixtureName);
-        $ret = null;
+        $fixturePath = $this->fixturesRootPath . '/' . $fixtureName;
+        $format      = $this->detectFormat($fixtureName);
+        $ret         = null;
 
         switch ($format) {
             case self::FORMAT_JSON:
@@ -149,7 +149,7 @@ class FixtureLoader
      */
     public function detectFormat($fixturePath)
     {
-        $info = new SplFileInfo($fixturePath);
+        $info      = new SplFileInfo($fixturePath);
         $extension = $info->getExtension();
 
         switch ($extension) {
@@ -162,7 +162,7 @@ class FixtureLoader
                 break;
 
             default:
-                throw new Exception('unknown format: '.$extension);
+                throw new Exception('unknown format: ' . $extension);
         }
 
         return $format;
@@ -191,12 +191,26 @@ class FixtureLoader
 
         $sqlArr = [];
 
+        $index = 0;
         while (($sql = fgets($handle)) !== false) {
             // Skip comments
             if (substr($sql, 0, 2) == '--') {
                 continue;
             }
-            $sqlArr[] = trim($sql);
+
+            $isMultiLineSql = array_key_exists($index, $sqlArr);
+            $isEndOfSql     = substr($sql, -2, 1) == ';';
+
+            if ($isMultiLineSql) {
+                $sqlArr[$index] .= $sql;
+            } else {
+                $sqlArr[$index] = $sql;
+            }
+
+            if ($isEndOfSql) {
+                $sqlArr[$index] = trim($sqlArr[$index]);
+                $index++;
+            }
         }
 
         fclose($handle);

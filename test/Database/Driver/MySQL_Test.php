@@ -37,7 +37,7 @@ class MySQL_Test extends BaseTest
      */
     protected $myMySQL;
 
-    protected function setUp()
+    public function setUp()
     {
         parent::setUp();
 
