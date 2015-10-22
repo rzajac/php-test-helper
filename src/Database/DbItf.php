@@ -24,7 +24,7 @@ use Kicaj\Tools\Itf\DbConnect;
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-interface TestDb extends DbConnect
+interface DbItf extends DbConnect
 {
     /**
      * Drop table.
@@ -33,7 +33,7 @@ interface TestDb extends DbConnect
      *
      * @return bool Returns true on success
      */
-    public function dropDbTable($tableName);
+    public function dbDropTable($tableName);
 
     /**
      * Drop list of tables.
@@ -42,7 +42,7 @@ interface TestDb extends DbConnect
      *
      * Returns true on success, false if one or more operations failed
      */
-    public function dropDbTables(array $tableNames);
+    public function dbDropTables(array $tableNames);
 
     /**
      * Truncate table.
@@ -51,7 +51,7 @@ interface TestDb extends DbConnect
      *
      * @return bool Returns true on success
      */
-    public function truncateDbTable($tableName);
+    public function dbTruncateTable($tableName);
 
     /**
      * Truncate list of tables.
@@ -60,23 +60,23 @@ interface TestDb extends DbConnect
      *
      * Returns true on success, false if one or more operations failed
      */
-    public function truncateDbTables(array $tableNames);
+    public function dbTruncateTables(array $tableNames);
 
     /**
      * Get number of rows in the given table.
      *
      * @param string $tableName The database table name
      *
-     * @return int
+     * @return int Returns -1 on error
      */
-    public function countDbTableRows($tableName);
+    public function dbCountTableRows($tableName);
 
     /**
      * Returns list of database tables.
      *
      * @return string[]
      */
-    public function getDbTableNames();
+    public function dbGetTableNames();
 
     /**
      * Run database query.
@@ -87,5 +87,5 @@ interface TestDb extends DbConnect
      *
      * @return mixed
      */
-    public function runQuery($query);
+    public function dbRunQuery($query);
 }

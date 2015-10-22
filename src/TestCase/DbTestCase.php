@@ -17,8 +17,9 @@
  */
 namespace Kicaj\Test\Helper\TestCase;
 
-use Kicaj\Test\Helper\Database\TestDb;
+use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\Database\DbGet;
+use Kicaj\Tools\Helper\Fn;
 
 /**
  * Database test case.
@@ -32,9 +33,9 @@ abstract class DbTestCase extends FixtureTestCase
     /**
      * Database driver.
      *
-     * @var TestDb
+     * @var DbItf
      */
-    protected static $db;
+    private static $db;
 
     /**
      * Fixtures to load and tear down for each test.
@@ -50,6 +51,7 @@ abstract class DbTestCase extends FixtureTestCase
      */
     protected static $residentFixtures = [];
 
+    // @codeCoverageIgnoreStart
     /**
      * Things that need to be done before each TestCase.
      */
@@ -72,13 +74,14 @@ abstract class DbTestCase extends FixtureTestCase
             self::$db->dbConnect();
 
             // Setup fixture loader with database
-            self::$fixtureLoader->setDb(self::$db);
+            parent::setFixtureDb(self::$db);
         }
 
         // Load resident fixtures
-        self::$db->truncateDbTables(static::$residentFixtures);
-        self::loadSQLFixtures(static::$residentFixtures);
+        self::$db->dbTruncateTables(static::$residentFixtures);
+        self::dbLoadFixtures(static::$residentFixtures);
     }
+    // @codeCoverageIgnoreEnd
 
     /**
      * Things to be done before each test case.
@@ -86,21 +89,89 @@ abstract class DbTestCase extends FixtureTestCase
     public function setUp()
     {
         // Drop all tables from fixtures
-        self::$db->dropDbTables($this->fixtures);
-        self::loadSQLFixtures($this->fixtures);
+        self::$db->dbDropTables($this->fixtures);
+        self::dbLoadFixtures($this->fixtures);
     }
 
     /**
-     * Loads database SQL fixtures.
+     * Drop database table.
      *
-     * @param array|string $fixtureNames
+     * @param string $tableName The database table name
+     *
+     * @return bool true on success
      */
-    public static function loadSQLFixtures($fixtureNames)
+    public function dbDropTable($tableName)
     {
-        if (is_string($fixtureNames)) {
-            $fixtureNames = [$fixtureNames];
+        return self::$db->dbDropTable($tableName);
+    }
+
+    /**
+     * Drop database tables.
+     *
+     * @param string[] $tableNames The database table name
+     *
+     * @return bool true if all tables were dropped
+     */
+    public function dbDropTables(array $tableNames)
+    {
+        $ret = true;
+        foreach ($tableNames as $tableName) {
+            $result = $this->dbDropTable($tableName);
+            $ret = Fn::returnIfNot($ret, false, $result);
         }
 
-        self::$fixtureLoader->loadFixtures($fixtureNames);
+        return $ret;
+    }
+
+    /**
+     * Truncate database table.
+     *
+     * @param string $tableName The database table name
+     *
+     * @return bool true on success
+     */
+    public function dbTruncateTable($tableName)
+    {
+        return self::$db->dbTruncateTable($tableName);
+    }
+
+    /**
+     * Truncate database tables.
+     *
+     * @param string[] $tableNames The database table name
+     *
+     * @return bool true if all tables were dropped
+     */
+    public function dbTruncateTables(array $tableNames)
+    {
+        $ret = true;
+        foreach ($tableNames as $tableName) {
+            $result = $this->dbTruncateTable($tableName);
+            $ret = Fn::returnIfNot($ret, false, $result);
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Return number of rows in the database table.
+     *
+     * @param string $tableName The database table name
+     *
+     * @return int
+     */
+    public function dbCountTableRows($tableName)
+    {
+        return self::$db->dbCountTableRows($tableName);
+    }
+
+    /**
+     * Return database table names.
+     *
+     * @return int
+     */
+    public function dbGetTableNames()
+    {
+        return self::$db->dbGetTableNames();
     }
 }

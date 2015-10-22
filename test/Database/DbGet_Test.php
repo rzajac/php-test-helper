@@ -18,6 +18,7 @@
 namespace Kicaj\Test\TestHelperTest\Database;
 
 use Kicaj\Test\Helper\Database\DbGet;
+use Kicaj\Test\TestHelperTest\Helper;
 use Kicaj\Tools\Exception;
 use Kicaj\Tools\Itf\DbConnect;
 
@@ -31,59 +32,52 @@ use Kicaj\Tools\Itf\DbConnect;
 class DbGet_Test extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Database configuration.
-     *
-     * @var array
-     */
-    protected $dbConfig = [];
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->dbConfig = [
-            'driver' => DbConnect::DB_DRIVER_MYSQL,
-            'username' => 'root',
-            'password' => '',
-            'host' => '127.0.0.1',
-            'port' => '3306',
-            'database' => 'test',
-        ];
-    }
-
-    /**
      * @dataProvider factoryProvider
      *
      * @covers ::factory
      *
      * @param string $driverName
-     * @param bool   $throws
-     * @param string $errorMsgExp
+     * @param string $expErrorMsg
      */
-    public function test_factory($driverName, $throws, $errorMsgExp)
+    public function test_factory($driverName, $expErrorMsg)
     {
-        $this->dbConfig['driver'] = $driverName;
+        $dbConfig = Helper::getDbConfig();
+        $dbConfig['driver'] = $driverName;
+
+        $mysql = null;
 
         try {
-            $mysql = DbGet::factory($this->dbConfig);
-
-            $hasThrown = false;
-            $this->assertSame($throws, $hasThrown);
-            $this->assertNotNull($mysql);
-            $this->assertInstanceOf('\Kicaj\Test\Helper\Database\TestDb', $mysql);
+            $mysql = DbGet::factory($dbConfig);
+            $gotErrorMsg = '';
         } catch (Exception $e) {
-            $hasThrown = true;
-            $this->assertSame($errorMsgExp, $e->getMessage());
+            $gotErrorMsg = $e->getMessage();
         }
 
-        $this->assertSame($throws, $hasThrown);
+        if ($expErrorMsg) {
+            $this->assertSame($expErrorMsg, $gotErrorMsg);
+            $this->assertNull($mysql);
+        } else {
+            $this->assertNotNull($mysql);
+            $this->assertInstanceOf('\Kicaj\Test\Helper\Database\DbItf', $mysql);
+        }
     }
 
     public function factoryProvider()
     {
         return [
-            [DbConnect::DB_DRIVER_MYSQL, false, ''],
-            ['unknown', true, 'unknown database driver name: unknown'],
+            [DbConnect::DB_DRIVER_MYSQL, ''],
+            ['unknown', 'unknown database driver name: unknown'],
         ];
+    }
+
+    /**
+     * @covers ::factory
+     */
+    public function test_factory_sameInstance()
+    {
+        $db1 = DbGet::factory(Helper::getDbConfig());
+        $db2 = DbGet::factory(Helper::getDbConfig());
+
+        $this->assertSame($db1, $db2);
     }
 }

@@ -17,7 +17,6 @@
 namespace Kicaj\Test\TestHelperTest\Loader;
 
 use Kicaj\Test\Helper\Loader\SchemaLoader;
-use Kicaj\Test\TestHelperTest\BaseTest;
 
 /**
  * Tests for SchemaLoader class.
@@ -26,7 +25,7 @@ use Kicaj\Test\TestHelperTest\BaseTest;
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class SchemaLoader_Test extends BaseTest
+class SchemaLoader_Test extends \PHPUnit_Framework_TestCase
 {
     /**
      * @covers ::__construct

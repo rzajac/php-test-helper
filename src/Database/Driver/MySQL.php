@@ -17,7 +17,7 @@
  */
 namespace Kicaj\Test\Helper\Database\Driver;
 
-use Kicaj\Test\Helper\Database\TestDb;
+use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Tools\Exception;
 use Kicaj\Tools\Helper\Fn;
 use Kicaj\Tools\Traits\Error;
@@ -27,7 +27,7 @@ use Kicaj\Tools\Traits\Error;
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class MySQL implements TestDb
+class MySQL implements DbItf
 {
     use Error;
 
@@ -87,9 +87,9 @@ class MySQL implements TestDb
      *
      * @return bool Returns true on success
      */
-    public function dropDbTable($tableName)
+    public function dbDropTable($tableName)
     {
-        return (bool) $this->mysql->query('DROP TABLE IF EXISTS '.$tableName);
+        return (bool) $this->mysql->query('DROP TABLE '.$tableName);
     }
 
     /**
@@ -99,11 +99,11 @@ class MySQL implements TestDb
      *
      * @return bool Returns true on success, false if one or more operations failed
      */
-    public function dropDbTables(array $tableNames)
+    public function dbDropTables(array $tableNames)
     {
         $ret = true;
         foreach ($tableNames as $tableName) {
-            $result = $this->dropDbTable($tableName);
+            $result = $this->dbDropTable($tableName);
             $ret = Fn::returnIfNot($ret, false, $result);
         }
 
@@ -117,7 +117,7 @@ class MySQL implements TestDb
      *
      * @return bool Returns true on success
      */
-    public function truncateDbTable($tableName)
+    public function dbTruncateTable($tableName)
     {
         return (bool) $this->mysql->query('TRUNCATE TABLE '.$tableName);
     }
@@ -129,12 +129,12 @@ class MySQL implements TestDb
      *
      * @return bool Returns true on success, false if one or more operations failed
      */
-    public function truncateDbTables(array $tableNames)
+    public function dbTruncateTables(array $tableNames)
     {
         $ret = true;
 
         foreach ($tableNames as $tableName) {
-            $result = $this->truncateDbTable($tableName);
+            $result = $this->dbTruncateTable($tableName);
             $ret = Fn::returnIfNot($ret, false, $result);
         }
 
@@ -146,9 +146,9 @@ class MySQL implements TestDb
      *
      * @param string $tableName The database table name
      *
-     * @return int
+     * @return int Returns -1 on error
      */
-    public function countDbTableRows($tableName)
+    public function dbCountTableRows($tableName)
     {
         $resp = $this->mysql->query('SELECT COUNT(1) AS c FROM '.$tableName);
         if ($resp === false) {
@@ -165,7 +165,7 @@ class MySQL implements TestDb
      *
      * @return string[]
      */
-    public function getDbTableNames()
+    public function dbGetTableNames()
     {
         $resp = $this->mysql->query('SHOW TABLES');
 
@@ -186,7 +186,7 @@ class MySQL implements TestDb
      *
      * @return bool|\mysqli_result
      */
-    public function runQuery($query)
+    public function dbRunQuery($query)
     {
         $queries = is_array($query) ? $query : [$query];
 

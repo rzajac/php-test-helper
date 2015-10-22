@@ -17,7 +17,8 @@
  */
 namespace Kicaj\Test\TestHelperTest\TestCase;
 
-use Kicaj\Test\TestHelperTest\BaseTest;
+use Kicaj\Test\Helper\TestCase\DbTestCase;
+use Kicaj\Test\TestHelperTest\Helper;
 
 /**
  * Class DbTestCase_Test.
@@ -26,16 +27,30 @@ use Kicaj\Test\TestHelperTest\BaseTest;
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class Fixtures_Test extends DbTestCaseBase
+class Fixtures_Test extends DbTestCase
 {
     protected $fixtures = ['test4.sql'];
+
+    /**
+     * Database helper.
+     *
+     * @var Helper
+     */
+    protected $helper;
+
+    public function setUp()
+    {
+        $this->helper = Helper::make()->resetTestDb();
+
+        parent::setUp();
+    }
 
     /**
      * @covers ::setUp
      */
     public function test_setUp()
     {
-        $this->assertSame(0, BaseTest::getTableRowCount('test1'));
-        $this->assertSame(2, BaseTest::getTableRowCount('test2'));
+        $this->assertSame(0, $this->helper->getTableRowCount('test1'));
+        $this->assertSame(2, $this->helper->getTableRowCount('test2'));
     }
 }

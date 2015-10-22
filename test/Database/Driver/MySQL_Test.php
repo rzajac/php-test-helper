@@ -18,7 +18,7 @@
 namespace Kicaj\Test\TestHelperTest\Database\Driver;
 
 use Kicaj\Test\Helper\Database\Driver\MySQL;
-use Kicaj\Test\TestHelperTest\BaseTest;
+use Kicaj\Test\TestHelperTest\Helper;
 use Kicaj\Tools\Exception;
 
 /**
@@ -28,25 +28,30 @@ use Kicaj\Tools\Exception;
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class MySQL_Test extends BaseTest
+class MySQL_Test extends \PHPUnit_Framework_TestCase
 {
     /**
      * Database driver we are testing.
      *
      * @var MySQL
      */
-    protected $myMySQL;
+    protected $testedDrv;
+
+    /**
+     * Independent database helper.
+     *
+     * @var Helper
+     */
+    protected $helper;
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->myMySQL = new MySQL();
-        $this->myMySQL->dbSetup(static::$defDbConfig)->dbConnect();
+        $this->helper = Helper::make()->resetTestDb();
 
-        static::connectToDb();
-        static::resetTestDb();
-        static::loadTestData();
+        $this->testedDrv = new MySQL();
+        $this->testedDrv->dbSetup(Helper::getDbConfig())->dbConnect();
     }
 
     /**
@@ -98,108 +103,114 @@ class MySQL_Test extends BaseTest
     }
 
     /**
-     * @covers ::getDbTableNames
+     * @covers ::dbGetTableNames
      */
     public function test_getDbTableNames()
     {
-        $tableNames = $this->myMySQL->getDbTableNames();
+        $tableNames = $this->testedDrv->dbGetTableNames();
         $this->assertSame(['test1', 'test2'], $tableNames);
     }
 
     /**
-     * @covers ::countDbTableRows
+     * @covers ::dbCountTableRows
      */
     public function test_countTableRows()
     {
-        $t1Rows = $this->myMySQL->countDbTableRows('test1');
+        $this->helper->loadTestData();
+
+        $t1Rows = $this->testedDrv->dbCountTableRows('test1');
         $this->assertSame(1, $t1Rows);
 
-        $t2Rows = $this->myMySQL->countDbTableRows('test2');
+        $t2Rows = $this->testedDrv->dbCountTableRows('test2');
         $this->assertSame(2, $t2Rows);
 
-        $notExisting = $this->myMySQL->countDbTableRows('notExisting');
+        $notExisting = $this->testedDrv->dbCountTableRows('notExisting');
         $this->assertSame(-1, $notExisting);
     }
 
     /**
-     * @covers ::truncateDbTable
+     * @covers ::dbTruncateTable
      *
      * @depends test_countTableRows
      */
     public function test_truncateTable()
     {
-        $ret = $this->myMySQL->truncateDbTable('test2');
+        $this->helper->loadTestData();
+
+        $ret = $this->testedDrv->dbTruncateTable('test2');
         $this->assertTrue($ret);
 
-        $t2Rows = $this->myMySQL->countDbTableRows('test2');
+        $t2Rows = $this->testedDrv->dbCountTableRows('test2');
         $this->assertSame(0, $t2Rows);
 
-        $t1Rows = $this->myMySQL->countDbTableRows('test1');
+        $t1Rows = $this->testedDrv->dbCountTableRows('test1');
         $this->assertSame(1, $t1Rows);
     }
 
     /**
-     * @covers ::truncateDbTables
+     * @covers ::dbTruncateTables
      *
      * @depends test_countTableRows
      */
     public function test_truncateTables()
     {
-        $ret = $this->myMySQL->truncateDbTables([]);
+        $this->helper->loadTestData();
+
+        $ret = $this->testedDrv->dbTruncateTables([]);
         $this->assertTrue($ret);
 
-        $t1Rows = $this->myMySQL->countDbTableRows('test1');
+        $t1Rows = $this->testedDrv->dbCountTableRows('test1');
         $this->assertSame(1, $t1Rows);
 
-        $t2Rows = $this->myMySQL->countDbTableRows('test2');
+        $t2Rows = $this->testedDrv->dbCountTableRows('test2');
         $this->assertSame(2, $t2Rows);
 
-        $ret = $this->myMySQL->truncateDbTables(['test1', 'test2']);
+        $ret = $this->testedDrv->dbTruncateTables(['test1', 'test2']);
         $this->assertTrue($ret);
 
-        $t1Rows = $this->myMySQL->countDbTableRows('test1');
+        $t1Rows = $this->testedDrv->dbCountTableRows('test1');
         $this->assertSame(0, $t1Rows);
 
-        $t2Rows = $this->myMySQL->countDbTableRows('test2');
+        $t2Rows = $this->testedDrv->dbCountTableRows('test2');
         $this->assertSame(0, $t2Rows);
     }
 
     /**
-     * @covers ::dropDbTable
+     * @covers ::dbDropTable
      */
     public function test_dropDbTable()
     {
-        $this->assertSame(2, count(static::getTableNames()));
+        $this->assertSame(2, $this->helper->getTableCount());
 
-        $ret = $this->myMySQL->dropDbTable('test1');
+        $ret = $this->testedDrv->dbDropTable('test1');
         $this->assertTrue($ret);
-        $this->assertSame(1, count(static::getTableNames()));
+        $this->assertSame(1, $this->helper->getTableCount());
 
-        $ret = $this->myMySQL->dropDbTable('test2');
+        $ret = $this->testedDrv->dbDropTable('test2');
         $this->assertTrue($ret);
-        $this->assertSame(0, count(static::getTableNames()));
+        $this->assertSame(0, $this->helper->getTableCount());
 
-        $ret = $this->myMySQL->dropDbTable('notExisting');
-        $this->assertTrue($ret);
-        $this->assertSame(0, count(static::getTableNames()));
+        $ret = $this->testedDrv->dbDropTable('notExisting');
+        $this->assertFalse($ret);
+        $this->assertSame(0, $this->helper->getTableCount());
     }
 
     /**
-     * @covers ::dropDbTables
+     * @covers ::dbDropTables
      */
     public function test_dropTables()
     {
-        $this->assertSame(2, count(static::getTableNames()));
+        $this->assertSame(2, $this->helper->getTableCount());
 
-        $this->myMySQL->dropDbTables(['test1', 'test2']);
+        $this->testedDrv->dbDropTables(['test1', 'test2']);
 
-        $this->assertSame(0, count(static::getTableNames()));
+        $this->assertSame(0, $this->helper->getTableCount());
     }
 
     /**
      * @dataProvider runQueryProvider
      *
-     * @covers ::runQuery
+     * @covers ::dbRunQuery
      *
      * @param string $sql
      * @param string $expMsg
@@ -209,7 +220,7 @@ class MySQL_Test extends BaseTest
         $resp = null;
 
         try {
-            $resp = $this->myMySQL->runQuery($sql);
+            $resp = $this->testedDrv->dbRunQuery($sql);
             $thrown = false;
             $gotMsg = '';
         } catch (Exception $e) {
@@ -231,10 +242,9 @@ class MySQL_Test extends BaseTest
     {
         return [
             ['SELECT * FROM test2', ''],
-            [ ['SELECT * FROM test2', 'SELECT * FROM test2'], ''],
+            [['SELECT * FROM test2', 'SELECT * FROM test2'], ''],
             ['SELECT BAD * FROM test2', 'You have an error in your SQL syntax'],
-            [ ['SELECT * FROM test2', 'SELECT BAD * FROM test2'], 'You have an error in your SQL syntax'],
+            [['SELECT * FROM test2', 'SELECT BAD * FROM test2'], 'You have an error in your SQL syntax'],
         ];
     }
-
 }

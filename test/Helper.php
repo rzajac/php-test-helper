@@ -1,0 +1,214 @@
+<?php
+
+/**
+ * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain
+ * a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
+namespace Kicaj\Test\TestHelperTest;
+
+use mysqli;
+
+/**
+ * Helper with its own database interface implementation.
+ *
+ * We need it to independently check our database implementation.
+ *
+ * @author Rafal Zajac <rzajac@gmail.com>
+ */
+class Helper
+{
+    /**
+     * Database driver.
+     *
+     * @var mysqli
+     */
+    protected $driver;
+
+    /**
+     * Singleton
+     *
+     * @var Helper
+     */
+    private static $instance;
+
+    private function __construct()
+    {
+        $dbConfig = self::getDbConfig();
+
+        $this->driver = new mysqli(
+            $dbConfig['host'],
+            $dbConfig['username'],
+            $dbConfig['password'],
+            $dbConfig['database'],
+            $dbConfig['port']);
+    }
+
+    public static function make()
+    {
+        if (!self::$instance) {
+            self::$instance = new self;
+        }
+
+        return self::$instance;
+    }
+
+    /**
+     * Returns global test database configuration.
+     *
+     * @return array
+     */
+    public static function getDbConfig()
+    {
+        return [
+            'driver' => $GLOBALS['DB_DRIVER'],
+            'username' => $GLOBALS['DB_USERNAME'],
+            'password' => $GLOBALS['DB_PASSWORD'],
+            'host' => $GLOBALS['DB_HOST'],
+            'port' => $GLOBALS['DB_PORT'],
+            'database' => $GLOBALS['DB_DATABASE'],
+        ];
+    }
+
+    /**
+     * Get database table names.
+     *
+     * @return string[]
+     */
+    public function getTableNames()
+    {
+        $databaseName = self::getDbConfig()['database'];
+
+        $resp = $this->driver->query('SHOW TABLES');
+
+        $tableNames = [];
+        while ($row = $resp->fetch_assoc()) {
+            $tableNames[] = $row['Tables_in_'.$databaseName];
+        }
+
+        return $tableNames;
+    }
+
+    /**
+     * Return number of tables in database.
+     *
+     * @return int
+     */
+    public function getTableCount()
+    {
+        return count($this->getTableNames());
+    }
+
+    /**
+     * Get database table data.
+     *
+     * @param string $tableName The database table name
+     *
+     * @return array
+     */
+    public function getTableData($tableName)
+    {
+        $resp = $this->driver->query('SELECT * FROM ' . $tableName);
+
+        $data = [];
+        while ($row = $resp->fetch_assoc()) {
+            $data[] = $row;
+        }
+
+        return $data;
+    }
+
+    /**
+     * Get number of rows in the given database table.
+     *
+     * @param string $tableName The database table name
+     *
+     * @return int
+     */
+    public function getTableRowCount($tableName)
+    {
+        $resp = $this->driver->query('SELECT COUNT(1) AS c FROM ' . $tableName);
+        if ($resp === false) {
+            return -1;
+        }
+
+        return (int) $resp->fetch_array(MYSQLI_ASSOC)['c'];
+    }
+
+    /**
+     * Disconnect from database.
+     *
+     * @return bool
+     */
+    public function closeDb()
+    {
+        return @$this->driver->close();
+    }
+
+    /**
+     * Reset test database to known state.
+     *
+     * @return Helper
+     */
+    public function resetTestDb()
+    {
+        $this->driver->query('DROP TABLE IF EXISTS test1');
+        $this->driver->query('DROP TABLE IF EXISTS test2');
+
+        // Create tables
+        $this->driver->query('CREATE TABLE `test1` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT, `col1` int(11) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB');
+        $this->driver->query('CREATE TABLE `test2` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT, `col2` int(11) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB');
+
+        return $this;
+    }
+
+    /**
+     * Load test data to database.
+     *
+     * @return Helper
+     */
+    public function loadTestData()
+    {
+        $this->driver->query("INSERT INTO `test1` (`id`, `col1`) VALUES (NULL, '1')");
+
+        $this->driver->query("INSERT INTO `test2` (`id`, `col2`) VALUES (NULL, '2')");
+        $this->driver->query("INSERT INTO `test2` (`id`, `col2`) VALUES (NULL, '22')");
+
+        return $this;
+    }
+
+    /**
+     * Truncate test database tables.
+     *
+     * @return Helper
+     */
+    public function truncateTestTables()
+    {
+        $this->driver->query('TRUNCATE `test1`');
+        $this->driver->query('TRUNCATE `test2`');
+
+        return $this;
+    }
+
+    /**
+     * Drop database table by name.
+     *
+     * @param string $tableName
+     *
+     * @return bool
+     */
+    public function dropDbTable($tableName)
+    {
+        return (bool) $this->driver->query("DROP TABLE $tableName");
+    }
+}

@@ -8,7 +8,7 @@ Unit testing helper classes.
 - Tests where you interact with database.
 - Load database fixtures (`sql`).
 - Optimize database tearDown and setUp by introducing fixtures and residentFixtures. Where resident fixtures are loaded once pest test class.
-- Database helper methods [see database interface](src/Database/TestDb.php).
+- Database helper methods [see database interface](src/Database/DbItf.php).
 
 ## Install
 

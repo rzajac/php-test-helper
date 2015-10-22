@@ -17,7 +17,7 @@
  */
 namespace Kicaj\Test\Helper\Loader;
 
-use Kicaj\Test\Helper\Database\TestDb;
+use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Tools\Api\JSON;
 use Kicaj\Tools\Exception;
 use SplFileInfo;
@@ -38,7 +38,7 @@ class FixtureLoader
     /**
      * Database connection.
      *
-     * @var TestDb
+     * @var DbItf
      */
     private $db;
 
@@ -52,21 +52,23 @@ class FixtureLoader
     /**
      * Constructor.
      *
-     * @param TestDb|null $database         The database connection
-     * @param string      $fixturesRootPath The path to fixture files
+     * @param DbItf|null $database         The database connection
+     * @param string     $fixturesRootPath The path to fixture files
      */
     public function __construct($database, $fixturesRootPath)
     {
-        $this->db               = $database;
+        $this->db = $database;
         $this->fixturesRootPath = $fixturesRootPath;
     }
 
     /**
      * Set database.
      *
-     * @param TestDb $db
+     * @param DbItf $db
      *
      * @throws Exception
+     *
+     * @return FixtureLoader
      */
     public function setDb($db)
     {
@@ -75,6 +77,8 @@ class FixtureLoader
         }
 
         $this->db = $db;
+
+        return $this;
     }
 
     /**
@@ -84,16 +88,16 @@ class FixtureLoader
      *
      * @throws Exception
      */
-    public function loadFixture($fixtureName)
+    public function dbLoadFixture($fixtureName)
     {
-        $fixtureData = $this->loadFixtureFile($fixtureName);
+        $fixtureData = $this->loadFileFixture($fixtureName);
 
         // Postpone database connection till we really need it.
         if (!$this->db->dbConnect()) {
             throw new Exception($this->db->getError()->getMessage());
         }
 
-        $this->db->runQuery($fixtureData);
+        $this->db->dbRunQuery($fixtureData);
     }
 
     /**
@@ -103,10 +107,10 @@ class FixtureLoader
      *
      * @throws Exception
      */
-    public function loadFixtures(array $fixtureNames)
+    public function dbLoadFixtures(array $fixtureNames)
     {
         foreach ($fixtureNames as $fixtureName) {
-            $this->loadFixture($fixtureName);
+            $this->dbLoadFixture($fixtureName);
         }
     }
 
@@ -119,11 +123,11 @@ class FixtureLoader
      *
      * @return mixed
      */
-    public function loadFixtureFile($fixtureName)
+    public function loadFileFixture($fixtureName)
     {
-        $fixturePath = $this->fixturesRootPath . '/' . $fixtureName;
-        $format      = $this->detectFormat($fixtureName);
-        $ret         = null;
+        $fixturePath = $this->fixturesRootPath.'/'.$fixtureName;
+        $format = $this->detectFormat($fixtureName);
+        $ret = null;
 
         switch ($format) {
             case self::FORMAT_JSON:
@@ -149,7 +153,7 @@ class FixtureLoader
      */
     public function detectFormat($fixturePath)
     {
-        $info      = new SplFileInfo($fixturePath);
+        $info = new SplFileInfo($fixturePath);
         $extension = $info->getExtension();
 
         switch ($extension) {
@@ -162,7 +166,7 @@ class FixtureLoader
                 break;
 
             default:
-                throw new Exception('unknown format: ' . $extension);
+                throw new Exception('unknown format: '.$extension);
         }
 
         return $format;
@@ -199,7 +203,7 @@ class FixtureLoader
             }
 
             $isMultiLineSql = array_key_exists($index, $sqlArr);
-            $isEndOfSql     = substr($sql, -2, 1) == ';';
+            $isEndOfSql = substr($sql, -2, 1) == ';';
 
             if ($isMultiLineSql) {
                 $sqlArr[$index] .= $sql;
@@ -209,7 +213,7 @@ class FixtureLoader
 
             if ($isEndOfSql) {
                 $sqlArr[$index] = trim($sqlArr[$index]);
-                $index++;
+                ++$index;
             }
         }
 

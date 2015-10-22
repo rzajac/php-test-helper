@@ -17,10 +17,9 @@
  */
 namespace Kicaj\Test\TestHelperTest\Loader;
 
-use Kicaj\Test\Helper\Database\TestDb;
 use Kicaj\Test\Helper\Database\DbGet;
 use Kicaj\Test\Helper\Loader\FixtureLoader;
-use Kicaj\Test\TestHelperTest\BaseTest;
+use Kicaj\Test\TestHelperTest\Helper;
 use Kicaj\Tools\Exception;
 use Kicaj\Tools\Helper\Str;
 
@@ -31,15 +30,8 @@ use Kicaj\Tools\Helper\Str;
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class FixtureLoader_Test extends BaseTest
+class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * The database interface.
-     *
-     * @var TestDb
-     */
-    protected $db;
-
     /**
      * Fixture loader.
      *
@@ -48,17 +40,24 @@ class FixtureLoader_Test extends BaseTest
     protected $fixtureLoader;
 
     /**
+     * Database helper.
+     *
+     * @var Helper
+     */
+    protected $helper;
+
+    /**
      * @throws Exception
      */
     public function setUp()
     {
         parent::setUp();
 
-        $this->db = DbGet::factory(static::$defDbConfig);
-        $this->fixtureLoader = new FixtureLoader($this->db, FIXTURE_PATH);
+        $db = DbGet::factory(Helper::getDbConfig());
+        $this->fixtureLoader = new FixtureLoader($db, FIXTURE_PATH);
 
-        static::connectToDb();
-        static::resetTestDb();
+        $this->helper = Helper::make();
+        $this->helper->resetTestDb();
     }
 
     /**
@@ -70,7 +69,7 @@ class FixtureLoader_Test extends BaseTest
         $fixtureLoader = new FixtureLoader(null, FIXTURE_PATH);
         $this->assertNotNull($fixtureLoader);
 
-        $db = DbGet::factory(static::$defDbConfig);
+        $db = DbGet::factory(Helper::getDbConfig());
         $fixtureLoader->setDb($db);
     }
 
@@ -82,7 +81,7 @@ class FixtureLoader_Test extends BaseTest
      */
     public function test_setDbErr()
     {
-        $db = DbGet::factory(static::$defDbConfig);
+        $db = DbGet::factory(Helper::getDbConfig());
         $fixtureLoader = new FixtureLoader($db, FIXTURE_PATH);
 
         $this->assertNotNull($fixtureLoader);
@@ -149,7 +148,7 @@ class FixtureLoader_Test extends BaseTest
     /**
      * @dataProvider loadFixtureFileProvider
      *
-     * @covers ::loadFixtureFile
+     * @covers ::loadFileFixture
      * @covers ::loadSql
      *
      * @param string $fixtureName
@@ -157,7 +156,7 @@ class FixtureLoader_Test extends BaseTest
      */
     public function test_loadFixtureFile($fixtureName, $expected)
     {
-        $loaded = $this->fixtureLoader->loadFixtureFile($fixtureName);
+        $loaded = $this->fixtureLoader->loadFileFixture($fixtureName);
         $this->assertSame($expected, $loaded);
     }
 
@@ -173,7 +172,7 @@ class FixtureLoader_Test extends BaseTest
     /**
      * @dataProvider loadFixtureFileErrProvider
      *
-     * @covers ::loadFixtureFile
+     * @covers ::loadFileFixture
      * @covers ::loadSql
      *
      * @param string $fixtureName
@@ -182,7 +181,7 @@ class FixtureLoader_Test extends BaseTest
     public function test_loadFixtureFileErr($fixtureName, $expMsg)
     {
         try {
-            $this->fixtureLoader->loadFixtureFile($fixtureName);
+            $this->fixtureLoader->loadFileFixture($fixtureName);
             $thrown = false;
             $gotMessage = '';
         } catch (Exception $e) {
@@ -205,15 +204,15 @@ class FixtureLoader_Test extends BaseTest
     }
 
     /**
-     * @covers ::loadFixture
+     * @covers ::dbLoadFixture
      */
     public function test_loadFixture()
     {
-        $this->fixtureLoader->loadFixture('test2.sql');
+        $this->fixtureLoader->dbLoadFixture('test2.sql');
 
-        $this->assertSame(2, static::getTableRowCount('test2'));
+        $this->assertSame(2, $this->helper->getTableRowCount('test2'));
 
-        $gotData = BaseTest::getTableData('test2');
+        $gotData = $this->helper->getTableData('test2');
         $expData = [
             ['id' => '1', 'col2' => '200'],
             ['id' => '2', 'col2' => '202'],
@@ -223,15 +222,15 @@ class FixtureLoader_Test extends BaseTest
     }
 
     /**
-     * @covers ::loadFixtures
+     * @covers ::dbLoadFixtures
      */
     public function test_loadFixtures()
     {
-        $this->fixtureLoader->loadFixtures(['test2.sql', 'test5.sql']);
+        $this->fixtureLoader->dbLoadFixtures(['test2.sql', 'test5.sql']);
 
-        $this->assertSame(3, static::getTableRowCount('test2'));
+        $this->assertSame(3, $this->helper->getTableRowCount('test2'));
 
-        $gotData = BaseTest::getTableData('test2');
+        $gotData = $this->helper->getTableData('test2');
         $expData = [
             ['id' => '1', 'col2' => '200'],
             ['id' => '2', 'col2' => '202'],
@@ -242,24 +241,26 @@ class FixtureLoader_Test extends BaseTest
     }
 
     /**
-     * @covers ::loadFixture
+     * @covers ::dbLoadFixture
      *
      * @expectedException Exception
      * @expectedExceptionMessageRegExp /.*Access denied for user.+/
      */
     public function test_loadFixtureDbConnectionError()
     {
-        static::$defDbConfig['password'] = 'wrongOne';
-        $db = DbGet::factory(static::$defDbConfig);
+        $dbConfig = Helper::getDbConfig();
+        $dbConfig['password'] = 'wrongOne';
+
+        $db = DbGet::factory($dbConfig);
         $fixtureLoader = new FixtureLoader($db, FIXTURE_PATH);
 
-        $fixtureLoader->loadFixture('test2.sql');
+        $fixtureLoader->dbLoadFixture('test2.sql');
     }
 
     /**
      * @dataProvider loadFixtureErrProvider
      *
-     * @covers ::loadFixture
+     * @covers ::dbLoadFixture
      * @covers ::loadSql
      *
      * @param string $fixtureName
@@ -268,7 +269,7 @@ class FixtureLoader_Test extends BaseTest
     public function test_loadFixtureErr($fixtureName, $expMsg)
     {
         try {
-            $this->fixtureLoader->loadFixture($fixtureName);
+            $this->fixtureLoader->dbLoadFixture($fixtureName);
             $thrown = false;
             $gotMessage = '';
         } catch (Exception $e) {

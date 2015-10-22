@@ -17,7 +17,9 @@
  */
 namespace Kicaj\Test\TestHelperTest\TestCase;
 
-use Kicaj\Test\TestHelperTest\BaseTest;
+use Kicaj\Test\Helper\Database\Driver\MySQL;
+use Kicaj\Test\Helper\TestCase\DbTestCase;
+use Kicaj\Test\TestHelperTest\Helper;
 
 /**
  * Class DbTestCase_Test.
@@ -26,27 +28,43 @@ use Kicaj\Test\TestHelperTest\BaseTest;
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class ResidentFixtures_Test extends DbTestCaseBase
+class ResidentFixtures_Test extends DbTestCase
 {
     protected static $residentFixtures = ['test4.sql'];
 
     /**
+     * Database helper.
+     *
+     * @var Helper
+     */
+    protected $helper;
+
+    public static function setUpBeforeClass()
+    {
+        Helper::make()->resetTestDb();
+
+        parent::setUpBeforeClass();
+    }
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->helper = Helper::make();
+    }
+
+    /**
      * @covers ::setUpBeforeClass
-     * @covers ::loadSQLFixtures
+     * @covers ::dbLoadFixtures
      */
     public function test_residentFixtures()
     {
-        // We do it to have test coverage.
-        self::$db = null;
-        self::$fixtureLoader = null;
-        static::setUpBeforeClass();
+        $this->dbLoadFixtures(['test5.sql']);
 
-        static::loadSQLFixtures('test5.sql');
+        $this->assertSame(0, $this->helper->getTableRowCount('test1'));
+        $this->assertSame(3, $this->helper->getTableRowCount('test2'));
 
-        $this->assertSame(0, BaseTest::getTableRowCount('test1'));
-        $this->assertSame(3, BaseTest::getTableRowCount('test2'));
-
-        $gotData = BaseTest::getTableData('test2');
+        $gotData = $this->helper->getTableData('test2');
         $expData = [
             ['id' => '1', 'col2' => '400'],
             ['id' => '2', 'col2' => '404'],

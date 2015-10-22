@@ -17,7 +17,9 @@
  */
 namespace Kicaj\Test\Helper\TestCase;
 
+use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\Loader\FixtureLoader;
+use Kicaj\Tools\Exception;
 
 /**
  * Test case with fixtures.
@@ -33,8 +35,9 @@ abstract class FixtureTestCase extends TestCase
      *
      * @var FixtureLoader
      */
-    protected static $fixtureLoader;
+    private static $fixtureLoader;
 
+    // @codeCoverageIgnoreStart
     /**
      * Things that need to be done before each TestCase.
      */
@@ -44,5 +47,30 @@ abstract class FixtureTestCase extends TestCase
         if (self::$fixtureLoader == null) {
             self::$fixtureLoader = new FixtureLoader(null, $GLOBALS['FIXTURE_DIRECTORY']);
         }
+    }
+
+    /**
+     * Set database to load fixtures to.
+     *
+     * @param DbItf $db The database interface
+     *
+     * @throws Exception
+     */
+    protected static function setFixtureDb(DbItf $db)
+    {
+        self::$fixtureLoader->setDb($db);
+    }
+    // @codeCoverageIgnoreEnd
+
+    /**
+     * Load collection of fixtures.
+     *
+     * @param array $fixtureNames
+     *
+     * @throws Exception
+     */
+    protected static function dbLoadFixtures(array $fixtureNames)
+    {
+        self::$fixtureLoader->dbLoadFixtures($fixtureNames);
     }
 }

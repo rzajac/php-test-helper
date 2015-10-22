@@ -31,27 +31,36 @@ final class DbGet
     /**
      * Database factory.
      *
+     * It returns the same instance for the same config.
+     *
      * @param array $dbConfig The database configuration
      *
-     * @return TestDb
+     * @return DbItf
      *
      * @throws \Exception
      */
     public static function factory(array $dbConfig)
     {
-        $drv = null;
+        /** @var DbConnect[] $instances */
+        static $instances = [];
+
+        $key = md5(json_encode($dbConfig));
+
+        if (isset($instances[$key])) {
+            return $instances[$key];
+        }
 
         switch ($dbConfig['driver']) {
             case DbConnect::DB_DRIVER_MYSQL:
-                $drv = new MySQL();
+                $instances[$key] = new MySQL();
                 break;
 
             default:
                 throw new Exception('unknown database driver name: '.$dbConfig['driver']);
         }
 
-        $drv->dbSetup($dbConfig);
+        $instances[$key]->dbSetup($dbConfig);
 
-        return $drv;
+        return $instances[$key];
     }
 }
