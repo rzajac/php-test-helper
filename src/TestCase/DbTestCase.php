@@ -62,7 +62,7 @@ abstract class DbTestCase extends FixtureTestCase
 
         // Connect to database
         if (self::$db === null) {
-            self::setupDb();
+            self::setUpDb();
         }
 
         // Load resident fixtures
@@ -75,7 +75,7 @@ abstract class DbTestCase extends FixtureTestCase
      *
      * @throws Exception
      */
-    protected static function setupDb()
+    protected static function setUpDb()
     {
         self::$db = DbGet::factory(self::dbGetConfig());
         self::$db->dbConnect();

@@ -43,6 +43,14 @@ abstract class FixtureTestCase extends TestCase
      */
     public static function setUpBeforeClass()
     {
+        self::setUpLoader();
+    }
+
+    /**
+     * Setup fixture loader
+     */
+    public static function setUpLoader()
+    {
         // Setup fixture loader
         if (self::$fixtureLoader == null) {
             self::$fixtureLoader = new FixtureLoader(null, $GLOBALS['FIXTURE_DIRECTORY']);
@@ -58,6 +66,7 @@ abstract class FixtureTestCase extends TestCase
      */
     protected static function setFixtureDb(DbItf $db)
     {
+        self::setUpLoader();
         self::$fixtureLoader->setDb($db);
     }
     // @codeCoverageIgnoreEnd
