@@ -17,8 +17,8 @@
  */
 namespace Kicaj\Test\Helper\TestCase;
 
-use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\Database\DbGet;
+use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Tools\Exception;
 use Kicaj\Tools\Helper\Fn;
 
@@ -60,10 +60,7 @@ abstract class DbTestCase extends FixtureTestCase
     {
         parent::setUpBeforeClass();
 
-        // Connect to database
-        if (self::$db === null) {
-            self::setUpDb();
-        }
+        self::setUpDb();
 
         // Load resident fixtures
         self::$db->dbTruncateTables(static::$residentFixtures);
@@ -77,11 +74,14 @@ abstract class DbTestCase extends FixtureTestCase
      */
     protected static function setUpDb()
     {
-        self::$db = DbGet::factory(self::dbGetConfig());
-        self::$db->dbConnect();
+        if (self::$db === null) {
+            self::$db = DbGet::factory(self::dbGetConfig());
+            // Connect to database
+            self::$db->dbConnect();
 
-        // Setup fixture loader with database
-        parent::setFixtureDb(self::$db);
+            // Setup fixture loader with database
+            parent::setFixtureDb(self::$db);
+        }
     }
     // @codeCoverageIgnoreEnd
 
@@ -136,7 +136,7 @@ abstract class DbTestCase extends FixtureTestCase
         $ret = true;
         foreach ($tableNames as $tableName) {
             $result = self::dbDropTable($tableName);
-            $ret = Fn::returnIfNot($ret, false, $result);
+            $ret    = Fn::returnIfNot($ret, false, $result);
         }
 
         return $ret;
@@ -178,7 +178,7 @@ abstract class DbTestCase extends FixtureTestCase
         $ret = true;
         foreach ($tableNames as $tableName) {
             $result = self::dbTruncateTable($tableName);
-            $ret = Fn::returnIfNot($ret, false, $result);
+            $ret    = Fn::returnIfNot($ret, false, $result);
         }
 
         return $ret;
