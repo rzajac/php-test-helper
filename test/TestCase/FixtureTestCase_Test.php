@@ -60,4 +60,15 @@ class FixtureTestCase_Test extends FixtureTestCase
 
         $this->assertSame(2, $this->helper->dbGetTableRowCount('test2'));
     }
+
+    /**
+     * @covers ::loadFileFixture
+     */
+    public function test_loadFileFixture()
+    {
+        $gotContents = $this->loadFileFixture('test1.sql');
+        $expContents = ['SELECT * FROM test1;', 'SELECT * FROM test2;'];
+
+        $this->assertSame($expContents, $gotContents);
+    }
 }

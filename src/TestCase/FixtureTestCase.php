@@ -74,12 +74,24 @@ abstract class FixtureTestCase extends TestCase
     /**
      * Load collection of fixtures.
      *
-     * @param array $fixtureNames
+     * @param array $fixtureNames The array of fixture file names
      *
      * @throws Exception
      */
     protected static function dbLoadFixtures(array $fixtureNames)
     {
         self::$fixtureLoader->dbLoadFixtures($fixtureNames);
+    }
+
+    /**
+     * Load fixture from file.
+     *
+     * @param string $fixtureName The fixture file name
+     *
+     * @return mixed
+     */
+    protected static function loadFileFixture($fixtureName)
+    {
+        return self::$fixtureLoader->loadFileFixture($fixtureName);
     }
 }
