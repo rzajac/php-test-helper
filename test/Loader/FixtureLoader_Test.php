@@ -117,6 +117,7 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
             ['subDir/test2.json', FixtureLoader::FORMAT_JSON],
             ['test1.sql', FixtureLoader::FORMAT_SQL],
             ['test1.txt', FixtureLoader::FORMAT_TXT],
+            ['test1.php', FixtureLoader::FORMAT_PHP],
         ];
     }
 
@@ -174,6 +175,7 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
             ['test1.sql', ['SELECT * FROM test1;', 'SELECT * FROM test2;']],
             ['multi_line.sql', ["INSERT INTO `test2`\n  (`id`, `col2`) VALUES (NULL, '200');", "INSERT INTO `test2`\n  (`id`, `col2`)\n  VALUES\n  (NULL, '202');"]],
             ['text.txt', "Some text file.\nWith many lines.\n"],
+            ['arr.php', ['test' => 1] ],
         ];
     }
 

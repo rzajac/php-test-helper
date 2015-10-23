@@ -38,6 +38,9 @@ class FixtureLoader
     /** TXT format */
     const FORMAT_TXT = 'txt';
 
+    /** PHP format */
+    const FORMAT_PHP = 'php';
+
     /**
      * Database connection.
      *
@@ -141,6 +144,11 @@ class FixtureLoader
                 $ret = file_get_contents($fixturePath);
                 break;
 
+            case self::FORMAT_PHP:
+                /** @noinspection PhpIncludeInspection */
+                $ret = require $fixturePath;
+                break;
+
             case self::FORMAT_SQL:
                 $ret = $this->loadSql($fixturePath);
                 break;
@@ -170,6 +178,10 @@ class FixtureLoader
 
             case self::FORMAT_TXT:
                 $format = self::FORMAT_TXT;
+                break;
+
+            case self::FORMAT_PHP:
+                $format = self::FORMAT_PHP;
                 break;
 
             case self::FORMAT_SQL:
