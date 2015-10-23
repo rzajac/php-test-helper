@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "2b19c70d6dabf0b0f23bf2ab90be9723",
-    "content-hash": "4339703729747a6093b138076e44c04d",
+    "hash": "83810511f7246f531987532ed99bb98d",
+    "content-hash": "bc744710d39b1d889bdf8781aa852182",
     "packages": [
         {
             "name": "doctrine/instantiator",
@@ -412,16 +412,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.8.14",
+            "version": "4.8.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "b4900675926860bef091644849305399b986efa2"
+                "reference": "625f8c345606ed0f3a141dfb88f4116f0e22978e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/b4900675926860bef091644849305399b986efa2",
-                "reference": "b4900675926860bef091644849305399b986efa2",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/625f8c345606ed0f3a141dfb88f4116f0e22978e",
+                "reference": "625f8c345606ed0f3a141dfb88f4116f0e22978e",
                 "shasum": ""
             },
             "require": {
@@ -480,7 +480,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-10-17 15:03:30"
+            "time": "2015-10-23 06:48:33"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -540,16 +540,16 @@
         },
         {
             "name": "rzajac/phptools",
-            "version": "0.2.8",
+            "version": "0.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rzajac/phptools.git",
-                "reference": "976a758217791e9d7ca420c38c8efdf8c5513b20"
+                "reference": "8ad2cbbb52fab2bc0b57e2045d13476b42775e3c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rzajac/phptools/zipball/976a758217791e9d7ca420c38c8efdf8c5513b20",
-                "reference": "976a758217791e9d7ca420c38c8efdf8c5513b20",
+                "url": "https://api.github.com/repos/rzajac/phptools/zipball/8ad2cbbb52fab2bc0b57e2045d13476b42775e3c",
+                "reference": "8ad2cbbb52fab2bc0b57e2045d13476b42775e3c",
                 "shasum": ""
             },
             "require": {
@@ -558,7 +558,7 @@
             "require-dev": {
                 "mikey179/vfsstream": "1.*",
                 "phpdocumentor/phpdocumentor": "~2.8",
-                "phpunit/phpunit": "~4.5"
+                "phpunit/phpunit": "*"
             },
             "type": "library",
             "autoload": {
@@ -578,7 +578,7 @@
                 }
             ],
             "description": "Collection of utility classes",
-            "time": "2015-10-20 21:36:15"
+            "time": "2015-10-23 13:00:06"
         },
         {
             "name": "sebastian/comparator",

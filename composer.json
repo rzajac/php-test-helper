@@ -7,7 +7,7 @@
   "require": {
     "php": ">=5.5",
     "phpunit/phpunit": "*",
-    "rzajac/phptools": "0.2.*"
+    "rzajac/phptools": "0.3.*"
   },
   "require-dev": {
   },

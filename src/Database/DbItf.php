@@ -16,15 +16,15 @@
  */
 namespace Kicaj\Test\Helper\Database;
 
+use Kicaj\Tools\Db\DbConnector;
 use Kicaj\Tools\Exception;
-use Kicaj\Tools\Itf\DbConnect;
 
 /**
  * Database interface.
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-interface DbItf extends DbConnect
+interface DbItf extends DbConnector
 {
     /**
      * Drop table.

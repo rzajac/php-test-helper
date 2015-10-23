@@ -19,8 +19,8 @@ namespace Kicaj\Test\TestHelperTest\Database;
 
 use Kicaj\Test\Helper\Database\DbGet;
 use Kicaj\Test\TestHelperTest\Helper;
+use Kicaj\Tools\Db\DbConnector;
 use Kicaj\Tools\Exception;
-use Kicaj\Tools\Itf\DbConnect;
 
 /**
  * DbGet tests.
@@ -71,7 +71,7 @@ class DbGet_Test extends \PHPUnit_Framework_TestCase
     public function factoryProvider()
     {
         return [
-            [DbConnect::DB_DRIVER_MYSQL, ''],
+            [DbConnector::DB_DRIVER_MYSQL, ''],
             ['unknown', 'unknown database driver name: unknown'],
         ];
     }

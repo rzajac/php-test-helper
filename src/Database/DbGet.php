@@ -18,8 +18,9 @@
 namespace Kicaj\Test\Helper\Database;
 
 use Kicaj\Test\Helper\Database\Driver\MySQL;
+use Kicaj\Tools\Db\DbConnect;
+use Kicaj\Tools\Db\DbConnector;
 use Kicaj\Tools\Exception;
-use Kicaj\Tools\Itf\DbConnect;
 
 /**
  * Helper class for getting database driver.
@@ -41,7 +42,7 @@ final class DbGet
      */
     public static function factory(array $dbConfig)
     {
-        /** @var DbConnect[] $instances */
+        /** @var DbConnector[] $instances */
         static $instances = [];
 
         $key = md5(json_encode($dbConfig));
@@ -50,13 +51,13 @@ final class DbGet
             return $instances[$key];
         }
 
-        switch ($dbConfig['driver']) {
-            case DbConnect::DB_DRIVER_MYSQL:
+        switch (DbConnect::getDriver($dbConfig)) {
+            case DbConnector::DB_DRIVER_MYSQL:
                 $instances[$key] = new MySQL();
                 break;
 
             default:
-                throw new Exception('unknown database driver name: '.$dbConfig['driver']);
+                throw new Exception('unknown database driver name: '.DbConnect::getDriver($dbConfig));
         }
 
         $instances[$key]->dbSetup($dbConfig);
