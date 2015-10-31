@@ -109,6 +109,7 @@ abstract class DbTestCase extends FixtureTestCase
             'database' => $GLOBALS['DB_DATABASE'],
             'port' => $GLOBALS['DB_PORT'],
             'driver' => $GLOBALS['DB_DRIVER'],
+            'debug' => true,
         ];
     }
 
