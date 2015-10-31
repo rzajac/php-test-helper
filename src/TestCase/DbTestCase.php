@@ -19,6 +19,7 @@ namespace Kicaj\Test\Helper\TestCase;
 
 use Kicaj\Test\Helper\Database\DbGet;
 use Kicaj\Test\Helper\Database\DbItf;
+use Kicaj\Tools\Db\DbConnector;
 use Kicaj\Tools\Exception;
 use Kicaj\Tools\Helper\Fn;
 
@@ -103,13 +104,13 @@ abstract class DbTestCase extends FixtureTestCase
     final public static function dbGetConfig()
     {
         return [
-            'host' => $GLOBALS['DB_HOST'],
-            'username' => $GLOBALS['DB_USERNAME'],
-            'password' => $GLOBALS['DB_PASSWORD'],
-            'database' => $GLOBALS['DB_DATABASE'],
-            'port' => $GLOBALS['DB_PORT'],
-            'driver' => $GLOBALS['DB_DRIVER'],
-            'debug' => true,
+            DbConnector::DB_CFG_HOST => $GLOBALS['DB_HOST'],
+            DbConnector::DB_CFG_USERNAME => $GLOBALS['DB_USERNAME'],
+            DbConnector::DB_CFG_PASSWORD => $GLOBALS['DB_PASSWORD'],
+            DbConnector::DB_CFG_DATABASE => $GLOBALS['DB_DATABASE'],
+            DbConnector::DB_CFG_PORT => $GLOBALS['DB_PORT'],
+            DbConnector::DB_CFG_DRIVER => $GLOBALS['DB_DRIVER'],
+            DbConnector::DB_CFG_DEBUG => true,
         ];
     }
 
