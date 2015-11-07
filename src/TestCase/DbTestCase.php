@@ -64,7 +64,6 @@ abstract class DbTestCase extends FixtureTestCase
         self::setUpDb();
 
         // Load resident fixtures
-        self::$db->dbTruncateTables(static::$residentFixtures);
         self::dbLoadFixtures(static::$residentFixtures);
     }
 
@@ -91,8 +90,6 @@ abstract class DbTestCase extends FixtureTestCase
      */
     public function setUp()
     {
-        // Drop all tables from fixtures
-        self::$db->dbDropTables($this->fixtures);
         self::dbLoadFixtures($this->fixtures);
     }
 

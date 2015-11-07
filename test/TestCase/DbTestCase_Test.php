@@ -55,7 +55,7 @@ class DbTestCase_Test extends DbTestCase
     public function test_dbGetConfig()
     {
         $dbConfig = self::dbGetConfig();
-        $expKeys = ['host', 'username', 'password', 'database', 'port', 'driver'];
+        $expKeys = ['host', 'username', 'password', 'database', 'port', 'driver', 'debug'];
         $this->assertSame($expKeys, array_keys($dbConfig));
     }
 
