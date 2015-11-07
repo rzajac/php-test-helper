@@ -200,4 +200,14 @@ class MySQL implements DbItf
 
         return $resp;
     }
+
+    /**
+     * Close database connection.
+     *
+     * @return bool
+     */
+    public function dbClose()
+    {
+        return $this->mysql->close();
+    }
 }
