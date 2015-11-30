@@ -181,7 +181,6 @@ class Helper
     public function dbLoadTestData()
     {
         $this->driver->query("INSERT INTO `test1` (`id`, `col1`) VALUES (NULL, '1')");
-
         $this->driver->query("INSERT INTO `test2` (`id`, `col2`) VALUES (NULL, '2')");
         $this->driver->query("INSERT INTO `test2` (`id`, `col2`) VALUES (NULL, '22')");
 
