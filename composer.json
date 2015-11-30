@@ -10,6 +10,7 @@
     "rzajac/phptools": "0.3.*"
   },
   "require-dev": {
+    "mikey179/vfsStream": "~1.6"
   },
   "autoload": {
     "psr-4": {

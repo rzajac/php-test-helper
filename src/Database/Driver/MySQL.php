@@ -46,6 +46,13 @@ class MySQL implements DbItf
     protected $config;
 
     /**
+     * Set to true when connected to database.
+     *
+     * @var bool
+     */
+    protected $isConnected = false;
+
+    /**
      * Configure database.
      *
      * @param array $config The database configuration
@@ -73,7 +80,9 @@ class MySQL implements DbItf
                 $this->config['password'],
                 $this->config['database'],
                 $this->config['port']);
+            $this->isConnected = true;
         } catch (\Exception $e) {
+            $this->isConnected = false;
             return $this->addError($e);
         }
 
@@ -89,7 +98,8 @@ class MySQL implements DbItf
      */
     public function dbDropTable($tableName)
     {
-        return (bool) $this->mysql->query('DROP TABLE '.$tableName);
+        $sql = sprintf('DROP TABLE `%s`', $tableName);
+        return (bool) $this->mysql->query($sql);
     }
 
     /**
@@ -119,7 +129,8 @@ class MySQL implements DbItf
      */
     public function dbTruncateTable($tableName)
     {
-        return (bool) $this->mysql->query('TRUNCATE TABLE '.$tableName);
+        $sql = sprintf('TRUNCATE TABLE `%s`', $tableName);
+        return (bool) $this->mysql->query($sql);
     }
 
     /**
@@ -150,7 +161,8 @@ class MySQL implements DbItf
      */
     public function dbCountTableRows($tableName)
     {
-        $resp = $this->mysql->query('SELECT COUNT(1) AS c FROM '.$tableName);
+        $sql = sprintf('SELECT COUNT(1) AS c FROM `%s`', $tableName);
+        $resp = $this->mysql->query($sql);
         if ($resp === false) {
             $this->addError($this->mysql->error);
 
@@ -167,11 +179,14 @@ class MySQL implements DbItf
      */
     public function dbGetTableNames()
     {
-        $resp = $this->mysql->query('SHOW TABLES');
+        $sql = sprintf('SHOW TABLES FROM `%s`', $this->config['database']);
+        $resp = $this->mysql->query($sql);
 
         $tableNames = [];
         while ($row = $resp->fetch_assoc()) {
-            $tableNames[] = $row['Tables_in_'.$this->config['database']];
+            foreach ($row as $tableName) {
+                $tableNames[] = $tableName;
+            }
         }
 
         return $tableNames;
@@ -202,12 +217,23 @@ class MySQL implements DbItf
     }
 
     /**
+     * Returns true if connected to database.
+     *
+     * @return boolean
+     */
+    public function isConnected()
+    {
+        return $this->isConnected;
+    }
+
+    /**
      * Close database connection.
      *
      * @return bool
      */
     public function dbClose()
     {
+        $this->isConnected = false;
         return $this->mysql->close();
     }
 }

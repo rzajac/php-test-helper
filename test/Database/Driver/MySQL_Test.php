@@ -65,6 +65,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      *
      * @covers ::dbSetup
      * @covers ::dbConnect
+     * @covers ::isConnected
      *
      * @param string $host
      * @param string $username
@@ -94,17 +95,19 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
 
         if ($connect) {
             $this->assertNull($error);
+            $this->assertTrue($myMySQL->isConnected());
         } else {
             $gotMsg = $error->getMessage();
             $this->assertContains($expMsg, $gotMsg);
+            $this->assertFalse($myMySQL->isConnected());
         }
     }
 
     public function connectionProvider()
     {
         return [
-            ['127.0.0.1', 'root', '', 'test', 3306, true, ''],
-            ['127.0.0.1', 'root', '', 'test2', 3306, false, "Unknown database 'test2'"],
+            [$GLOBALS['DB_HOST'], $GLOBALS['DB_USERNAME'], $GLOBALS['DB_PASSWORD'], 'test', 3306, true, ''],
+            [$GLOBALS['DB_HOST'], $GLOBALS['DB_USERNAME'], $GLOBALS['DB_PASSWORD'], 'test2', 3306, false, "Unknown database 'test2'"],
         ];
     }
 
@@ -252,5 +255,16 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
             ['SELECT BAD * FROM test2', 'You have an error in your SQL syntax'],
             [['SELECT * FROM test2', 'SELECT BAD * FROM test2'], 'You have an error in your SQL syntax'],
         ];
+    }
+
+    /**
+     * @covers ::dbClose
+     */
+    public function test_dbClose()
+    {
+        $this->assertTrue($this->testedDrv->isConnected());
+        $ret = $this->testedDrv->dbClose();
+        $this->assertTrue($ret);
+        $this->assertFalse($this->testedDrv->isConnected());
     }
 }

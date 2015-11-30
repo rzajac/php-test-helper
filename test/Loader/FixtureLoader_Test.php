@@ -22,6 +22,7 @@ use Kicaj\Test\Helper\Loader\FixtureLoader;
 use Kicaj\Test\TestHelperTest\Helper;
 use Kicaj\Tools\Exception;
 use Kicaj\Tools\Helper\Str;
+use org\bovigo\vfs\vfsStream;
 
 /**
  * Tests for FixtureLoader class.
@@ -299,5 +300,20 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
         return [
             ['bad.sql', 'You have an error in your SQL syntax'],
         ];
+    }
+
+    /**
+     * @covers ::loadSql
+     *
+     * @expectedException \Kicaj\Tools\Exception
+     * @expectedExceptionMessage error opening fixture vfs://root/fixture.sql
+     */
+    public function test_loadSal_file_permissions_error()
+    {
+        $vFsRoot = vfsStream::setup();
+        vfsStream::newFile('fixture.sql', 0000)->at($vFsRoot);
+
+        $fixtureLoader = new FixtureLoader(null, $vFsRoot->url());
+        $fixtureLoader->dbLoadFixture('fixture.sql');
     }
 }
