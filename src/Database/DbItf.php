@@ -81,6 +81,8 @@ interface DbItf extends DbConnector
     /**
      * Run database query.
      *
+     * It's used when loading fixtures. The queries must be in format understandable by the database.
+     *
      * @param mixed $query
      *
      * @throws Exception
