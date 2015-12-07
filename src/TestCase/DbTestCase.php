@@ -76,10 +76,8 @@ abstract class DbTestCase extends FixtureTestCase
     {
         if (self::$db === null) {
             self::$db = DbGet::factory(self::dbGetConfig());
-            // Connect to database
-            self::$db->dbConnect();
 
-            // Setup fixture loader with database
+            // Pass database interface to fixture loader.
             self::setFixtureDb(self::$db);
         }
     }

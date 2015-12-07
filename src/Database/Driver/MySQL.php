@@ -76,6 +76,12 @@ class MySQL implements DbItf
      */
     public function dbConnect()
     {
+        if ($this->isConnected) {
+            return true;
+        }
+
+        mysqli_report(MYSQLI_REPORT_STRICT);
+
         try {
             $this->mysql = new \mysqli(
                 $this->config[DbConnector::DB_CFG_HOST],
@@ -83,10 +89,11 @@ class MySQL implements DbItf
                 $this->config[DbConnector::DB_CFG_PASSWORD],
                 $this->config[DbConnector::DB_CFG_DATABASE],
                 $this->config[DbConnector::DB_CFG_PORT]);
+            $this->mysql->set_charset('utf8');
 
-            if (isset($this->config[DbConnector::DB_CFG_TIMEZONE]) && $this->config[DbConnector::DB_CFG_TIMEZONE] != '')
+            $timezone = $this->config[DbConnector::DB_CFG_TIMEZONE];
+            if ($timezone)
             {
-                $timezone = $this->config[DbConnector::DB_CFG_TIMEZONE];
                 $sql = sprintf('SET time_zone = "%s"', $timezone);
                 $success = $this->mysql->query($sql);
                 if (!$success) {
@@ -94,7 +101,6 @@ class MySQL implements DbItf
                     throw new Exception($msg);
                 }
             }
-
             $this->isConnected = true;
         } catch (\Exception $e) {
             $this->isConnected = false;
@@ -102,6 +108,16 @@ class MySQL implements DbItf
         }
 
         return true;
+    }
+
+    /**
+     * Returns true if connected to database.
+     *
+     * @return boolean
+     */
+    public function isConnected()
+    {
+        return $this->isConnected;
     }
 
     /**
@@ -229,16 +245,6 @@ class MySQL implements DbItf
         }
 
         return $resp;
-    }
-
-    /**
-     * Returns true if connected to database.
-     *
-     * @return boolean
-     */
-    public function isConnected()
-    {
-        return $this->isConnected;
     }
 
     /**

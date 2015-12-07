@@ -58,7 +58,7 @@ abstract class FixtureTestCase extends TestCase
     }
 
     /**
-     * Set database to load fixtures to.
+     * Set database interface to use for fixture loading.
      *
      * @param DbItf $db The database interface
      *
@@ -66,7 +66,6 @@ abstract class FixtureTestCase extends TestCase
      */
     protected static function setFixtureDb(DbItf $db)
     {
-        self::setUpLoader();
         self::$fixtureLoader->setDb($db);
     }
     // @codeCoverageIgnoreEnd

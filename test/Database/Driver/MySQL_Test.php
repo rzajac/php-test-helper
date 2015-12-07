@@ -84,6 +84,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
             'password' => $password,
             'database' => $database,
             'port' => $port,
+            'timezone' => 'UTC'
         ];
 
         $myMySQL = new MySQL();
@@ -106,7 +107,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     public function connectionProvider()
     {
         return [
-            [$GLOBALS['DB_HOST'], $GLOBALS['DB_USERNAME'], $GLOBALS['DB_PASSWORD'], 'test', 3306, true, ''],
+            [$GLOBALS['DB_HOST'], $GLOBALS['DB_USERNAME'], $GLOBALS['DB_PASSWORD'], $GLOBALS['DB_DATABASE'], 3306, true, ''],
             [$GLOBALS['DB_HOST'], $GLOBALS['DB_USERNAME'], $GLOBALS['DB_PASSWORD'], 'test2', 3306, false, "'test2'"],
         ];
     }

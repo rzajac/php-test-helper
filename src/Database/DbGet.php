@@ -62,6 +62,10 @@ final class DbGet
 
         $instances[$key]->dbSetup($dbConfig);
 
+        if ($dbConfig[DbConnector::DB_CFG_CONNECT]) {
+            $instances[$key]->dbConnect();
+        }
+
         return $instances[$key];
     }
 }

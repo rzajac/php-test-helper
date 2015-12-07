@@ -93,6 +93,7 @@ class FixtureLoader
      * @param string $fixtureName The fixture path relative to fixturesRootPath
      *
      * @throws Exception
+     * @throws null
      */
     public function dbLoadFixture($fixtureName)
     {
@@ -100,7 +101,7 @@ class FixtureLoader
 
         // Postpone database connection till we really need it.
         if (!$this->db->dbConnect()) {
-            throw new Exception($this->db->getError()->getMessage());
+            throw $this->db->getError();
         }
 
         $this->db->dbRunQuery($fixtureData);
