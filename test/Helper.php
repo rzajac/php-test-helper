@@ -71,13 +71,17 @@ class Helper
      */
     public static function dbGetConfig()
     {
+        $timezone = isset($GLOBALS['DB_TIMEZONE']) ? $GLOBALS['DB_TIMEZONE'] : '';
         return [
             'driver' => $GLOBALS['DB_DRIVER'],
+            'host' => $GLOBALS['DB_HOST'],
             'username' => $GLOBALS['DB_USERNAME'],
             'password' => $GLOBALS['DB_PASSWORD'],
-            'host' => $GLOBALS['DB_HOST'],
-            'port' => $GLOBALS['DB_PORT'],
             'database' => $GLOBALS['DB_DATABASE'],
+            'port' => $GLOBALS['DB_PORT'],
+            'connect' => true,
+            'timezone' => $timezone,
+            'debug' => true
         ];
     }
 

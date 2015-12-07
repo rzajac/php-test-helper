@@ -18,6 +18,7 @@
 namespace Kicaj\Test\Helper\Database\Driver;
 
 use Kicaj\Test\Helper\Database\DbItf;
+use Kicaj\Tools\Db\DbConnector;
 use Kicaj\Tools\Exception;
 use Kicaj\Tools\Helper\Fn;
 use Kicaj\Tools\Traits\Error;
@@ -69,17 +70,31 @@ class MySQL implements DbItf
     /**
      * Connect to database.
      *
+     * @throws Exception
+     *
      * @return bool Returns true on success.
      */
     public function dbConnect()
     {
         try {
             $this->mysql = new \mysqli(
-                $this->config['host'],
-                $this->config['username'],
-                $this->config['password'],
-                $this->config['database'],
-                $this->config['port']);
+                $this->config[DbConnector::DB_CFG_HOST],
+                $this->config[DbConnector::DB_CFG_USERNAME],
+                $this->config[DbConnector::DB_CFG_PASSWORD],
+                $this->config[DbConnector::DB_CFG_DATABASE],
+                $this->config[DbConnector::DB_CFG_PORT]);
+
+            if (isset($this->config[DbConnector::DB_CFG_TIMEZONE]) && $this->config[DbConnector::DB_CFG_TIMEZONE] != '')
+            {
+                $timezone = $this->config[DbConnector::DB_CFG_TIMEZONE];
+                $sql = sprintf('SET time_zone = "%s"', $timezone);
+                $success = $this->mysql->query($sql);
+                if (!$success) {
+                    $msg = sprintf('setting timezone (%s) for MySQL driver failed', $timezone);
+                    throw new Exception($msg);
+                }
+            }
+
             $this->isConnected = true;
         } catch (\Exception $e) {
             $this->isConnected = false;
