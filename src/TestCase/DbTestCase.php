@@ -19,7 +19,7 @@ namespace Kicaj\Test\Helper\TestCase;
 
 use Kicaj\Test\Helper\Database\DbGet;
 use Kicaj\Test\Helper\Database\DbItf;
-use Kicaj\Tools\Db\DbConnector;
+use Kicaj\Tools\Db\DbConnect;
 use Kicaj\Tools\Exception;
 use Kicaj\Tools\Helper\Fn;
 
@@ -100,16 +100,19 @@ abstract class DbTestCase extends FixtureTestCase
      */
     public static function dbGetConfig()
     {
-        return [
-            DbConnector::DB_CFG_DRIVER => $GLOBALS['DB_DRIVER'],
-            DbConnector::DB_CFG_HOST => $GLOBALS['DB_HOST'],
-            DbConnector::DB_CFG_USERNAME => $GLOBALS['DB_USERNAME'],
-            DbConnector::DB_CFG_PASSWORD => $GLOBALS['DB_PASSWORD'],
-            DbConnector::DB_CFG_DATABASE => $GLOBALS['DB_DATABASE'],
-            DbConnector::DB_CFG_PORT => $GLOBALS['DB_PORT'],
-            DbConnector::DB_CFG_CONNECT => true,
-            DbConnector::DB_CFG_DEBUG => true,
-        ];
+        $timezone = isset($GLOBALS['DB_TIMEZONE']) ? $GLOBALS['DB_TIMEZONE'] : '';
+
+        return DbConnect::getCfg(
+            $GLOBALS['DB_DRIVER'],
+            $GLOBALS['DB_HOST'],
+            $GLOBALS['DB_USERNAME'],
+            $GLOBALS['DB_PASSWORD'],
+            $GLOBALS['DB_DATABASE'],
+            $GLOBALS['DB_PORT'],
+            true,
+            $timezone,
+            true
+        );
     }
 
     /**

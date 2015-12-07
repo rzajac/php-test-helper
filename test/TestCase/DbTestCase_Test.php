@@ -56,7 +56,7 @@ class DbTestCase_Test extends DbTestCase
     {
         $dbConfig = self::dbGetConfig();
 
-        $this->assertSame(8, count($dbConfig));
+        $this->assertSame(9, count($dbConfig));
         $this->assertArrayHasKey('driver', $dbConfig);
         $this->assertArrayHasKey('host', $dbConfig);
         $this->assertArrayHasKey('username', $dbConfig);
@@ -64,6 +64,7 @@ class DbTestCase_Test extends DbTestCase
         $this->assertArrayHasKey('database', $dbConfig);
         $this->assertArrayHasKey('port', $dbConfig);
         $this->assertArrayHasKey('connect', $dbConfig);
+        $this->assertArrayHasKey('timezone', $dbConfig);
         $this->assertArrayHasKey('debug', $dbConfig);
     }
 
