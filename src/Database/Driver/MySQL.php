@@ -97,7 +97,7 @@ class MySQL implements DbItf
                 $sql = sprintf('SET time_zone = "%s"', $timezone);
                 $success = $this->mysql->query($sql);
                 if (!$success) {
-                    $msg = sprintf('setting timezone (%s) for MySQL driver failed', $timezone);
+                    $msg = sprintf('Setting timezone (%s) for MySQL driver failed. Please load timezone information using mysql_tzinfo_to_sql.', $timezone);
                     throw new Exception($msg);
                 }
             }
