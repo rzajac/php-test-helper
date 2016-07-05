@@ -15,7 +15,7 @@ Unit testing helper classes.
 ```json
 {
     "require": {
-        "rzajac/php-test-helper": "0.1.*"
+        "rzajac/php-test-helper": "0.3.*"
     }
 }
 ```
