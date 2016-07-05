@@ -111,6 +111,22 @@ class MySQL implements DbItf
     }
 
     /**
+     * The database to use if not specified in database config.
+     *
+     * @param string $dbName The database name to use.
+     *
+     * @return $this
+     */
+    public function useDatabase($dbName)
+    {
+        if (!$this->mysql->select_db($dbName)) {
+            $this->addError('Could not change the database to: '.$dbName);
+        }
+
+        return $this;
+    }
+
+    /**
      * Returns true if connected to database.
      *
      * @return boolean

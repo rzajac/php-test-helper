@@ -113,6 +113,18 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ::useDatabase
+     */
+    public function test_useDatabase()
+    {
+        $drv = $this->testedDrv->useDatabase('__not_existing__');
+
+        $this->assertSame($this->testedDrv, $drv);
+        $this->assertInstanceOf('\Exception', $drv->getError());
+        $this->assertSame($drv->getError()->getMessage(), 'Could not change the database to: __not_existing__');
+    }
+
+    /**
      * @covers ::dbGetTableNames
      */
     public function test_getDbTableNames()
