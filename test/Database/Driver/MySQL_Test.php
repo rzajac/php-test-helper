@@ -107,8 +107,8 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     public function connectionProvider()
     {
         return [
-            [$GLOBALS['DB_HOST'], $GLOBALS['DB_USERNAME'], $GLOBALS['DB_PASSWORD'], $GLOBALS['DB_DATABASE'], 3306, true, ''],
-            [$GLOBALS['DB_HOST'], $GLOBALS['DB_USERNAME'], $GLOBALS['DB_PASSWORD'], 'test2', 3306, false, "'test2'"],
+            [$GLOBALS['TEST_DB_HOST'], $GLOBALS['TEST_DB_USERNAME'], $GLOBALS['TEST_DB_PASSWORD'], $GLOBALS['TEST_DB_DATABASE'], 3306, true, ''],
+            [$GLOBALS['TEST_DB_HOST'], $GLOBALS['TEST_DB_USERNAME'], $GLOBALS['TEST_DB_PASSWORD'], 'test2', 3306, false, "'test2'"],
         ];
     }
 

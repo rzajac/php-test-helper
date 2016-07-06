@@ -98,15 +98,15 @@ abstract class DbTestCase extends FixtureTestCase
      */
     public static function dbGetConfig()
     {
-        $timezone = isset($GLOBALS['DB_TIMEZONE']) ? $GLOBALS['DB_TIMEZONE'] : '';
+        $timezone = isset($GLOBALS['TEST_DB_TIMEZONE']) ? $GLOBALS['TEST_DB_TIMEZONE'] : '';
 
         return DbConnect::getCfg(
-            $GLOBALS['DB_DRIVER'],
-            $GLOBALS['DB_HOST'],
-            $GLOBALS['DB_USERNAME'],
-            $GLOBALS['DB_PASSWORD'],
-            $GLOBALS['DB_DATABASE'],
-            $GLOBALS['DB_PORT'],
+            $GLOBALS['TEST_DB_DRIVER'],
+            $GLOBALS['TEST_DB_HOST'],
+            $GLOBALS['TEST_DB_USERNAME'],
+            $GLOBALS['TEST_DB_PASSWORD'],
+            $GLOBALS['TEST_DB_DATABASE'],
+            $GLOBALS['TEST_DB_PORT'],
             true,
             $timezone,
             true

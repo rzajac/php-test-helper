@@ -53,7 +53,7 @@ abstract class FixtureTestCase extends TestCase
     {
         // Setup fixture loader
         if (self::$fixtureLoader == null) {
-            self::$fixtureLoader = new FixtureLoader(null, $GLOBALS['FIXTURE_DIRECTORY']);
+            self::$fixtureLoader = new FixtureLoader(null, $GLOBALS['TEST_FIXTURE_DIRECTORY']);
         }
     }
 
