@@ -272,12 +272,16 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers ::dbClose
+     * @covers ::dbConnect
      */
     public function test_dbClose()
     {
         $this->assertTrue($this->testedDrv->isConnected());
-        $ret = $this->testedDrv->dbClose();
-        $this->assertTrue($ret);
+
+        // TODO: make sure the new connection is not being established.
+        $this->assertTrue($this->testedDrv->dbConnect());
+
+        $this->assertTrue($this->testedDrv->dbClose());
         $this->assertFalse($this->testedDrv->isConnected());
     }
 }
