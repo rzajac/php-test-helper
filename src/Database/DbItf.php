@@ -17,7 +17,6 @@
 namespace Kicaj\Test\Helper\Database;
 
 use Kicaj\Tools\Db\DbConnector;
-use Kicaj\Tools\Exception;
 
 /**
  * Database interface.
@@ -29,12 +28,24 @@ interface DbItf extends DbConnector
     /** The default database name. */
     const DB_NAME_DEFAULT = 'DEFAULT';
 
+    /** Fixture in JSON format */
+    const FIXTURE_FORMAT_JSON = 'json';
+
+    /** Fixture in SQL format */
+    const FIXTURE_FORMAT_SQL = 'sql';
+
+    /** Fixture in TXT format */
+    const FIXTURE_FORMAT_TXT = 'txt';
+
+    /** Fixture in PHP format */
+    const FIXTURE_FORMAT_PHP = 'php';
+
     /**
      * Drop table or list of tables.
      *
      * @param string|string[] $tableNames The table name or array of table names to drop.
      *
-     * @return bool Returns true on success, false if one or more operations failed.
+     * @return bool Return true on success, false if one or more operations failed.
      */
     public function dbDropTables($tableNames);
 
@@ -43,21 +54,21 @@ interface DbItf extends DbConnector
      *
      * @param string|string[] $tableNames The table name or array of table names to truncate.
      *
-     * Returns true on success, false if one or more operations failed.
+     * @return bool Return true on success, false if one or more operations failed.
      */
     public function dbTruncateTables($tableNames);
 
     /**
      * Get number of rows in the given table.
      *
-     * @param string $tableName The database table name
+     * @param string $tableName The database table name.
      *
-     * @return int Returns -1 on error
+     * @return int Return -1 on error.
      */
     public function dbCountTableRows($tableName);
 
     /**
-     * Returns list of database tables.
+     * Return list of database tables.
      *
      * @return string[]
      */
@@ -70,9 +81,19 @@ interface DbItf extends DbConnector
      *
      * @param mixed $query
      *
-     * @throws Exception
+     * @throws \Exception
      *
      * @return mixed
      */
     public function dbRunQuery($query);
+
+    /**
+     * Load fixture to database.
+     *
+     * @param string $fixtureFormat The one of FIXTURE_FORMAT_* constants.
+     * @param mixed  $fixture       The fixture to load to database.
+     *
+     * @throws \Exception
+     */
+    public function dbLoadFixture($fixtureFormat, $fixture);
 }

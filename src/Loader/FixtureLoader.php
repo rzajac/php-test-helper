@@ -19,7 +19,6 @@ namespace Kicaj\Test\Helper\Loader;
 
 use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Tools\Api\JSON;
-use Kicaj\Tools\Exception;
 use SplFileInfo;
 
 /**
@@ -29,18 +28,6 @@ use SplFileInfo;
  */
 class FixtureLoader
 {
-    /** JSON format */
-    const FORMAT_JSON = 'json';
-
-    /** SQL format */
-    const FORMAT_SQL = 'sql';
-
-    /** TXT format */
-    const FORMAT_TXT = 'txt';
-
-    /** PHP format */
-    const FORMAT_PHP = 'php';
-
     /**
      * Database connection.
      *
@@ -58,148 +45,130 @@ class FixtureLoader
     /**
      * Constructor.
      *
-     * @param DbItf|null $database         The database connection
-     * @param string     $fixturesRootPath The path to fixture files
+     * @param string $fixturesRootPath The path to fixture files root folder.
+     * @param DbItf  $database         The database to load fixtures to.
      */
-    public function __construct($database, $fixturesRootPath)
+    public function __construct($fixturesRootPath, DbItf $database)
     {
-        $this->db = $database;
         $this->fixturesRootPath = $fixturesRootPath;
-    }
-
-    /**
-     * Set database.
-     *
-     * @param DbItf $db
-     *
-     * @throws Exception
-     *
-     * @return FixtureLoader
-     */
-    public function setDb($db)
-    {
-        if ($this->db) {
-            throw new Exception('cannot set database twice');
-        }
-
-        $this->db = $db;
-
-        return $this;
+        $this->db               = $database;
     }
 
     /**
      * Load fixture to database.
      *
-     * @param string $fixtureName The fixture path relative to fixturesRootPath
+     * @param string $fixturePath The fixture path relative to fixturesRootPath.
      *
-     * @throws Exception
-     * @throws null
+     * @throws \Exception
+     * @throws null Somehow PhpStorm needs it ???
      */
-    public function dbLoadFixture($fixtureName)
+    public function loadDbFixture($fixturePath)
     {
-        $fixtureData = $this->loadFileFixture($fixtureName);
+        list($fixtureFormat, $fixtureData) = $this->loadFixtureData($fixturePath);
 
         // Postpone database connection till we really need it.
         if (!$this->db->dbConnect()) {
             throw $this->db->getError();
         }
 
-        $this->db->dbRunQuery($fixtureData);
+        $this->db->dbLoadFixture($fixtureFormat, $fixtureData);
     }
 
     /**
      * Load collection of fixtures.
      *
-     * @param array $fixtureNames
+     * @param array $fixtureNames The array of fixture paths to load to database.
      *
-     * @throws Exception
+     * @throws \Exception
      */
-    public function dbLoadFixtures(array $fixtureNames)
+    public function loadDbFixtures(array $fixtureNames)
     {
         foreach ($fixtureNames as $fixtureName) {
-            $this->dbLoadFixture($fixtureName);
+            $this->loadDbFixture($fixtureName);
         }
+    }
+
+    /**
+     * Get fixture data.
+     *
+     * @param string $fixturePath The fixture path relative to fixturesRootPath.
+     *
+     * @return mixed
+     */
+    public function getFixtureData($fixturePath)
+    {
+        return $this->loadFixtureData($fixturePath)[1];
     }
 
     /**
      * Load fixture file from disk.
      *
-     * @param string $fixtureName The fixture path relative to fixturesRootPath
+     * @param string $fixturePath The path to fixture file.
      *
-     * @throws Exception
+     * @throws \Exception
      *
-     * @return mixed
+     * @return array The array where index 0 holds fixture format and index 1 holds the fixture content.
      */
-    public function loadFileFixture($fixtureName)
+    public function loadFixtureData($fixturePath)
     {
-        $fixturePath = $this->fixturesRootPath.'/'.$fixtureName;
-        $format = $this->detectFormat($fixtureName);
-        $ret = null;
+        $fixturePath   = $this->fixturesRootPath . '/' . $fixturePath;
+        $fixtureFormat = $this->detectFormat($fixturePath);
 
-        switch ($format) {
-            case self::FORMAT_JSON:
-                $ret = JSON::decode(file_get_contents($fixturePath));
+        $fixtureData = null;
+
+        switch ($fixtureFormat) {
+            case DbItf::FIXTURE_FORMAT_JSON:
+                $fixtureData = JSON::decode(file_get_contents($fixturePath));
                 break;
 
-            case self::FORMAT_TXT:
-                $ret = file_get_contents($fixturePath);
+            case DbItf::FIXTURE_FORMAT_TXT:
+                $fixtureData = file_get_contents($fixturePath);
                 break;
 
-            case self::FORMAT_PHP:
+            case DbItf::FIXTURE_FORMAT_PHP:
                 /** @noinspection PhpIncludeInspection */
-                $ret = require $fixturePath;
+                $fixtureData = require $fixturePath;
                 break;
 
-            case self::FORMAT_SQL:
-                $ret = $this->loadSql($fixturePath);
+            case DbItf::FIXTURE_FORMAT_SQL:
+                $fixtureData = $this->loadSql($fixturePath);
                 break;
         }
 
-        return $ret;
+        return [$fixtureFormat, $fixtureData];
     }
 
     /**
-     * Detect fixture format based on its name.
+     * Detect fixture format based on its extension.
      *
-     * @param string $fixturePath The fixture path
+     * @param string $fixturePath The path to fixture file.
      *
-     * @throws Exception
+     * @throws \Exception
      *
      * @return string The one of self::FORMAT_* constants
      */
     public function detectFormat($fixturePath)
     {
-        $info = new SplFileInfo($fixturePath);
-        $extension = $info->getExtension();
+        $info         = new SplFileInfo($fixturePath);
+        $extension    = $info->getExtension();
+        $knownFormats = [
+            DbItf::FIXTURE_FORMAT_JSON,
+            DbItf::FIXTURE_FORMAT_PHP,
+            DbItf::FIXTURE_FORMAT_SQL,
+            DbItf::FIXTURE_FORMAT_TXT,
+        ];
 
-        switch ($extension) {
-            case self::FORMAT_JSON:
-                $format = self::FORMAT_JSON;
-                break;
-
-            case self::FORMAT_TXT:
-                $format = self::FORMAT_TXT;
-                break;
-
-            case self::FORMAT_PHP:
-                $format = self::FORMAT_PHP;
-                break;
-
-            case self::FORMAT_SQL:
-                $format = self::FORMAT_SQL;
-                break;
-
-            default:
-                throw new Exception('unknown format: '.$extension);
+        if (!in_array($extension, $knownFormats)) {
+            throw new \Exception("Unknown fixture format: $extension.");
         }
 
-        return $format;
+        return $extension;
     }
 
     /**
      * Get array of SQL statements form fixture file.
      *
-     * @param string $fixturePath The fixture path
+     * @param string $fixturePath The fixture path.
      *
      * @throws \Exception
      *
@@ -208,13 +177,13 @@ class FixtureLoader
     private function loadSql($fixturePath)
     {
         if (!file_exists($fixturePath)) {
-            throw new Exception("fixture $fixturePath does not exist");
+            throw new \Exception("Fixture $fixturePath does not exist.");
         }
 
         $handle = @fopen($fixturePath, 'r');
 
         if (!$handle) {
-            throw new Exception("error opening fixture $fixturePath");
+            throw new \Exception("Error opening fixture $fixturePath.");
         }
 
         $sqlArr = [];
@@ -227,7 +196,7 @@ class FixtureLoader
             }
 
             $isMultiLineSql = array_key_exists($index, $sqlArr);
-            $isEndOfSql = substr($sql, -2, 1) == ';';
+            $isEndOfSql     = substr($sql, -2, 1) == ';';
 
             if ($isMultiLineSql) {
                 $sqlArr[$index] .= $sql;

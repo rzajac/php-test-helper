@@ -19,7 +19,6 @@ namespace Kicaj\Test\Helper\Database\Driver;
 
 use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Tools\Db\DbConnector;
-use Kicaj\Tools\Exception;
 use Kicaj\Tools\Helper\Fn;
 use Kicaj\Tools\Traits\Error;
 
@@ -70,7 +69,7 @@ class MySQL implements DbItf
     /**
      * Connect to database.
      *
-     * @throws Exception
+     * @throws \Exception
      *
      * @return bool Returns true on success.
      */
@@ -98,7 +97,7 @@ class MySQL implements DbItf
                 $success = $this->mysql->query($sql);
                 if (!$success) {
                     $msg = sprintf('Setting timezone (%s) for MySQL driver failed. Please load timezone information using mysql_tzinfo_to_sql.', $timezone);
-                    throw new Exception($msg);
+                    throw new \Exception($msg);
                 }
             }
             $this->isConnected = true;
@@ -204,11 +203,20 @@ class MySQL implements DbItf
         foreach ($queries as $sql) {
             $resp = $this->mysql->query($sql);
             if (!$resp) {
-                throw new Exception($this->mysql->error);
+                throw new \Exception($this->mysql->error);
             }
         }
 
         return $resp;
+    }
+
+    public function dbLoadFixture($fixtureFormat, $fixture)
+    {
+        if ($fixtureFormat != DbItf::FIXTURE_FORMAT_SQL) {
+            throw new \Exception('MySQL driver currently supports only SQL fixture format.');
+        }
+
+        $this->dbRunQuery($fixture);
     }
 
     public function dbClose()

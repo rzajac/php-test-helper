@@ -42,6 +42,7 @@ class ResidentFixtures_Test extends DbTestCase
     {
         Helper::make()->dbDropAllTables();
         Helper::make()->dbResetTestDbatabase();
+
         parent::setUpBeforeClass();
     }
 
@@ -50,26 +51,5 @@ class ResidentFixtures_Test extends DbTestCase
         parent::setUp();
 
         $this->helper = Helper::make();
-    }
-
-    /**
-     * @covers ::setUpBeforeClass
-     * @covers ::dbLoadFixtures
-     */
-    public function test_residentFixtures()
-    {
-        self::dbLoadFixtures(['test5.sql']);
-
-        $this->assertSame(0, $this->helper->dbGetTableRowCount('test1'));
-        $this->assertSame(3, $this->helper->dbGetTableRowCount('test2'));
-
-        $gotData = $this->helper->dbGetTableData('test2');
-        $expData = [
-            ['id' => '1', 'col2' => '400'],
-            ['id' => '2', 'col2' => '404'],
-            ['id' => '3', 'col2' => '500'],
-        ];
-
-        $this->assertSame($expData, $gotData);
     }
 }

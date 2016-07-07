@@ -18,9 +18,9 @@
 namespace Kicaj\Test\TestHelperTest\Loader;
 
 use Kicaj\Test\Helper\Database\DbGet;
+use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\Loader\FixtureLoader;
 use Kicaj\Test\TestHelperTest\Helper;
-use Kicaj\Tools\Exception;
 use Kicaj\Tools\Helper\Str;
 use org\bovigo\vfs\vfsStream;
 
@@ -54,14 +54,14 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function setUp()
     {
         parent::setUp();
 
         $db = DbGet::factory(Helper::dbGetConfig());
-        $this->fixtureLoader = new FixtureLoader($db, FIXTURE_PATH);
+        $this->fixtureLoader = new FixtureLoader(FIXTURE_PATH, $db);
 
         $this->helper = Helper::make();
         $this->helper->dbResetTestDbatabase();
@@ -69,32 +69,13 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers ::__construct
-     * @covers ::setDb
      */
     public function test___construct()
     {
-        $fixtureLoader = new FixtureLoader(null, FIXTURE_PATH);
-        $this->assertNotNull($fixtureLoader);
-
         $db = DbGet::factory(Helper::dbGetConfig());
-        $fixtureLoader->setDb($db);
-    }
-
-    /**
-     * @covers ::setDb
-     *
-     * @expectedException Exception
-     * @expectedExceptionMessage cannot set database twice
-     */
-    public function test_setDbErr()
-    {
-        $db = DbGet::factory(Helper::dbGetConfig());
-        $fixtureLoader = new FixtureLoader($db, FIXTURE_PATH);
+        $fixtureLoader = new FixtureLoader(FIXTURE_PATH, $db);
 
         $this->assertNotNull($fixtureLoader);
-
-        // Set already set database
-        $fixtureLoader->setDb($db);
     }
 
     /**
@@ -114,11 +95,11 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     public function detectFormatProvider()
     {
         return [
-            ['test1.json', FixtureLoader::FORMAT_JSON],
-            ['subDir/test2.json', FixtureLoader::FORMAT_JSON],
-            ['test1.sql', FixtureLoader::FORMAT_SQL],
-            ['test1.txt', FixtureLoader::FORMAT_TXT],
-            ['test1.php', FixtureLoader::FORMAT_PHP],
+            ['test1.json', DbItf::FIXTURE_FORMAT_JSON],
+            ['subDir/test2.json', DbItf::FIXTURE_FORMAT_JSON],
+            ['test1.sql', DbItf::FIXTURE_FORMAT_SQL],
+            ['test1.txt', DbItf::FIXTURE_FORMAT_TXT],
+            ['test1.php', DbItf::FIXTURE_FORMAT_PHP],
         ];
     }
 
@@ -137,7 +118,7 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
 
         try {
             $this->fixtureLoader->detectFormat($fixturePath);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $thrown = true;
             $gotMsg = $e->getMessage();
         }
@@ -149,15 +130,15 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     public function detectFormatErrProvider()
     {
         return [
-            ['notExisting.xxx', 'unknown format: xxx'],
-            ['unknown.bad', 'unknown format: bad'],
+            ['notExisting.xxx', 'Unknown fixture format: xxx.'],
+            ['unknown.bad', 'Unknown fixture format: bad.'],
         ];
     }
 
     /**
      * @dataProvider loadFixtureFileProvider
      *
-     * @covers ::loadFileFixture
+     * @covers ::getFixtureData
      * @covers ::loadSql
      *
      * @param string $fixtureName
@@ -165,7 +146,7 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_loadFixtureFile($fixtureName, $expected)
     {
-        $loaded = $this->fixtureLoader->loadFileFixture($fixtureName);
+        $loaded = $this->fixtureLoader->getFixtureData($fixtureName);
         $this->assertSame($expected, $loaded);
     }
 
@@ -183,7 +164,7 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider loadFixtureFileErrProvider
      *
-     * @covers ::loadFileFixture
+     * @covers ::loadFixtureData
      * @covers ::loadSql
      *
      * @param string $fixtureName
@@ -192,10 +173,10 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     public function test_loadFixtureFileErr($fixtureName, $expMsg)
     {
         try {
-            $this->fixtureLoader->loadFileFixture($fixtureName);
+            $this->fixtureLoader->loadFixtureData($fixtureName);
             $thrown = false;
             $gotMessage = '';
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $thrown = true;
             $gotMessage = $e->getMessage();
 
@@ -210,16 +191,16 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     public function loadFixtureFileErrProvider()
     {
         return [
-            ['notExisting.sql', 'fixture notExisting.sql does not exist'],
+            ['notExisting.sql', 'Fixture notExisting.sql does not exist.'],
         ];
     }
 
     /**
-     * @covers ::dbLoadFixture
+     * @covers ::loadDbFixture
      */
     public function test_loadFixture()
     {
-        $this->fixtureLoader->dbLoadFixture('test2.sql');
+        $this->fixtureLoader->loadDbFixture('test2.sql');
 
         $this->assertSame(2, $this->helper->dbGetTableRowCount('test2'));
 
@@ -233,11 +214,11 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::dbLoadFixtures
+     * @covers ::loadDbFixtures
      */
     public function test_loadFixtures()
     {
-        $this->fixtureLoader->dbLoadFixtures(['test2.sql', 'test5.sql']);
+        $this->fixtureLoader->loadDbFixtures(['test2.sql', 'test5.sql']);
 
         $this->assertSame(3, $this->helper->dbGetTableRowCount('test2'));
 
@@ -252,9 +233,9 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::dbLoadFixture
+     * @covers ::loadDbFixture
      *
-     * @expectedException Exception
+     * @expectedException \Exception
      * @expectedExceptionMessageRegExp /.*Access denied for user.+/
      */
     public function test_loadFixtureDbConnectionError()
@@ -263,15 +244,15 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
         $dbConfig['password'] = 'wrongOne';
 
         $db = DbGet::factory($dbConfig);
-        $fixtureLoader = new FixtureLoader($db, FIXTURE_PATH);
+        $fixtureLoader = new FixtureLoader(FIXTURE_PATH, $db);
 
-        $fixtureLoader->dbLoadFixture('test2.sql');
+        $fixtureLoader->loadDbFixture('test2.sql');
     }
 
     /**
      * @dataProvider loadFixtureErrProvider
      *
-     * @covers ::dbLoadFixture
+     * @covers ::loadDbFixture
      * @covers ::loadSql
      *
      * @param string $fixtureName
@@ -280,10 +261,10 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     public function test_loadFixtureErr($fixtureName, $expMsg)
     {
         try {
-            $this->fixtureLoader->dbLoadFixture($fixtureName);
+            $this->fixtureLoader->loadDbFixture($fixtureName);
             $thrown = false;
             $gotMessage = '';
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $thrown = true;
             $gotMessage = $e->getMessage();
 
@@ -305,15 +286,16 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::loadSql
      *
-     * @expectedException \Kicaj\Tools\Exception
-     * @expectedExceptionMessage error opening fixture vfs://root/fixture.sql
+     * @expectedException \Exception
+     * @expectedExceptionMessage Error opening fixture vfs://root/fixture.sql
      */
     public function test_loadSal_file_permissions_error()
     {
         $vFsRoot = vfsStream::setup();
         vfsStream::newFile('fixture.sql', 0000)->at($vFsRoot);
 
-        $fixtureLoader = new FixtureLoader(null, $vFsRoot->url());
-        $fixtureLoader->dbLoadFixture('fixture.sql');
+        $db = DbGet::factory(Helper::dbGetConfig());
+        $fixtureLoader = new FixtureLoader($vFsRoot->url(), $db);
+        $fixtureLoader->loadDbFixture('fixture.sql');
     }
 }

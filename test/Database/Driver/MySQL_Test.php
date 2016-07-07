@@ -19,7 +19,6 @@ namespace Kicaj\Test\TestHelperTest\Database\Driver;
 
 use Kicaj\Test\Helper\Database\Driver\MySQL;
 use Kicaj\Test\TestHelperTest\Helper;
-use Kicaj\Tools\Exception;
 
 /**
  * DbGet tests.
@@ -206,7 +205,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
             $resp = $this->testedDrv->dbRunQuery($sql);
             $thrown = false;
             $gotMsg = '';
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $thrown = true;
             $gotMsg = $e->getMessage();
         }
