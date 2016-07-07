@@ -17,6 +17,8 @@
  */
 namespace Kicaj\Test\TestHelperTest;
 
+use Kicaj\Test\Helper\Database\DbItf;
+use Kicaj\Tools\Db\DbConnector;
 use Kicaj\Tools\Helper\Fn;
 use mysqli;
 
@@ -67,21 +69,24 @@ class Helper
     /**
      * Returns global test database configuration.
      *
+     * @param string $dbName The database name connection data to use.
+     *
      * @return array
      */
-    public static function dbGetConfig()
+    public static function dbGetConfig($dbName = DbItf::DB_NAME_DEFAULT)
     {
-        $timezone = isset($GLOBALS['TEST_DB_TIMEZONE']) ? $GLOBALS['TEST_DB_TIMEZONE'] : '';
+        $timezone = isset($GLOBALS['TEST_DB_'.$dbName.'_TIMEZONE']) ? $GLOBALS['TEST_DB_'.$dbName.'_TIMEZONE'] : '';
+
         return [
-            'driver' => $GLOBALS['TEST_DB_DRIVER'],
-            'host' => $GLOBALS['TEST_DB_HOST'],
-            'username' => $GLOBALS['TEST_DB_USERNAME'],
-            'password' => $GLOBALS['TEST_DB_PASSWORD'],
-            'database' => $GLOBALS['TEST_DB_DATABASE'],
-            'port' => $GLOBALS['TEST_DB_PORT'],
-            'connect' => true,
-            'timezone' => $timezone,
-            'debug' => true
+            DbConnector::DB_CFG_DRIVER => $GLOBALS['TEST_DB_'.$dbName.'_DRIVER'],
+            DbConnector::DB_CFG_HOST => $GLOBALS['TEST_DB_'.$dbName.'_HOST'],
+            DbConnector::DB_CFG_USERNAME => $GLOBALS['TEST_DB_'.$dbName.'_USERNAME'],
+            DbConnector::DB_CFG_PASSWORD => $GLOBALS['TEST_DB_'.$dbName.'_PASSWORD'],
+            DbConnector::DB_CFG_DATABASE => $GLOBALS['TEST_DB_'.$dbName.'_DATABASE'],
+            DbConnector::DB_CFG_PORT => $GLOBALS['TEST_DB_'.$dbName.'_PORT'],
+            DbConnector::DB_CFG_CONNECT => true,
+            DbConnector::DB_CFG_TIMEZONE => $timezone,
+            DbConnector::DB_CFG_DEBUG => true
         ];
     }
 
@@ -173,6 +178,7 @@ class Helper
         // Create tables
         $this->driver->query('CREATE TABLE `test1` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT, `col1` int(11) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB');
         $this->driver->query('CREATE TABLE `test2` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT, `col2` int(11) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB');
+        $this->driver->query('CREATE TABLE `test3` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT, `col2` int(11) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB');
 
         return $this;
     }
@@ -205,30 +211,21 @@ class Helper
     }
 
     /**
-     * Drop database table by name.
-     *
-     * @param string $tableName
-     *
-     * @return bool
-     */
-    public function dbDropTable($tableName)
-    {
-        return (bool) $this->driver->query("DROP TABLE $tableName");
-    }
-
-    /**
      * Drop database tables.
      *
-     * @param array $tableNames
+     * @param string|string[] $tableNames The table or table names to drop.
      *
      * @return bool
      */
-    public function dbDropTables(array $tableNames)
+    public function dbDropTables($tableNames)
     {
-        $ret = false;
+        if (is_string($tableNames)) {
+            $tableNames = [$tableNames];
+        }
 
+        $ret = false;
         foreach ($tableNames as $tableName) {
-            $result = $this->dbDropTable($tableName);
+            $result = (bool) $this->driver->query("DROP TABLE $tableName");
             $ret = Fn::returnIfNot($ret, false, $result);
         }
 

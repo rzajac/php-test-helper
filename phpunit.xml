@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit colors="true" bootstrap="test/bootstrap.php">
     <php>
-        <var name="TEST_DB_HOST" value="127.0.0.1"/>
-        <var name="TEST_DB_USERNAME" value="testUser"/>
-        <var name="TEST_DB_PASSWORD" value="testUserPass"/>
-        <var name="TEST_DB_DATABASE" value="test"/>
-        <var name="TEST_DB_PORT" value="3306"/>
-        <var name="TEST_DB_TIMEZONE" value="UTC"/>
-        <var name="TEST_DB_DRIVER" value="mysql"/>
+        <var name="TEST_DB_DEFAULT_HOST" value="127.0.0.1"/>
+        <var name="TEST_DB_DEFAULT_USERNAME" value="testUser"/>
+        <var name="TEST_DB_DEFAULT_PASSWORD" value="testUserPass"/>
+        <var name="TEST_DB_DEFAULT_DATABASE" value="test"/>
+        <var name="TEST_DB_DEFAULT_PORT" value="3306"/>
+        <var name="TEST_DB_DEFAULT_TIMEZONE" value="UTC"/>
+        <var name="TEST_DB_DEFAULT_DRIVER" value="mysql"/>
 
         <var name="TEST_FIXTURE_DIRECTORY" value="test/fixtures"/>
     </php>

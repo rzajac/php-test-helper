@@ -26,41 +26,26 @@ use Kicaj\Tools\Exception;
  */
 interface DbItf extends DbConnector
 {
-    /**
-     * Drop table.
-     *
-     * @param string $tableName The database table name
-     *
-     * @return bool Returns true on success
-     */
-    public function dbDropTable($tableName);
+    /** The default database name. */
+    const DB_NAME_DEFAULT = 'DEFAULT';
 
     /**
-     * Drop list of tables.
+     * Drop table or list of tables.
      *
-     * @param array $tableNames The array of database table names
+     * @param string|string[] $tableNames The table name or array of table names to drop.
      *
-     * Returns true on success, false if one or more operations failed
+     * @return bool Returns true on success, false if one or more operations failed.
      */
-    public function dbDropTables(array $tableNames);
+    public function dbDropTables($tableNames);
 
     /**
-     * Truncate table.
+     * Truncate table or list of tables.
      *
-     * @param string $tableName The database table name
+     * @param string|string[] $tableNames The table name or array of table names to truncate.
      *
-     * @return bool Returns true on success
+     * Returns true on success, false if one or more operations failed.
      */
-    public function dbTruncateTable($tableName);
-
-    /**
-     * Truncate list of tables.
-     *
-     * @param array $tableNames The array of database table names
-     *
-     * Returns true on success, false if one or more operations failed
-     */
-    public function dbTruncateTables(array $tableNames);
+    public function dbTruncateTables($tableNames);
 
     /**
      * Get number of rows in the given table.

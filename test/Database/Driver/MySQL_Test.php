@@ -130,7 +130,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     public function test_getDbTableNames()
     {
         $tableNames = $this->testedDrv->dbGetTableNames();
-        $this->assertSame(['test1', 'test2'], $tableNames);
+        $this->assertSame(['test1', 'test2', 'test3'], $tableNames);
     }
 
     /**
@@ -148,25 +148,6 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
 
         $notExisting = $this->testedDrv->dbCountTableRows('notExisting');
         $this->assertSame(-1, $notExisting);
-    }
-
-    /**
-     * @covers ::dbTruncateTable
-     *
-     * @depends test_countTableRows
-     */
-    public function test_truncateTable()
-    {
-        $this->helper->dbLoadTestData();
-
-        $ret = $this->testedDrv->dbTruncateTable('test2');
-        $this->assertTrue($ret);
-
-        $t2Rows = $this->testedDrv->dbCountTableRows('test2');
-        $this->assertSame(0, $t2Rows);
-
-        $t1Rows = $this->testedDrv->dbCountTableRows('test1');
-        $this->assertSame(1, $t1Rows);
     }
 
     /**
@@ -198,35 +179,15 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::dbDropTable
-     */
-    public function test_dropDbTable()
-    {
-        $this->assertSame(2, $this->helper->dbGetTableCount());
-
-        $ret = $this->testedDrv->dbDropTable('test1');
-        $this->assertTrue($ret);
-        $this->assertSame(1, $this->helper->dbGetTableCount());
-
-        $ret = $this->testedDrv->dbDropTable('test2');
-        $this->assertTrue($ret);
-        $this->assertSame(0, $this->helper->dbGetTableCount());
-
-        $ret = $this->testedDrv->dbDropTable('notExisting');
-        $this->assertFalse($ret);
-        $this->assertSame(0, $this->helper->dbGetTableCount());
-    }
-
-    /**
      * @covers ::dbDropTables
      */
     public function test_dropTables()
     {
-        $this->assertSame(2, $this->helper->dbGetTableCount());
+        $this->assertSame(3, $this->helper->dbGetTableCount());
 
         $this->testedDrv->dbDropTables(['test1', 'test2']);
 
-        $this->assertSame(0, $this->helper->dbGetTableCount());
+        $this->assertSame(1, $this->helper->dbGetTableCount());
     }
 
     /**

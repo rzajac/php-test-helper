@@ -56,7 +56,7 @@ class MySQL implements DbItf
     /**
      * Configure database.
      *
-     * @param array $config The database configuration
+     * @param array $config The database configuration.
      *
      * @return MySQL
      */
@@ -136,76 +136,38 @@ class MySQL implements DbItf
         return $this->isConnected;
     }
 
-    /**
-     * Drop table.
-     *
-     * @param string $tableName The database table name
-     *
-     * @return bool Returns true on success
-     */
-    public function dbDropTable($tableName)
+    public function dbDropTables($tableNames)
     {
-        $sql = sprintf('DROP TABLE `%s`', $tableName);
-        return (bool) $this->mysql->query($sql);
-    }
+        if (is_string($tableNames)) {
+            $tableNames = [$tableNames];
+        }
 
-    /**
-     * Drop list of tables.
-     *
-     * @param array $tableNames The array of database table names
-     *
-     * @return bool Returns true on success, false if one or more operations failed
-     */
-    public function dbDropTables(array $tableNames)
-    {
         $ret = true;
         foreach ($tableNames as $tableName) {
-            $result = $this->dbDropTable($tableName);
+            $sql = sprintf('DROP TABLE `%s`', $tableName);
+            $result = (bool) $this->mysql->query($sql);
             $ret = Fn::returnIfNot($ret, false, $result);
         }
 
         return $ret;
     }
 
-    /**
-     * Truncate table.
-     *
-     * @param string $tableName The database table name
-     *
-     * @return bool Returns true on success
-     */
-    public function dbTruncateTable($tableName)
+    public function dbTruncateTables($tableNames)
     {
-        $sql = sprintf('TRUNCATE TABLE `%s`', $tableName);
-        return (bool) $this->mysql->query($sql);
-    }
+        if (is_string($tableNames)) {
+            $tableNames = [$tableNames];
+        }
 
-    /**
-     * Truncate list of tables.
-     *
-     * @param array $tableNames The array of database table names
-     *
-     * @return bool Returns true on success, false if one or more operations failed
-     */
-    public function dbTruncateTables(array $tableNames)
-    {
         $ret = true;
-
         foreach ($tableNames as $tableName) {
-            $result = $this->dbTruncateTable($tableName);
+            $sql = sprintf('TRUNCATE TABLE `%s`', $tableName);
+            $result = $this->mysql->query($sql);
             $ret = Fn::returnIfNot($ret, false, $result);
         }
 
         return $ret;
     }
 
-    /**
-     * Get number of rows in the given table.
-     *
-     * @param string $tableName The database table name
-     *
-     * @return int Returns -1 on error
-     */
     public function dbCountTableRows($tableName)
     {
         $sql = sprintf('SELECT COUNT(1) AS c FROM `%s`', $tableName);
@@ -219,11 +181,6 @@ class MySQL implements DbItf
         return (int) $resp->fetch_array(MYSQLI_ASSOC)['c'];
     }
 
-    /**
-     * Returns list of database tables.
-     *
-     * @return string[]
-     */
     public function dbGetTableNames()
     {
         $sql = sprintf('SHOW TABLES FROM `%s`', $this->config['database']);
@@ -239,15 +196,6 @@ class MySQL implements DbItf
         return $tableNames;
     }
 
-    /**
-     * Run database query.
-     *
-     * @param mixed $query
-     *
-     * @throws Exception
-     *
-     * @return bool|\mysqli_result
-     */
     public function dbRunQuery($query)
     {
         $queries = is_array($query) ? $query : [$query];
@@ -263,11 +211,6 @@ class MySQL implements DbItf
         return $resp;
     }
 
-    /**
-     * Close database connection.
-     *
-     * @return bool
-     */
     public function dbClose()
     {
         $this->isConnected = false;

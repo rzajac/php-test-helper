@@ -36,9 +36,9 @@ final class DbGet
      *
      * @param array $dbConfig The database configuration
      *
-     * @return DbItf
-     *
      * @throws \Exception
+     *
+     * @return DbItf
      */
     public static function factory(array $dbConfig)
     {

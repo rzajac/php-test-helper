@@ -75,7 +75,7 @@ abstract class DbTestCase extends FixtureTestCase
     protected static function setUpDb()
     {
         if (self::$db === null) {
-            self::$db = DbGet::factory(self::dbGetConfig());
+            self::$db = DbGet::factory(self::dbGetConfig(DbItf::DB_NAME_DEFAULT));
 
             // Pass database interface to fixture loader.
             self::setFixtureDb(self::$db);
@@ -94,19 +94,21 @@ abstract class DbTestCase extends FixtureTestCase
     /**
      * Returns database configuration.
      *
+     * @param string $testDbName The name of database configuration.
+     *
      * @return array
      */
-    public static function dbGetConfig()
+    public static function dbGetConfig($testDbName)
     {
-        $timezone = isset($GLOBALS['TEST_DB_TIMEZONE']) ? $GLOBALS['TEST_DB_TIMEZONE'] : '';
+        $timezone = isset($GLOBALS['TEST_DB_'.$testDbName.'_TIMEZONE']) ? $GLOBALS['TEST_DB_'.$testDbName.'_TIMEZONE'] : '';
 
         return DbConnect::getCfg(
-            $GLOBALS['TEST_DB_DRIVER'],
-            $GLOBALS['TEST_DB_HOST'],
-            $GLOBALS['TEST_DB_USERNAME'],
-            $GLOBALS['TEST_DB_PASSWORD'],
-            $GLOBALS['TEST_DB_DATABASE'],
-            $GLOBALS['TEST_DB_PORT'],
+            $GLOBALS['TEST_DB_'.$testDbName.'_DRIVER'],
+            $GLOBALS['TEST_DB_'.$testDbName.'_HOST'],
+            $GLOBALS['TEST_DB_'.$testDbName.'_USERNAME'],
+            $GLOBALS['TEST_DB_'.$testDbName.'_PASSWORD'],
+            $GLOBALS['TEST_DB_'.$testDbName.'_DATABASE'],
+            $GLOBALS['TEST_DB_'.$testDbName.'_PORT'],
             true,
             $timezone,
             true
@@ -114,33 +116,15 @@ abstract class DbTestCase extends FixtureTestCase
     }
 
     /**
-     * Drop database table.
+     * Drop database table or tables.
      *
-     * @param string $tableName The database table name
-     *
-     * @return bool true on success
-     */
-    public static function dbDropTable($tableName)
-    {
-        return self::$db->dbDropTable($tableName);
-    }
-
-    /**
-     * Drop database tables.
-     *
-     * @param string[] $tableNames The database table name
+     * @param string|string[] $tableNames The database table name or names.
      *
      * @return bool true if all tables were dropped
      */
-    public static function dbDropTables(array $tableNames)
+    public static function dbDropTables($tableNames)
     {
-        $ret = true;
-        foreach ($tableNames as $tableName) {
-            $result = self::dbDropTable($tableName);
-            $ret    = Fn::returnIfNot($ret, false, $result);
-        }
-
-        return $ret;
+        return self::$db->dbDropTables($tableNames);
     }
 
     /**
@@ -156,33 +140,15 @@ abstract class DbTestCase extends FixtureTestCase
     }
 
     /**
-     * Truncate database table.
+     * Truncate database table or tables.
      *
-     * @param string $tableName The database table name
+     * @param string|string[] $tableNames The database table name or names to truncate.
      *
-     * @return bool true on success
-     */
-    public static function dbTruncateTable($tableName)
-    {
-        return self::$db->dbTruncateTable($tableName);
-    }
-
-    /**
-     * Truncate database tables.
-     *
-     * @param string[] $tableNames The database table name
-     *
-     * @return bool true if all tables were dropped
+     * @return bool Returns true if all tables were dropped, false otherwise.
      */
     public static function dbTruncateTables(array $tableNames)
     {
-        $ret = true;
-        foreach ($tableNames as $tableName) {
-            $result = self::dbTruncateTable($tableName);
-            $ret    = Fn::returnIfNot($ret, false, $result);
-        }
-
-        return $ret;
+        return self::$db->dbTruncateTables($tableNames);
     }
 
     /**
@@ -205,5 +171,17 @@ abstract class DbTestCase extends FixtureTestCase
     public static function dbGetTableNames()
     {
         return self::$db->dbGetTableNames();
+    }
+
+    /**
+     * Check if table exists in the database.
+     *
+     * @param string $tableName The table name to check existence in the database.
+     *
+     * @return bool
+     */
+    public static function dbTableExists($tableName)
+    {
+        return in_array($tableName, self::dbGetTableNames());
     }
 }

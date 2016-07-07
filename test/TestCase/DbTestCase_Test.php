@@ -17,6 +17,7 @@
  */
 namespace Kicaj\Test\TestHelperTest\TestCase;
 
+use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\TestCase\DbTestCase;
 use Kicaj\Test\TestHelperTest\Helper;
 
@@ -54,7 +55,7 @@ class DbTestCase_Test extends DbTestCase
      */
     public function test_dbGetConfig()
     {
-        $dbConfig = self::dbGetConfig();
+        $dbConfig = self::dbGetConfig(DbItf::DB_NAME_DEFAULT);
 
         $this->assertSame(9, count($dbConfig));
         $this->assertArrayHasKey('driver', $dbConfig);
@@ -69,17 +70,16 @@ class DbTestCase_Test extends DbTestCase
     }
 
     /**
-     * @covers ::dbDropTable
      * @covers ::dbDropTables
      */
     public function test_dropTables()
     {
-        $this->assertSame(2, $this->helper->dbGetTableCount());
+        $this->assertSame(3, $this->helper->dbGetTableCount());
 
         $ret = self::dbDropTables(['test1', 'test2']);
         $this->assertTrue($ret);
 
-        $this->assertSame(0, $this->helper->dbGetTableCount());
+        $this->assertSame(1, $this->helper->dbGetTableCount());
     }
 
     /**
@@ -87,7 +87,7 @@ class DbTestCase_Test extends DbTestCase
      */
     public function test_dropAllTables()
     {
-        $this->assertSame(2, $this->helper->dbGetTableCount());
+        $this->assertSame(3, $this->helper->dbGetTableCount());
 
         $ret = self::dbDropAllTables();
         $this->assertTrue($ret);
@@ -96,7 +96,6 @@ class DbTestCase_Test extends DbTestCase
     }
 
     /**
-     * @covers ::dbDropTable
      * @covers ::dbDropTables
      */
     public function test_dropTablesErr()
@@ -109,7 +108,6 @@ class DbTestCase_Test extends DbTestCase
     }
 
     /**
-     * @covers ::dbTruncateTable
      * @covers ::dbTruncateTables
      */
     public function test_dbTruncateTable()
@@ -127,7 +125,6 @@ class DbTestCase_Test extends DbTestCase
     }
 
     /**
-     * @covers ::dbTruncateTable
      * @covers ::dbTruncateTables
      */
     public function test_dbTruncateTableErr()
@@ -142,12 +139,12 @@ class DbTestCase_Test extends DbTestCase
     public function test_dbGetTableNames()
     {
         $got = self::dbGetTableNames();
-        $this->assertSame(['test1', 'test2'], $got);
+        $this->assertSame(['test1', 'test2', 'test3'], $got);
 
-        $this->helper->dbDropTable('test2');
+        $this->helper->dbDropTables('test2');
 
         $got = self::dbGetTableNames();
-        $this->assertSame(['test1'], $got);
+        $this->assertSame(['test1', 'test3'], $got);
     }
 
     /**
