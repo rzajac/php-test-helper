@@ -17,8 +17,8 @@
  */
 namespace Kicaj\Test\TestHelperTest\TestCase;
 
-use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\TestCase\DbTestCase;
+use Kicaj\Tools\Db\DbConnector;
 
 /**
  * Tests for DbTextCase class.
@@ -37,22 +37,22 @@ class DbTestCase_Test extends DbTestCase
         $dbConfig = self::dbGetConfig('HELPER1');
 
         $this->assertSame(9, count($dbConfig));
-        $this->assertArrayHasKey(DbItf::DB_CFG_DRIVER, $dbConfig);
-        $this->assertArrayHasKey(DbItf::DB_CFG_HOST, $dbConfig);
-        $this->assertArrayHasKey(DbItf::DB_CFG_USERNAME, $dbConfig);
-        $this->assertArrayHasKey(DbItf::DB_CFG_PASSWORD, $dbConfig);
-        $this->assertArrayHasKey(DbItf::DB_CFG_DATABASE, $dbConfig);
-        $this->assertArrayHasKey(DbItf::DB_CFG_PORT, $dbConfig);
-        $this->assertArrayHasKey(DbItf::DB_CFG_CONNECT, $dbConfig);
-        $this->assertArrayHasKey(DbItf::DB_CFG_TIMEZONE, $dbConfig);
-        $this->assertArrayHasKey(DbItf::DB_CFG_DEBUG, $dbConfig);
+        $this->assertArrayHasKey(DbConnector::DB_CFG_DRIVER, $dbConfig);
+        $this->assertArrayHasKey(DbConnector::DB_CFG_HOST, $dbConfig);
+        $this->assertArrayHasKey(DbConnector::DB_CFG_USERNAME, $dbConfig);
+        $this->assertArrayHasKey(DbConnector::DB_CFG_PASSWORD, $dbConfig);
+        $this->assertArrayHasKey(DbConnector::DB_CFG_DATABASE, $dbConfig);
+        $this->assertArrayHasKey(DbConnector::DB_CFG_PORT, $dbConfig);
+        $this->assertArrayHasKey(DbConnector::DB_CFG_CONNECT, $dbConfig);
+        $this->assertArrayHasKey(DbConnector::DB_CFG_TIMEZONE, $dbConfig);
+        $this->assertArrayHasKey(DbConnector::DB_CFG_DEBUG, $dbConfig);
 
-        $this->assertSame('127.0.0.1', $dbConfig[DbItf::DB_CFG_HOST]);
-        $this->assertSame('testUser', $dbConfig[DbItf::DB_CFG_USERNAME]);
-        $this->assertSame('testUserPass', $dbConfig[DbItf::DB_CFG_PASSWORD]);
-        $this->assertSame('testHelper1', $dbConfig[DbItf::DB_CFG_DATABASE]);
-        $this->assertSame('3306', $dbConfig[DbItf::DB_CFG_PORT]);
-        $this->assertSame('UTC', $dbConfig[DbItf::DB_CFG_TIMEZONE]);
-        $this->assertSame('mysql', $dbConfig[DbItf::DB_CFG_DRIVER]);
+        $this->assertSame('127.0.0.1', $dbConfig[DbConnector::DB_CFG_HOST]);
+        $this->assertSame('testUser', $dbConfig[DbConnector::DB_CFG_USERNAME]);
+        $this->assertSame('testUserPass', $dbConfig[DbConnector::DB_CFG_PASSWORD]);
+        $this->assertSame('testHelper1', $dbConfig[DbConnector::DB_CFG_DATABASE]);
+        $this->assertSame('3306', $dbConfig[DbConnector::DB_CFG_PORT]);
+        $this->assertSame('UTC', $dbConfig[DbConnector::DB_CFG_TIMEZONE]);
+        $this->assertSame('mysql', $dbConfig[DbConnector::DB_CFG_DRIVER]);
     }
 }
