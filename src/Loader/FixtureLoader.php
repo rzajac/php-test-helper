@@ -56,6 +56,16 @@ class FixtureLoader
     }
 
     /**
+     * Return true if database has been set, false otherwise.
+     *
+     * @return bool
+     */
+    public function isDbSet()
+    {
+        return (bool) $this->db;
+    }
+
+    /**
      * Load fixture to database.
      *
      * @param string $fixturePath The fixture path relative to fixturesRootPath.

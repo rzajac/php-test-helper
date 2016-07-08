@@ -27,14 +27,14 @@ use Kicaj\Tools\Db\DbConnector;
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class DbTestCase_Test extends DbTestCase
+class DbTestCase_Test extends \PHPUnit_Framework_TestCase
 {
     /**
      * @covers ::dbGetConfig
      */
     public function test_dbGetConfig()
     {
-        $dbConfig = self::dbGetConfig('HELPER1');
+        $dbConfig = DbTestCase::dbGetConfig('HELPER1');
 
         $this->assertSame(9, count($dbConfig));
         $this->assertArrayHasKey(DbConnector::DB_CFG_DRIVER, $dbConfig);
@@ -54,5 +54,37 @@ class DbTestCase_Test extends DbTestCase
         $this->assertSame('3306', $dbConfig[DbConnector::DB_CFG_PORT]);
         $this->assertSame('UTC', $dbConfig[DbConnector::DB_CFG_TIMEZONE]);
         $this->assertSame('mysql', $dbConfig[DbConnector::DB_CFG_DRIVER]);
+    }
+
+    /**
+     * @covers ::dbGetHelper
+     */
+    public function test_dbGetHelper()
+    {
+        $db = DbTestCase::dbGetHelper('HELPER1');
+
+        $this->assertInstanceOf('\Kicaj\Test\Helper\Database\DbItf', $db);
+    }
+
+    /**
+     * @covers ::dbGetFixtureLoader
+     */
+    public function test_dbGetFixtureLoader_noDb()
+    {
+        $fLoader = DbTestCase::dbGetFixtureLoader();
+
+        $this->assertInstanceOf('\Kicaj\Test\Helper\Loader\FixtureLoader', $fLoader);
+        $this->assertFalse($fLoader->isDbSet());
+    }
+
+    /**
+     * @covers ::dbGetFixtureLoader
+     */
+    public function test_dbGetFixtureLoader_db()
+    {
+        $fLoader = DbTestCase::dbGetFixtureLoader('HELPER2');
+
+        $this->assertInstanceOf('\Kicaj\Test\Helper\Loader\FixtureLoader', $fLoader);
+        $this->assertTrue($fLoader->isDbSet());
     }
 }

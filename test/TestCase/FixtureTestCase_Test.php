@@ -18,6 +18,7 @@
 namespace Kicaj\Test\TestHelperTest\TestCase;
 
 
+use Kicaj\Test\Helper\Database\Driver\MySQL;
 use Kicaj\Test\Helper\TestCase\FixtureTestCase;
 
 /**
@@ -30,12 +31,36 @@ use Kicaj\Test\Helper\TestCase\FixtureTestCase;
 class FixtureTestCase_Test extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @covers ::fixtureRootDirPath
+     * @covers ::getFixturesRootPath
      */
     public function test_fixtureRootDirPath()
     {
-        $got = FixtureTestCase::fixtureRootDirPath();
+        $got = FixtureTestCase::getFixturesRootPath();
 
         $this->assertSame('test/fixtures', $got);
+    }
+
+    /**
+     * @covers ::getFixtureLoader
+     */
+    public function test_getFixtureLoader()
+    {
+        $fLoader = FixtureTestCase::getFixtureLoader();
+
+        $this->assertInstanceOf('\Kicaj\Test\Helper\Loader\FixtureLoader', $fLoader);
+        $this->assertFalse($fLoader->isDbSet());
+    }
+
+    /**
+     * @covers ::getFixtureLoader
+     */
+    public function test_getFixtureLoader_dbSet()
+    {
+        $db = new MySQL();
+        $db->dbSetup(getUnitTestDbConfig('HELPER1'))->dbConnect();
+        $fLoader = FixtureTestCase::getFixtureLoader($db);
+
+        $this->assertInstanceOf('\Kicaj\Test\Helper\Loader\FixtureLoader', $fLoader);
+        $this->assertTrue($fLoader->isDbSet());
     }
 }

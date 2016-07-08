@@ -17,6 +17,9 @@
  */
 namespace Kicaj\Test\Helper\TestCase;
 
+use Kicaj\Test\Helper\Database\DbItf;
+use Kicaj\Test\Helper\Loader\FixtureLoader;
+
 /**
  * Test case with fixtures.
  *
@@ -31,8 +34,20 @@ abstract class FixtureTestCase extends TestCase
      *
      * @return string
      */
-    public static function fixtureRootDirPath()
+    public static function getFixturesRootPath()
     {
         return $GLOBALS['TEST_FIXTURE_DIRECTORY'];
+    }
+
+    /**
+     * Get fixture loader.
+     *
+     * @param DbItf $dbDrv The database to load fixtures to.
+     *
+     * @return FixtureLoader
+     */
+    public static function getFixtureLoader(DbItf $dbDrv = null)
+    {
+        return new FixtureLoader(self::getFixturesRootPath(), $dbDrv);
     }
 }

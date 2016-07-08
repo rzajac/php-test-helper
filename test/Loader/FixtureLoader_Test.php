@@ -43,15 +43,17 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->fixtureLoader = new FixtureLoader(FixtureTestCase::fixtureRootDirPath());
+        $this->fixtureLoader = new FixtureLoader(FixtureTestCase::getFixturesRootPath());
     }
 
     /**
      * @covers ::__construct
+     * @covers ::isDbSet
      */
     public function test___construct()
     {
         $this->assertNotNull($this->fixtureLoader);
+        $this->assertFalse($this->fixtureLoader->isDbSet());
     }
 
     /**

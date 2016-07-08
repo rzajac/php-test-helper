@@ -59,6 +59,7 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers ::__construct
+     * @covers ::isDbSet
      */
     public function test___construct()
     {
@@ -66,6 +67,7 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
         $fixtureLoader = new FixtureLoader(FIXTURE_PATH, $db);
 
         $this->assertNotNull($fixtureLoader);
+        $this->assertTrue($fixtureLoader->isDbSet());
     }
 
     /**

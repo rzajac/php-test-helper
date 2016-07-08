@@ -21,6 +21,7 @@ use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\Database\Driver\MySQL;
 use Kicaj\Test\TestHelperTest\MySQLHelper;
 use Kicaj\Tools\Db\DatabaseException;
+use Kicaj\Tools\Db\DbConnector;
 use ReflectionClass;
 
 /**
@@ -79,12 +80,12 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     {
         // Database config
         $dbConfig = [
-            'host' => $host,
-            'username' => $username,
-            'password' => $password,
-            'database' => $database,
-            'port' => $port,
-            'timezone' => $timezone
+            DbConnector::DB_CFG_HOST => $host,
+            DbConnector::DB_CFG_USERNAME => $username,
+            DbConnector::DB_CFG_PASSWORD => $password,
+            DbConnector::DB_CFG_DATABASE => $database,
+            DbConnector::DB_CFG_PORT => $port,
+            DbConnector::DB_CFG_TIMEZONE => $timezone
         ];
 
         $driver = new MySQL();

@@ -17,6 +17,10 @@
  */
 namespace Kicaj\Test\Helper\TestCase;
 
+use Kicaj\Test\Helper\Database\DbGet;
+use Kicaj\Test\Helper\Database\DbItf;
+use Kicaj\Test\Helper\Loader\FixtureLoader;
+use Kicaj\Tools\Db\DatabaseException;
 use Kicaj\Tools\Db\DbConnect;
 
 /**
@@ -52,5 +56,34 @@ abstract class DbTestCase extends FixtureTestCase
             $timezone,
             $debug
         );
+    }
+
+    /**
+     * Get database helper.
+     *
+     * @param string $testDbName The name of database connection details form phpunit.xml.
+     *
+     * @throws DatabaseException
+     *
+     * @return DbItf
+     */
+    public static function dbGetHelper($testDbName)
+    {
+        return DbGet::factory(self::dbGetConfig($testDbName));
+    }
+
+    /**
+     * Get database fixture loader.
+     *
+     * @param string $testDbName The name of database connection details form phpunit.xml.
+     *
+     * @throws DatabaseException
+     *
+     * @return FixtureLoader
+     */
+    public static function dbGetFixtureLoader($testDbName = '')
+    {
+        $db = $testDbName ? self::dbGetHelper($testDbName) : null;
+        return parent::getFixtureLoader($db);
     }
 }
