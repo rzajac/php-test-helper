@@ -82,17 +82,16 @@ class MySQLHelper
      */
     protected static function getMysqlTableNames($mysql, $dbName)
     {
-        $resp = $mysql->query('SHOW TABLES');
+        $sql  = sprintf('SHOW TABLES FROM `%s`', $dbName);
+        $resp = $mysql->query($sql);
         if (!$resp) {
             throw new DatabaseException($mysql->error);
         }
 
         $tableNames = [];
         while ($row = $resp->fetch_assoc()) {
-            if (isset($row['Tables_in_'.$dbName])) {
-                $tableNames[] = $row['Tables_in_'.$dbName];
-            } else {
-                $tableNames[] = $row['Tables_in_'.strtolower($dbName)];
+            foreach ($row as $tableName) {
+                $tableNames[] = $tableName;
             }
         }
 

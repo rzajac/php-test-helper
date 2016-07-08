@@ -159,7 +159,6 @@ class MySQL implements DbItf
 
     public function dbGetTableNames()
     {
-        // TODO: check for case sensitive table names.
         $sql  = sprintf('SHOW TABLES FROM `%s`', $this->config[DbItf::DB_CFG_DATABASE]);
         $resp = $this->mysql->query($sql);
         if ($resp === false) {
