@@ -47,8 +47,6 @@ interface DbItf extends DbConnector
      * @param string|string[] $tableNames The table name or array of table names to drop.
      *
      * @throws DatabaseException
-     *
-     * @return bool Return true on success, false if one or more operations failed.
      */
     public function dbDropTables($tableNames);
 
@@ -58,8 +56,6 @@ interface DbItf extends DbConnector
      * @param string|string[] $tableNames The table name or array of table names to truncate.
      *
      * @throws DatabaseException
-     *
-     * @return bool Return true on success, false if one or more operations failed.
      */
     public function dbTruncateTables($tableNames);
 

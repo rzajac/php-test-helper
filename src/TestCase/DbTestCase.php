@@ -28,6 +28,8 @@ use Kicaj\Tools\Db\DbConnect;
  *
  * It manages database and fixtures.
  *
+ * All methods are static so they can be called from setUpBeforeClass or tearDownAfterClass.
+ *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
 abstract class DbTestCase extends FixtureTestCase
@@ -84,6 +86,56 @@ abstract class DbTestCase extends FixtureTestCase
     public static function dbGetFixtureLoader($testDbName = '')
     {
         $db = $testDbName ? self::dbGetHelper($testDbName) : null;
+
         return parent::getFixtureLoader($db);
+    }
+
+    /**
+     * Load fixtures to database.
+     *
+     * @param string          $testDbName   The name of database connection details form phpunit.xml.
+     * @param string|string[] $fixturePaths The array of fixture paths to load to database.
+     *
+     * @throws DatabaseException
+     */
+    public static function dbLoadFixture($testDbName, $fixturePaths)
+    {
+        if (is_string($fixturePaths)) {
+            $fixturePaths = [$fixturePaths];
+        }
+
+        $fLoader = self::dbGetFixtureLoader($testDbName);
+        $fLoader->loadDbFixtures($fixturePaths);
+    }
+
+    /**
+     * Drop table or tables from given test database.
+     *
+     * @param string          $testDbName The name of database connection details form phpunit.xml.
+     * @param string|string[] $tableNames The table or tables to drop from the database.
+     *
+     * @throws DatabaseException
+     */
+    public static function dbDropTables($testDbName, $tableNames)
+    {
+        if (is_string($tableNames)) {
+            $tableNames = [$tableNames];
+        }
+
+        self::dbGetHelper($testDbName)->dbDropTables($tableNames);
+    }
+
+    /**
+     * Drop all tables from given test database.
+     *
+     * @param string $testDbName The name of database connection details form phpunit.xml.
+     *
+     * @throws DatabaseException
+     */
+    public static function dbDropAllTables($testDbName)
+    {
+        $db = self::dbGetHelper($testDbName);
+
+        $db->dbDropTables($db->dbGetTableNames());
     }
 }
