@@ -98,7 +98,7 @@ abstract class DbTestCase extends FixtureTestCase
      *
      * @throws DatabaseException
      */
-    public static function dbLoadFixture($testDbName, $fixturePaths)
+    public static function dbLoadFixtures($testDbName, $fixturePaths)
     {
         if (is_string($fixturePaths)) {
             $fixturePaths = [$fixturePaths];
