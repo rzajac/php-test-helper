@@ -31,7 +31,7 @@ abstract class DbTestCase extends FixtureTestCase
     /**
      * Returns database configuration.
      *
-     * @param string $testDbName The name of database configuration.
+     * @param string $testDbName The name of database connection details form phpunit.xml.
      * @param bool   $connect    Set to true to connect to database right away.
      * @param bool   $debug      Set to true to put database driver in debug mode.
      *
