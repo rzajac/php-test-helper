@@ -18,6 +18,7 @@
 namespace Kicaj\Test\TestHelperTest\Database;
 
 use Kicaj\Test\Helper\Database\DbGet;
+use Kicaj\Tools\Db\DatabaseException;
 use Kicaj\Tools\Db\DbConnector;
 
 /**
@@ -47,7 +48,7 @@ class DbGet_Test extends \PHPUnit_Framework_TestCase
         try {
             $mysql       = DbGet::factory($dbConfig);
             $gotErrorMsg = '';
-        } catch (\Exception $e) {
+        } catch (DatabaseException $e) {
             $gotErrorMsg = $e->getMessage();
         }
 

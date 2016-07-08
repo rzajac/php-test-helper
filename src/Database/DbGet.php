@@ -18,6 +18,7 @@
 namespace Kicaj\Test\Helper\Database;
 
 use Kicaj\Test\Helper\Database\Driver\MySQL;
+use Kicaj\Tools\Db\DatabaseException;
 use Kicaj\Tools\Db\DbConnect;
 use Kicaj\Tools\Db\DbConnector;
 
@@ -35,7 +36,7 @@ final class DbGet
      *
      * @param array $dbConfig The database configuration
      *
-     * @throws \Exception
+     * @throws DatabaseException
      *
      * @return DbItf
      */
@@ -56,7 +57,7 @@ final class DbGet
                 break;
 
             default:
-                throw new \Exception('Unknown database driver name: ' . DbConnect::getDriver($dbConfig));
+                throw new DatabaseException('Unknown database driver name: ' . DbConnect::getDriver($dbConfig));
         }
 
         $instances[$key]->dbSetup($dbConfig);
