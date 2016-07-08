@@ -20,10 +20,9 @@ namespace Kicaj\Test\Helper\Database;
 use Kicaj\Test\Helper\Database\Driver\MySQL;
 use Kicaj\Tools\Db\DbConnect;
 use Kicaj\Tools\Db\DbConnector;
-use Kicaj\Tools\Exception;
 
 /**
- * Helper class for getting database driver.
+ * MySQLHelper class for getting database driver.
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
@@ -57,7 +56,7 @@ final class DbGet
                 break;
 
             default:
-                throw new Exception('unknown database driver name: '.DbConnect::getDriver($dbConfig));
+                throw new \Exception('Unknown database driver name: '.DbConnect::getDriver($dbConfig));
         }
 
         $instances[$key]->dbSetup($dbConfig);

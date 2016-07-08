@@ -17,36 +17,42 @@
  */
 namespace Kicaj\Test\TestHelperTest\TestCase;
 
+use Kicaj\Test\Helper\Database\DbGet;
+use Kicaj\Test\Helper\Database\Driver\MySQL;
+use Kicaj\Test\Helper\Loader\FixtureLoader;
 use Kicaj\Test\Helper\TestCase\DbTestCase;
-use Kicaj\Test\TestHelperTest\Helper;
+use Kicaj\Test\TestHelperTest\MySQLHelper;
 
 /**
  * Class DbTestCase_Test.
  *
- * @coversDefaultClass Kicaj\Test\Helper\TestCase\DbTestCase
+ * @coversDefaultClass \Kicaj\Test\Helper\TestCase\FixtureTestCase
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class Fixtures_Test extends DbTestCase
+class FixturesMySQL_Test extends DbTestCase
 {
     protected $fixtures = ['test4.sql'];
-
-    public static function setUpBeforeClass()
-    {
-        Helper::make()->dbDropAllTables();
-        parent::setUpBeforeClass();
-    }
 
     /**
      * Database helper.
      *
-     * @var Helper
+     * @var MySQL
      */
-    protected $helper;
+    protected $dbDriver;
+
+    /**
+     * The fixture loader.
+     *
+     * @var FixtureLoader
+     */
+    protected $fixtureLoader;
 
     public function setUp()
     {
-        $this->helper = Helper::make()->dbResetTestDbatabase();
+        MySQLHelper::resetMySQLDatabases();
+        $this->dbDriver = DbGet::factory(getUnitTestDbConfig('HELPER1'));
+        $this->fixtureLoader = new FixtureLoader(self::fixtureRootDirPath(), $this->dbDriver);
 
         parent::setUp();
     }
@@ -56,7 +62,12 @@ class Fixtures_Test extends DbTestCase
      */
     public function test_setUp()
     {
-        $this->assertSame(0, $this->helper->dbGetTableRowCount('test1'));
-        $this->assertSame(2, $this->helper->dbGetTableRowCount('test2'));
+        $this->assertSame(1, $this->dbDriver->dbCountTableRows('test1'));
+        $this->assertSame(2, $this->dbDriver->dbCountTableRows('test2'));
+
+        $this->fixtureLoader->loadDbFixture('test4.sql');
+
+        $this->assertSame(1, $this->dbDriver->dbCountTableRows('test1'));
+        $this->assertSame(4, $this->dbDriver->dbCountTableRows('test2'));
     }
 }

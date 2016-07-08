@@ -17,8 +17,6 @@
  */
 namespace Kicaj\Test\Helper\TestCase;
 
-use Kicaj\Test\Helper\Database\DbGet;
-use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Tools\Db\DbConnect;
 
 /**
@@ -31,27 +29,15 @@ use Kicaj\Tools\Db\DbConnect;
 abstract class DbTestCase extends FixtureTestCase
 {
     /**
-     * Fixtures to load and tear down for each test.
-     *
-     * @var array
-     */
-    protected $fixtures = [];
-
-    /**
-     * Fixtures to load once per DbTestCase class.
-     *
-     * @var array
-     */
-    protected static $residentFixtures = [];
-
-    /**
      * Returns database configuration.
      *
      * @param string $testDbName The name of database configuration.
+     * @param bool   $connect    Set to true to connect to database right away.
+     * @param bool   $debug      Set to true to put database driver in debug mode.
      *
      * @return array
      */
-    public static function dbGetConfig($testDbName)
+    public static function dbGetConfig($testDbName, $connect = true, $debug = true)
     {
         $timezone = isset($GLOBALS['TEST_DB_'.$testDbName.'_TIMEZONE']) ? $GLOBALS['TEST_DB_'.$testDbName.'_TIMEZONE'] : '';
 
@@ -62,9 +48,9 @@ abstract class DbTestCase extends FixtureTestCase
             $GLOBALS['TEST_DB_'.$testDbName.'_PASSWORD'],
             $GLOBALS['TEST_DB_'.$testDbName.'_DATABASE'],
             $GLOBALS['TEST_DB_'.$testDbName.'_PORT'],
-            true,
+            $connect,
             $timezone,
-            true
+            $debug
         );
     }
 }

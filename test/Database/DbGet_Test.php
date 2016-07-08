@@ -18,25 +18,17 @@
 namespace Kicaj\Test\TestHelperTest\Database;
 
 use Kicaj\Test\Helper\Database\DbGet;
-use Kicaj\Test\TestHelperTest\Helper;
 use Kicaj\Tools\Db\DbConnector;
-use Kicaj\Tools\Exception;
 
 /**
  * DbGet tests.
  *
- * @coversDefaultClass Kicaj\Test\Helper\Database\DbGet
+ * @coversDefaultClass \Kicaj\Test\Helper\Database\DbGet
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
 class DbGet_Test extends \PHPUnit_Framework_TestCase
 {
-    public static function setUpBeforeClass()
-    {
-        Helper::make()->dbDropAllTables();
-        parent::setUpBeforeClass();
-    }
-
     /**
      * @dataProvider factoryProvider
      *
@@ -47,7 +39,7 @@ class DbGet_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_factory($driverName, $expErrorMsg)
     {
-        $dbConfig = Helper::dbGetConfig();
+        $dbConfig = getUnitTestDbConfig('HELPER1');
         $dbConfig['driver'] = $driverName;
 
         $mysql = null;
@@ -55,7 +47,7 @@ class DbGet_Test extends \PHPUnit_Framework_TestCase
         try {
             $mysql = DbGet::factory($dbConfig);
             $gotErrorMsg = '';
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $gotErrorMsg = $e->getMessage();
         }
 
@@ -72,7 +64,7 @@ class DbGet_Test extends \PHPUnit_Framework_TestCase
     {
         return [
             [DbConnector::DB_DRIVER_MYSQL, ''],
-            ['unknown', 'unknown database driver name: unknown'],
+            ['unknown', 'Unknown database driver name: unknown'],
         ];
     }
 
@@ -81,9 +73,20 @@ class DbGet_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_factory_sameInstance()
     {
-        $db1 = DbGet::factory(Helper::dbGetConfig());
-        $db2 = DbGet::factory(Helper::dbGetConfig());
+        $db1 = DbGet::factory(getUnitTestDbConfig('HELPER1'));
+        $db2 = DbGet::factory(getUnitTestDbConfig('HELPER1'));
 
         $this->assertSame($db1, $db2);
+    }
+
+    /**
+     * @covers ::factory
+     */
+    public function test_factory_notSameInstance()
+    {
+        $db1 = DbGet::factory(getUnitTestDbConfig('HELPER1'));
+        $db2 = DbGet::factory(getUnitTestDbConfig('HELPER2'));
+
+        $this->assertNotSame($db1, $db2);
     }
 }

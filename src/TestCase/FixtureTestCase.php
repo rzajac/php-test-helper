@@ -30,4 +30,13 @@ use Kicaj\Tools\Exception;
  */
 abstract class FixtureTestCase extends TestCase
 {
+    /**
+     * Returns fixtures root directory path.
+     *
+     * @return string
+     */
+    public static function fixtureRootDirPath()
+    {
+        return $GLOBALS['TEST_FIXTURE_DIRECTORY'];
+    }
 }

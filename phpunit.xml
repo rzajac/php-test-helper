@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit colors="true" bootstrap="test/bootstrap.php">
     <php>
-        <var name="TEST_DB_DEFAULT_HOST" value="127.0.0.1"/>
-        <var name="TEST_DB_DEFAULT_USERNAME" value="testUser"/>
-        <var name="TEST_DB_DEFAULT_PASSWORD" value="testUserPass"/>
-        <var name="TEST_DB_DEFAULT_DATABASE" value="test"/>
-        <var name="TEST_DB_DEFAULT_PORT" value="3306"/>
-        <var name="TEST_DB_DEFAULT_TIMEZONE" value="UTC"/>
-        <var name="TEST_DB_DEFAULT_DRIVER" value="mysql"/>
+        <var name="TEST_DB_HELPER1_HOST" value="127.0.0.1"/>
+        <var name="TEST_DB_HELPER1_USERNAME" value="testUser"/>
+        <var name="TEST_DB_HELPER1_PASSWORD" value="testUserPass"/>
+        <var name="TEST_DB_HELPER1_DATABASE" value="testHelper1"/>
+        <var name="TEST_DB_HELPER1_PORT" value="3306"/>
+        <var name="TEST_DB_HELPER1_TIMEZONE" value="UTC"/>
+        <var name="TEST_DB_HELPER1_DRIVER" value="mysql"/>
+
+        <var name="TEST_DB_HELPER2_HOST" value="127.0.0.1"/>
+        <var name="TEST_DB_HELPER2_USERNAME" value="testUser"/>
+        <var name="TEST_DB_HELPER2_PASSWORD" value="testUserPass"/>
+        <var name="TEST_DB_HELPER2_DATABASE" value="testHelper2"/>
+        <var name="TEST_DB_HELPER2_PORT" value="3306"/>
+        <var name="TEST_DB_HELPER2_TIMEZONE" value="UTC"/>
+        <var name="TEST_DB_HELPER2_DRIVER" value="mysql"/>
 
         <var name="TEST_FIXTURE_DIRECTORY" value="test/fixtures"/>
     </php>

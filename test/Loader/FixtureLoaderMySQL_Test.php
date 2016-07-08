@@ -17,9 +17,11 @@
  */
 namespace Kicaj\Test\TestHelperTest\Loader;
 
+use Kicaj\Test\Helper\Database\DbGet;
 use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\Loader\FixtureLoader;
-use Kicaj\Test\Helper\TestCase\FixtureTestCase;
+use Kicaj\Test\TestHelperTest\MySQLHelper;
+use Kicaj\Tools\Helper\Str;
 use org\bovigo\vfs\vfsStream;
 
 /**
@@ -27,9 +29,9 @@ use org\bovigo\vfs\vfsStream;
  *
  * @coversDefaultClass \Kicaj\Test\Helper\Loader\FixtureLoader
  *
- * @author             Rafal Zajac <rzajac@gmail.com>
+ * @author Rafal Zajac <rzajac@gmail.com>
  */
-class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
+class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
 {
     /**
      * Fixture loader.
@@ -39,11 +41,20 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     protected $fixtureLoader;
 
     /**
+     * Database driver.
+     *
+     * @var DbItf
+     */
+    protected $dbDriver;
+
+    /**
      * @throws \Exception
      */
     public function setUp()
     {
-        $this->fixtureLoader = new FixtureLoader(FixtureTestCase::fixtureRootDirPath());
+        MySQLHelper::resetMySQLDatabases();
+        $this->dbDriver = DbGet::factory(getUnitTestDbConfig('HELPER1'));
+        $this->fixtureLoader = new FixtureLoader(FIXTURE_PATH, $this->dbDriver);
     }
 
     /**
@@ -51,7 +62,10 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
      */
     public function test___construct()
     {
-        $this->assertNotNull($this->fixtureLoader);
+        $db = DbGet::factory(getUnitTestDbConfig('HELPER1'));
+        $fixtureLoader = new FixtureLoader(FIXTURE_PATH, $db);
+
+        $this->assertNotNull($fixtureLoader);
     }
 
     /**
@@ -131,14 +145,9 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
         return [
             ['test1.json', ['key1' => 'val1']],
             ['test1.sql', ['SELECT * FROM test1;', 'SELECT * FROM test2;']],
-            ['multi_line.sql',
-             [
-                 "INSERT INTO `test2`\n  (`id`, `col2`) VALUES (NULL, '200');",
-                 "INSERT INTO `test2`\n  (`id`, `col2`)\n  VALUES\n  (NULL, '202');"
-             ]
-            ],
+            ['multi_line.sql', ["INSERT INTO `test2`\n  (`id`, `col2`) VALUES (NULL, '200');", "INSERT INTO `test2`\n  (`id`, `col2`)\n  VALUES\n  (NULL, '202');"]],
             ['text.txt', "Some text file.\nWith many lines.\n"],
-            ['arr.php', ['test' => 1]],
+            ['arr.php', ['test' => 1] ],
         ];
     }
 
@@ -155,14 +164,14 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     {
         try {
             $this->fixtureLoader->loadFixtureData($fixtureName);
-            $thrown     = false;
+            $thrown = false;
             $gotMessage = '';
         } catch (\Exception $e) {
-            $thrown     = true;
+            $thrown = true;
             $gotMessage = $e->getMessage();
 
-            // Make path relative to FIXTURE_PATH.
-            $gotMessage = str_replace(FIXTURE_PATH . DIRECTORY_SEPARATOR, '', $gotMessage);
+            // Make path relative to FIXTURE_PATH
+            $gotMessage = str_replace(FIXTURE_PATH.DIRECTORY_SEPARATOR, '', $gotMessage);
         }
 
         $this->assertTrue($thrown);
@@ -172,8 +181,99 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     public function loadFixtureFileErrProvider()
     {
         return [
-            ['notExisting.sql', 'Fixture test/fixtures/notExisting.sql does not exist.'],
-            ['test1bad.json', 'JSON decoding error'],
+            ['notExisting.sql', 'Fixture notExisting.sql does not exist.'],
+        ];
+    }
+
+    /**
+     * @covers ::loadDbFixture
+     */
+    public function test_loadFixture()
+    {
+        $this->fixtureLoader->loadDbFixture('test2.sql');
+
+        $this->assertSame(4, $this->dbDriver->dbCountTableRows('test2'));
+
+        $gotData = $this->dbDriver->dbGetTableData('test2');
+        $expData = [
+            ['id' => '1', 'col2' => '2'],
+            ['id' => '2', 'col2' => '22'],
+            ['id' => '3', 'col2' => '200'],
+            ['id' => '4', 'col2' => '202'],
+        ];
+
+        $this->assertSame($expData, $gotData);
+    }
+
+    /**
+     * @covers ::loadDbFixtures
+     */
+    public function test_loadFixtures()
+    {
+        $this->fixtureLoader->loadDbFixtures(['test2.sql', 'test5.sql']);
+
+        $this->assertSame(5, $this->dbDriver->dbCountTableRows('test2'));
+
+        $gotData = $this->dbDriver->dbGetTableData('test2');
+        $expData = [
+            ['id' => '1', 'col2' => '2'],
+            ['id' => '2', 'col2' => '22'],
+            ['id' => '3', 'col2' => '200'],
+            ['id' => '4', 'col2' => '202'],
+            ['id' => '5', 'col2' => '500'],
+        ];
+
+        $this->assertSame($expData, $gotData);
+    }
+
+    /**
+     * @covers ::loadDbFixture
+     *
+     * @expectedException \Exception
+     * @expectedExceptionMessageRegExp /.*Access denied for user.+/
+     */
+    public function test_loadFixtureDbConnectionError()
+    {
+        $dbConfig = getUnitTestDbConfig('HELPER1');
+        $dbConfig['password'] = 'wrongOne';
+
+        $db = DbGet::factory($dbConfig);
+        $fixtureLoader = new FixtureLoader(FIXTURE_PATH, $db);
+
+        $fixtureLoader->loadDbFixture('test2.sql');
+    }
+
+    /**
+     * @dataProvider loadFixtureErrProvider
+     *
+     * @covers ::loadDbFixture
+     * @covers ::loadSql
+     *
+     * @param string $fixtureName
+     * @param string $expMsg
+     */
+    public function test_loadFixtureErr($fixtureName, $expMsg)
+    {
+        try {
+            $this->fixtureLoader->loadDbFixture($fixtureName);
+            $thrown = false;
+            $gotMessage = '';
+        } catch (\Exception $e) {
+            $thrown = true;
+            $gotMessage = $e->getMessage();
+
+            // Make path relative to FIXTURE_PATH
+            $gotMessage = str_replace(FIXTURE_PATH.DIRECTORY_SEPARATOR, '', $gotMessage);
+        }
+
+        $this->assertTrue($thrown);
+        $this->assertTrue(Str::startsWith($gotMessage, $expMsg));
+    }
+
+    public function loadFixtureErrProvider()
+    {
+        return [
+            ['bad.sql', 'You have an error in your SQL syntax'],
         ];
     }
 
@@ -188,7 +288,8 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
         $vFsRoot = vfsStream::setup();
         vfsStream::newFile('fixture.sql', 0000)->at($vFsRoot);
 
-        $fixtureLoader = new FixtureLoader($vFsRoot->url());
-        $fixtureLoader->getFixtureData('fixture.sql');
+        $db = DbGet::factory(getUnitTestDbConfig('HELPER1'));
+        $fixtureLoader = new FixtureLoader($vFsRoot->url(), $db);
+        $fixtureLoader->loadDbFixture('fixture.sql');
     }
 }

@@ -19,7 +19,6 @@ namespace Kicaj\Test\TestHelperTest\TestCase;
 
 use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\TestCase\DbTestCase;
-use Kicaj\Test\TestHelperTest\Helper;
 
 /**
  * Tests for DbTextCase class.
@@ -31,41 +30,29 @@ use Kicaj\Test\TestHelperTest\Helper;
 class DbTestCase_Test extends DbTestCase
 {
     /**
-     * Database helper.
-     *
-     * @var Helper
-     */
-    protected $helper;
-
-    public static function setUpBeforeClass()
-    {
-        Helper::make()->dbDropAllTables();
-        parent::setUpBeforeClass();
-    }
-
-    public function setUp()
-    {
-        parent::setUp();
-
-        $this->helper = Helper::make()->dbResetTestDbatabase();
-    }
-
-    /**
      * @covers ::dbGetConfig
      */
     public function test_dbGetConfig()
     {
-        $dbConfig = self::dbGetConfig('DEFAULT');
+        $dbConfig = self::dbGetConfig('HELPER1');
 
         $this->assertSame(9, count($dbConfig));
-        $this->assertArrayHasKey('driver', $dbConfig);
-        $this->assertArrayHasKey('host', $dbConfig);
-        $this->assertArrayHasKey('username', $dbConfig);
-        $this->assertArrayHasKey('password', $dbConfig);
-        $this->assertArrayHasKey('database', $dbConfig);
-        $this->assertArrayHasKey('port', $dbConfig);
-        $this->assertArrayHasKey('connect', $dbConfig);
-        $this->assertArrayHasKey('timezone', $dbConfig);
-        $this->assertArrayHasKey('debug', $dbConfig);
+        $this->assertArrayHasKey(DbItf::DB_CFG_DRIVER, $dbConfig);
+        $this->assertArrayHasKey(DbItf::DB_CFG_HOST, $dbConfig);
+        $this->assertArrayHasKey(DbItf::DB_CFG_USERNAME, $dbConfig);
+        $this->assertArrayHasKey(DbItf::DB_CFG_PASSWORD, $dbConfig);
+        $this->assertArrayHasKey(DbItf::DB_CFG_DATABASE, $dbConfig);
+        $this->assertArrayHasKey(DbItf::DB_CFG_PORT, $dbConfig);
+        $this->assertArrayHasKey(DbItf::DB_CFG_CONNECT, $dbConfig);
+        $this->assertArrayHasKey(DbItf::DB_CFG_TIMEZONE, $dbConfig);
+        $this->assertArrayHasKey(DbItf::DB_CFG_DEBUG, $dbConfig);
+
+        $this->assertSame('127.0.0.1', $dbConfig[DbItf::DB_CFG_HOST]);
+        $this->assertSame('testUser', $dbConfig[DbItf::DB_CFG_USERNAME]);
+        $this->assertSame('testUserPass', $dbConfig[DbItf::DB_CFG_PASSWORD]);
+        $this->assertSame('testHelper1', $dbConfig[DbItf::DB_CFG_DATABASE]);
+        $this->assertSame('3306', $dbConfig[DbItf::DB_CFG_PORT]);
+        $this->assertSame('UTC', $dbConfig[DbItf::DB_CFG_TIMEZONE]);
+        $this->assertSame('mysql', $dbConfig[DbItf::DB_CFG_DRIVER]);
     }
 }

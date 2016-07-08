@@ -16,6 +16,7 @@
  */
 namespace Kicaj\Test\Helper\Database;
 
+use Kicaj\Tools\Db\DatabaseException;
 use Kicaj\Tools\Db\DbConnector;
 
 /**
@@ -45,6 +46,8 @@ interface DbItf extends DbConnector
      *
      * @param string|string[] $tableNames The table name or array of table names to drop.
      *
+     * @throws DatabaseException
+     *
      * @return bool Return true on success, false if one or more operations failed.
      */
     public function dbDropTables($tableNames);
@@ -53,6 +56,8 @@ interface DbItf extends DbConnector
      * Truncate table or list of tables.
      *
      * @param string|string[] $tableNames The table name or array of table names to truncate.
+     *
+     * @throws DatabaseException
      *
      * @return bool Return true on success, false if one or more operations failed.
      */
@@ -63,12 +68,27 @@ interface DbItf extends DbConnector
      *
      * @param string $tableName The database table name.
      *
-     * @return int Return -1 on error.
+     * @throws DatabaseException
+     *
+     * @return int
      */
     public function dbCountTableRows($tableName);
 
     /**
+     * Get database table data.
+     *
+     * @param string $tableName The database table name.
+     *
+     * @throws DatabaseException
+     *
+     * @return array
+     */
+    public function dbGetTableData($tableName);
+
+    /**
      * Return list of database tables.
+     *
+     * @throws DatabaseException
      *
      * @return string[]
      */
@@ -81,7 +101,7 @@ interface DbItf extends DbConnector
      *
      * @param mixed $query
      *
-     * @throws \Exception
+     * @throws DatabaseException
      *
      * @return mixed
      */
@@ -93,7 +113,7 @@ interface DbItf extends DbConnector
      * @param string $fixtureFormat The one of FIXTURE_FORMAT_* constants.
      * @param mixed  $fixture       The fixture to load to database.
      *
-     * @throws \Exception
+     * @throws DatabaseException
      */
     public function dbLoadFixture($fixtureFormat, $fixture);
 }

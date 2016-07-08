@@ -18,14 +18,14 @@
 namespace Kicaj\Test\TestHelperTest\Database\Driver;
 
 use Kicaj\Test\Helper\Database\Driver\MySQL;
-use Kicaj\Test\TestHelperTest\Helper;
+use Kicaj\Test\TestHelperTest\MySQLHelper;
 
 /**
  * DbGet tests.
  *
- * @coversDefaultClass Kicaj\Test\Helper\Database\Driver\MySQL
+ * @coversDefaultClass \Kicaj\Test\Helper\Database\Driver\MySQL
  *
- * @author Rafal Zajac <rzajac@gmail.com>
+ * @author             Rafal Zajac <rzajac@gmail.com>
  */
 class MySQL_Test extends \PHPUnit_Framework_TestCase
 {
@@ -34,29 +34,27 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      *
      * @var MySQL
      */
-    protected $testedDrv;
+    protected $driver;
 
     /**
-     * Independent database helper.
+     * Database driver.
      *
-     * @var Helper
+     * @var \mysqli
      */
-    protected $helper;
-
-    public static function setUpBeforeClass()
-    {
-        Helper::make()->dbDropAllTables();
-        parent::setUpBeforeClass();
-    }
+    protected $mysql;
 
     public function setUp()
     {
-        parent::setUp();
+        MySQLHelper::resetMySQLDatabases();
 
-        $this->helper = Helper::make()->dbResetTestDbatabase();
+        // Connect to default database.
+        $this->driver = new MySQL();
+        $this->driver->dbSetup(getUnitTestDbConfig('HELPER1'))->dbConnect();
+    }
 
-        $this->testedDrv = new MySQL();
-        $this->testedDrv->dbSetup(Helper::dbGetConfig())->dbConnect();
+    protected function tearDown()
+    {
+        $this->driver->dbClose();
     }
 
     /**
@@ -64,17 +62,15 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      *
      * @covers ::dbSetup
      * @covers ::dbConnect
-     * @covers ::isConnected
      *
-     * @param string $host
-     * @param string $username
-     * @param string $password
-     * @param string $database
-     * @param string $port
-     * @param bool   $connect
-     * @param string $expMsg
+     * @param string $host     The database host.
+     * @param string $username The database username.
+     * @param string $password The database password.
+     * @param string $database The database name.
+     * @param string $port     The database port.
+     * @param string $expMsg   The expected error message.
      */
-    public function test_connection($host, $username, $password, $database, $port, $connect, $expMsg)
+    public function test_connection($host, $username, $password, $database, $port, $expMsg)
     {
         // Database config
         $dbConfig = [
@@ -86,29 +82,65 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
             'timezone' => 'UTC'
         ];
 
-        $myMySQL = new MySQL();
-        $connected = $myMySQL->dbSetup($dbConfig)->dbConnect();
+        $driver = new MySQL();
 
-        $this->assertSame($connect, $connected);
+        try {
+            $thrown = false;
+            $db = $driver->dbSetup($dbConfig);
 
-        $error = $gotMsg = $myMySQL->getError();
+            $this->assertSame($driver, $db);
+            $this->assertFalse($driver->isConnected());
+            $db = $driver->dbConnect();
+            $this->assertSame($driver, $db);
+            $this->assertTrue($driver->isConnected());
 
-        if ($connect) {
-            $this->assertNull($error);
-            $this->assertTrue($myMySQL->isConnected());
-        } else {
-            $gotMsg = $error->getMessage();
-            $this->assertContains($expMsg, $gotMsg);
-            $this->assertFalse($myMySQL->isConnected());
+            $driver->dbGetTableNames(); // Call method that is actually doing something with database.
+        } catch (\Exception $e) {
+            $thrown = true;
+
+            if ($expMsg === '') {
+                $this->fail('Did not expect to see error: ' . $e->getMessage());
+            }
+            $this->assertRegExp($expMsg, $e->getMessage());
+        } finally {
+            if ($expMsg !== '' && $thrown === false) {
+                $this->fail('Expected to see error: ' . $expMsg);
+            }
         }
     }
 
     public function connectionProvider()
     {
         return [
-            [$GLOBALS['TEST_DB_HOST'], $GLOBALS['TEST_DB_USERNAME'], $GLOBALS['TEST_DB_PASSWORD'], $GLOBALS['TEST_DB_DATABASE'], 3306, true, ''],
-            [$GLOBALS['TEST_DB_HOST'], $GLOBALS['TEST_DB_USERNAME'], $GLOBALS['TEST_DB_PASSWORD'], 'test2', 3306, false, "'test2'"],
+            [
+                $GLOBALS['TEST_DB_HELPER1_HOST'],
+                $GLOBALS['TEST_DB_HELPER1_USERNAME'],
+                $GLOBALS['TEST_DB_HELPER1_PASSWORD'],
+                $GLOBALS['TEST_DB_HELPER1_DATABASE'],
+                3306,
+                ''
+            ],
+
+            [
+                $GLOBALS['TEST_DB_HELPER1_HOST'],
+                $GLOBALS['TEST_DB_HELPER1_USERNAME'],
+                $GLOBALS['TEST_DB_HELPER1_PASSWORD'],
+                'not_existing',
+                3306,
+                "/Access denied for user .* to database 'not_existing'/"
+            ],
         ];
+    }
+
+    /**
+     * @covers ::dbConnect
+     */
+    public function test_dbConnect_return_if_connected()
+    {
+        $driver = $this->driver->dbConnect();
+
+        $this->assertSame($this->driver, $driver);
+        $this->assertTrue($this->driver->isConnected());
     }
 
     /**
@@ -116,11 +148,20 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_useDatabase()
     {
-        $drv = $this->testedDrv->useDatabase('__not_existing__');
+        $driver = $this->driver->useDatabase('testHelper1');
 
-        $this->assertSame($this->testedDrv, $drv);
-        $this->assertInstanceOf('\Exception', $drv->getError());
-        $this->assertSame($drv->getError()->getMessage(), 'Could not change the database to: __not_existing__');
+        $this->assertSame($this->driver, $driver);
+    }
+
+    /**
+     * @covers ::useDatabase
+     *
+     * @expectedException \Kicaj\Tools\Db\DatabaseException
+     * @expectedExceptionMessage __not_existing__
+     */
+    public function test_useDatabase_error()
+    {
+        $this->driver->useDatabase('__not_existing__');
     }
 
     /**
@@ -128,7 +169,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_getDbTableNames()
     {
-        $tableNames = $this->testedDrv->dbGetTableNames();
+        $tableNames = $this->driver->dbGetTableNames();
         $this->assertSame(['test1', 'test2', 'test3'], $tableNames);
     }
 
@@ -137,16 +178,22 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_countTableRows()
     {
-        $this->helper->dbLoadTestData();
-
-        $t1Rows = $this->testedDrv->dbCountTableRows('test1');
+        $t1Rows = $this->driver->dbCountTableRows('test1');
         $this->assertSame(1, $t1Rows);
 
-        $t2Rows = $this->testedDrv->dbCountTableRows('test2');
+        $t2Rows = $this->driver->dbCountTableRows('test2');
         $this->assertSame(2, $t2Rows);
+    }
 
-        $notExisting = $this->testedDrv->dbCountTableRows('notExisting');
-        $this->assertSame(-1, $notExisting);
+    /**
+     * @covers ::dbCountTableRows
+     *
+     * @expectedException \Kicaj\Tools\Db\DatabaseException
+     * @expectedExceptionMessageRegExp /Table .* doesn't exist/
+     */
+    public function test_countTableRows_not_existing_table()
+    {
+        $this->driver->dbCountTableRows('notExisting');
     }
 
     /**
@@ -156,25 +203,30 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_truncateTables()
     {
-        $this->helper->dbLoadTestData();
+        $this->driver->dbTruncateTables([]);
 
-        $ret = $this->testedDrv->dbTruncateTables([]);
-        $this->assertTrue($ret);
-
-        $t1Rows = $this->testedDrv->dbCountTableRows('test1');
+        // No changes in database.
+        $t1Rows = $this->driver->dbCountTableRows('test1');
         $this->assertSame(1, $t1Rows);
 
-        $t2Rows = $this->testedDrv->dbCountTableRows('test2');
+        $t2Rows = $this->driver->dbCountTableRows('test2');
         $this->assertSame(2, $t2Rows);
 
-        $ret = $this->testedDrv->dbTruncateTables(['test1', 'test2']);
-        $this->assertTrue($ret);
+        $t3Rows = $this->driver->dbCountTableRows('test3');
+        $this->assertSame(0, $t3Rows);
 
-        $t1Rows = $this->testedDrv->dbCountTableRows('test1');
-        $this->assertSame(0, $t1Rows);
+        // Truncate tables.
+        $this->driver->dbTruncateTables(['test2', 'test3']);
 
-        $t2Rows = $this->testedDrv->dbCountTableRows('test2');
+        // Test changes visible.
+        $t1Rows = $this->driver->dbCountTableRows('test1');
+        $this->assertSame(1, $t1Rows);
+
+        $t2Rows = $this->driver->dbCountTableRows('test2');
         $this->assertSame(0, $t2Rows);
+
+        $t3Rows = $this->driver->dbCountTableRows('test3');
+        $this->assertSame(0, $t3Rows);
     }
 
     /**
@@ -182,11 +234,11 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_dropTables()
     {
-        $this->assertSame(3, $this->helper->dbGetTableCount());
+        $this->assertSame(3, count($this->driver->dbGetTableNames()));
 
-        $this->testedDrv->dbDropTables(['test1', 'test2']);
+        $this->driver->dbDropTables(['test1', 'test3']);
 
-        $this->assertSame(1, $this->helper->dbGetTableCount());
+        $this->assertSame(1, count($this->driver->dbGetTableNames()));
     }
 
     /**
@@ -202,7 +254,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
         $resp = null;
 
         try {
-            $resp = $this->testedDrv->dbRunQuery($sql);
+            $resp   = $this->driver->dbRunQuery($sql);
             $thrown = false;
             $gotMsg = '';
         } catch (\Exception $e) {
@@ -236,12 +288,10 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_dbClose()
     {
-        $this->assertTrue($this->testedDrv->isConnected());
+        $this->assertTrue($this->driver->isConnected());
 
-        // TODO: make sure the new connection is not being established.
-        $this->assertTrue($this->testedDrv->dbConnect());
+        $this->driver->dbClose();
 
-        $this->assertTrue($this->testedDrv->dbClose());
-        $this->assertFalse($this->testedDrv->isConnected());
+        $this->assertFalse($this->driver->isConnected());
     }
 }

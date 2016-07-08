@@ -19,6 +19,7 @@ namespace Kicaj\Test\Helper\Loader;
 
 use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Tools\Api\JSON;
+use Kicaj\Tools\Db\DatabaseException;
 use SplFileInfo;
 
 /**
@@ -48,7 +49,7 @@ class FixtureLoader
      * @param string $fixturesRootPath The path to fixture files root folder.
      * @param DbItf  $database         The database to load fixtures to.
      */
-    public function __construct($fixturesRootPath, DbItf $database)
+    public function __construct($fixturesRootPath, DbItf $database = null)
     {
         $this->fixturesRootPath = $fixturesRootPath;
         $this->db               = $database;
@@ -59,17 +60,14 @@ class FixtureLoader
      *
      * @param string $fixturePath The fixture path relative to fixturesRootPath.
      *
-     * @throws \Exception
-     * @throws null Somehow PhpStorm needs it ???
+     * @throws DatabaseException
      */
     public function loadDbFixture($fixturePath)
     {
         list($fixtureFormat, $fixtureData) = $this->loadFixtureData($fixturePath);
 
         // Postpone database connection till we really need it.
-        if (!$this->db->dbConnect()) {
-            throw $this->db->getError();
-        }
+        $this->db->dbConnect();
 
         $this->db->dbLoadFixture($fixtureFormat, $fixtureData);
     }
@@ -79,7 +77,7 @@ class FixtureLoader
      *
      * @param array $fixtureNames The array of fixture paths to load to database.
      *
-     * @throws \Exception
+     * @throws DatabaseException
      */
     public function loadDbFixtures(array $fixtureNames)
     {
