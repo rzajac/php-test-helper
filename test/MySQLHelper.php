@@ -89,8 +89,11 @@ class MySQLHelper
 
         $tableNames = [];
         while ($row = $resp->fetch_assoc()) {
-            // TODO: check for case sensitive table names.
-            $tableNames[] = $row['Tables_in_' . strtolower($dbName)];
+            if (isset($row['Tables_in_'.$dbName])) {
+                $tableNames[] = $row['Tables_in_'.$dbName];
+            } else {
+                $tableNames[] = $row['Tables_in_'.strtolower($dbName)];
+            }
         }
 
         return $tableNames;
