@@ -81,7 +81,7 @@ class MySQL implements DbItf
 
         $timezone = $this->config[DbConnector::DB_CFG_TIMEZONE];
         if ($timezone) {
-            $sql     = sprintf($this->sqlSetTimezone, $timezone);
+            $sql = sprintf($this->sqlSetTimezone, $timezone);
             if (!$this->mysql->query($sql)) {
                 $msg = sprintf('Setting timezone (%s) for MySQL driver failed. Please load timezone information using mysql_tzinfo_to_sql.',
                     $timezone);
@@ -174,7 +174,7 @@ class MySQL implements DbItf
 
     public function dbGetTableData($tableName)
     {
-        $resp = $this->mysql->query('SELECT * FROM '.$tableName);
+        $resp = $this->mysql->query('SELECT * FROM ' . $tableName);
         if (!$resp) {
             throw new DatabaseException($this->mysql->error);
         }

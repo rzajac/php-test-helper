@@ -30,7 +30,7 @@ class MySQLHelper
     public static function resetMySQLDatabases()
     {
         $dbConfig1 = getUnitTestDbConfig('HELPER1');
-        $mysql1 = new \mysqli(
+        $mysql1    = new \mysqli(
             $dbConfig1[DbConnector::DB_CFG_HOST],
             $dbConfig1[DbConnector::DB_CFG_USERNAME],
             $dbConfig1[DbConnector::DB_CFG_PASSWORD],
@@ -38,7 +38,7 @@ class MySQLHelper
             $dbConfig1[DbConnector::DB_CFG_PORT]);
 
         $dbConfig2 = getUnitTestDbConfig('HELPER2');
-        $mysql2 = new \mysqli(
+        $mysql2    = new \mysqli(
             $dbConfig2[DbConnector::DB_CFG_HOST],
             $dbConfig2[DbConnector::DB_CFG_USERNAME],
             $dbConfig2[DbConnector::DB_CFG_PASSWORD],

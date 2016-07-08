@@ -39,15 +39,15 @@ abstract class DbTestCase extends FixtureTestCase
      */
     public static function dbGetConfig($testDbName, $connect = true, $debug = true)
     {
-        $timezone = isset($GLOBALS['TEST_DB_'.$testDbName.'_TIMEZONE']) ? $GLOBALS['TEST_DB_'.$testDbName.'_TIMEZONE'] : '';
+        $timezone = isset($GLOBALS['TEST_DB_' . $testDbName . '_TIMEZONE']) ? $GLOBALS['TEST_DB_' . $testDbName . '_TIMEZONE'] : '';
 
         return DbConnect::getCfg(
-            $GLOBALS['TEST_DB_'.$testDbName.'_DRIVER'],
-            $GLOBALS['TEST_DB_'.$testDbName.'_HOST'],
-            $GLOBALS['TEST_DB_'.$testDbName.'_USERNAME'],
-            $GLOBALS['TEST_DB_'.$testDbName.'_PASSWORD'],
-            $GLOBALS['TEST_DB_'.$testDbName.'_DATABASE'],
-            $GLOBALS['TEST_DB_'.$testDbName.'_PORT'],
+            $GLOBALS['TEST_DB_' . $testDbName . '_DRIVER'],
+            $GLOBALS['TEST_DB_' . $testDbName . '_HOST'],
+            $GLOBALS['TEST_DB_' . $testDbName . '_USERNAME'],
+            $GLOBALS['TEST_DB_' . $testDbName . '_PASSWORD'],
+            $GLOBALS['TEST_DB_' . $testDbName . '_DATABASE'],
+            $GLOBALS['TEST_DB_' . $testDbName . '_PORT'],
             $connect,
             $timezone,
             $debug

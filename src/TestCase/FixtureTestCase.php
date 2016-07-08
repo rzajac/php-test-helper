@@ -17,10 +17,6 @@
  */
 namespace Kicaj\Test\Helper\TestCase;
 
-use Kicaj\Test\Helper\Database\DbItf;
-use Kicaj\Test\Helper\Loader\FixtureLoader;
-use Kicaj\Tools\Exception;
-
 /**
  * Test case with fixtures.
  *

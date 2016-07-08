@@ -56,7 +56,7 @@ final class DbGet
                 break;
 
             default:
-                throw new \Exception('Unknown database driver name: '.DbConnect::getDriver($dbConfig));
+                throw new \Exception('Unknown database driver name: ' . DbConnect::getDriver($dbConfig));
         }
 
         $instances[$key]->dbSetup($dbConfig);

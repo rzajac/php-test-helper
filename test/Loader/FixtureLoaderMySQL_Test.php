@@ -53,7 +53,7 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         MySQLHelper::resetMySQLDatabases();
-        $this->dbDriver = DbGet::factory(getUnitTestDbConfig('HELPER1'));
+        $this->dbDriver      = DbGet::factory(getUnitTestDbConfig('HELPER1'));
         $this->fixtureLoader = new FixtureLoader(FIXTURE_PATH, $this->dbDriver);
     }
 
@@ -62,7 +62,7 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test___construct()
     {
-        $db = DbGet::factory(getUnitTestDbConfig('HELPER1'));
+        $db            = DbGet::factory(getUnitTestDbConfig('HELPER1'));
         $fixtureLoader = new FixtureLoader(FIXTURE_PATH, $db);
 
         $this->assertNotNull($fixtureLoader);
@@ -145,9 +145,14 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
         return [
             ['test1.json', ['key1' => 'val1']],
             ['test1.sql', ['SELECT * FROM test1;', 'SELECT * FROM test2;']],
-            ['multi_line.sql', ["INSERT INTO `test2`\n  (`id`, `col2`) VALUES (NULL, '200');", "INSERT INTO `test2`\n  (`id`, `col2`)\n  VALUES\n  (NULL, '202');"]],
+            ['multi_line.sql',
+             [
+                 "INSERT INTO `test2`\n  (`id`, `col2`) VALUES (NULL, '200');",
+                 "INSERT INTO `test2`\n  (`id`, `col2`)\n  VALUES\n  (NULL, '202');"
+             ]
+            ],
             ['text.txt', "Some text file.\nWith many lines.\n"],
-            ['arr.php', ['test' => 1] ],
+            ['arr.php', ['test' => 1]],
         ];
     }
 
@@ -164,14 +169,14 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
     {
         try {
             $this->fixtureLoader->loadFixtureData($fixtureName);
-            $thrown = false;
+            $thrown     = false;
             $gotMessage = '';
         } catch (\Exception $e) {
-            $thrown = true;
+            $thrown     = true;
             $gotMessage = $e->getMessage();
 
             // Make path relative to FIXTURE_PATH
-            $gotMessage = str_replace(FIXTURE_PATH.DIRECTORY_SEPARATOR, '', $gotMessage);
+            $gotMessage = str_replace(FIXTURE_PATH . DIRECTORY_SEPARATOR, '', $gotMessage);
         }
 
         $this->assertTrue($thrown);
@@ -234,10 +239,10 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_loadFixtureDbConnectionError()
     {
-        $dbConfig = getUnitTestDbConfig('HELPER1');
+        $dbConfig             = getUnitTestDbConfig('HELPER1');
         $dbConfig['password'] = 'wrongOne';
 
-        $db = DbGet::factory($dbConfig);
+        $db            = DbGet::factory($dbConfig);
         $fixtureLoader = new FixtureLoader(FIXTURE_PATH, $db);
 
         $fixtureLoader->loadDbFixture('test2.sql');
@@ -256,14 +261,14 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
     {
         try {
             $this->fixtureLoader->loadDbFixture($fixtureName);
-            $thrown = false;
+            $thrown     = false;
             $gotMessage = '';
         } catch (\Exception $e) {
-            $thrown = true;
+            $thrown     = true;
             $gotMessage = $e->getMessage();
 
             // Make path relative to FIXTURE_PATH
-            $gotMessage = str_replace(FIXTURE_PATH.DIRECTORY_SEPARATOR, '', $gotMessage);
+            $gotMessage = str_replace(FIXTURE_PATH . DIRECTORY_SEPARATOR, '', $gotMessage);
         }
 
         $this->assertTrue($thrown);
@@ -288,7 +293,7 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
         $vFsRoot = vfsStream::setup();
         vfsStream::newFile('fixture.sql', 0000)->at($vFsRoot);
 
-        $db = DbGet::factory(getUnitTestDbConfig('HELPER1'));
+        $db            = DbGet::factory(getUnitTestDbConfig('HELPER1'));
         $fixtureLoader = new FixtureLoader($vFsRoot->url(), $db);
         $fixtureLoader->loadDbFixture('fixture.sql');
     }

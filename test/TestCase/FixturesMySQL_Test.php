@@ -51,7 +51,7 @@ class FixturesMySQL_Test extends DbTestCase
     public function setUp()
     {
         MySQLHelper::resetMySQLDatabases();
-        $this->dbDriver = DbGet::factory(getUnitTestDbConfig('HELPER1'));
+        $this->dbDriver      = DbGet::factory(getUnitTestDbConfig('HELPER1'));
         $this->fixtureLoader = new FixtureLoader(self::fixtureRootDirPath(), $this->dbDriver);
 
         parent::setUp();

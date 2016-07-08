@@ -131,11 +131,12 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
         return [
             ['test1.json', ['key1' => 'val1']],
             ['test1.sql', ['SELECT * FROM test1;', 'SELECT * FROM test2;']],
-            ['multi_line.sql',
-             [
-                 "INSERT INTO `test2`\n  (`id`, `col2`) VALUES (NULL, '200');",
-                 "INSERT INTO `test2`\n  (`id`, `col2`)\n  VALUES\n  (NULL, '202');"
-             ]
+            [
+                'multi_line.sql',
+                [
+                    "INSERT INTO `test2`\n  (`id`, `col2`) VALUES (NULL, '200');",
+                    "INSERT INTO `test2`\n  (`id`, `col2`)\n  VALUES\n  (NULL, '202');"
+                ]
             ],
             ['text.txt', "Some text file.\nWith many lines.\n"],
             ['arr.php', ['test' => 1]],
@@ -168,7 +169,6 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
             ['arr.php', DbItf::FIXTURE_FORMAT_PHP, ['test' => 1]],
         ];
     }
-
 
     /**
      * @dataProvider loadFixtureFileErrProvider

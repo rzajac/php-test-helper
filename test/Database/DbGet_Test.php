@@ -39,13 +39,13 @@ class DbGet_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_factory($driverName, $expErrorMsg)
     {
-        $dbConfig = getUnitTestDbConfig('HELPER1');
+        $dbConfig           = getUnitTestDbConfig('HELPER1');
         $dbConfig['driver'] = $driverName;
 
         $mysql = null;
 
         try {
-            $mysql = DbGet::factory($dbConfig);
+            $mysql       = DbGet::factory($dbConfig);
             $gotErrorMsg = '';
         } catch (\Exception $e) {
             $gotErrorMsg = $e->getMessage();

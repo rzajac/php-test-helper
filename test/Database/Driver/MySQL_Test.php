@@ -89,7 +89,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
 
         try {
             $thrown = false;
-            $db = $driver->dbSetup($dbConfig);
+            $db     = $driver->dbSetup($dbConfig);
 
             $this->assertSame($driver, $db);
             $this->assertFalse($driver->isConnected());
@@ -143,8 +143,8 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_dbConnect_timezoneError()
     {
-        $driver = new MySQL();
-        $reflection = new ReflectionClass($driver);
+        $driver              = new MySQL();
+        $reflection          = new ReflectionClass($driver);
         $reflection_property = $reflection->getProperty('sqlSetTimezone');
         $reflection_property->setAccessible(true);
         $reflection_property->setValue($driver, 'BAD SQL IS ENOUGH');
@@ -326,7 +326,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
 
         $this->driver->dbLoadFixture(DbItf::FIXTURE_FORMAT_SQL, $fixture);
 
-        $got = $this->driver->dbGetTableData('test2');
+        $got      = $this->driver->dbGetTableData('test2');
         $expected = [
             ['id' => '1', 'col2' => '2'],
             ['id' => '2', 'col2' => '22'],
