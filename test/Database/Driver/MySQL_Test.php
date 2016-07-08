@@ -71,9 +71,10 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      * @param string $password The database password.
      * @param string $database The database name.
      * @param string $port     The database port.
+     * @param string $timezone The timezone to set for connection.
      * @param string $expMsg   The expected error message.
      */
-    public function test_connection($host, $username, $password, $database, $port, $expMsg)
+    public function test_connection($host, $username, $password, $database, $port, $timezone, $expMsg)
     {
         // Database config
         $dbConfig = [
@@ -82,7 +83,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
             'password' => $password,
             'database' => $database,
             'port' => $port,
-            'timezone' => 'UTC'
+            'timezone' => $timezone
         ];
 
         $driver = new MySQL();
@@ -121,7 +122,18 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
                 $GLOBALS['TEST_DB_HELPER1_PASSWORD'],
                 $GLOBALS['TEST_DB_HELPER1_DATABASE'],
                 3306,
+                'UTC',
                 ''
+            ],
+
+            [
+                $GLOBALS['TEST_DB_HELPER1_HOST'],
+                $GLOBALS['TEST_DB_HELPER1_USERNAME'],
+                $GLOBALS['TEST_DB_HELPER1_PASSWORD'],
+                $GLOBALS['TEST_DB_HELPER1_DATABASE'],
+                3306,
+                'NOT_EXISTING',
+                '/Setting timezone \(NOT_EXISTING\) for MySQL driver failed.*/'
             ],
 
             [
@@ -130,6 +142,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
                 $GLOBALS['TEST_DB_HELPER1_PASSWORD'],
                 'not_existing',
                 3306,
+                'UTC',
                 "/Access denied for user .* to database 'not_existing'/"
             ],
         ];
