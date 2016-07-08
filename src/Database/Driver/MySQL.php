@@ -49,6 +49,13 @@ class MySQL implements DbItf
      */
     protected $isConnected = false;
 
+    /**
+     * SQL for setting timezone.
+     *
+     * @var string
+     */
+    private $sqlSetTimezone = 'SET time_zone = "%s"';
+
     public function dbSetup(array $config)
     {
         $this->config = $config;
@@ -74,7 +81,7 @@ class MySQL implements DbItf
 
         $timezone = $this->config[DbConnector::DB_CFG_TIMEZONE];
         if ($timezone) {
-            $sql     = sprintf('SET time_zone = "%s"', $timezone);
+            $sql     = sprintf($this->sqlSetTimezone, $timezone);
             if (!$this->mysql->query($sql)) {
                 $msg = sprintf('Setting timezone (%s) for MySQL driver failed. Please load timezone information using mysql_tzinfo_to_sql.',
                     $timezone);
@@ -195,13 +202,13 @@ class MySQL implements DbItf
         return $resp;
     }
 
-    public function dbLoadFixture($fixtureFormat, $fixture)
+    public function dbLoadFixture($fixtureFormat, $fixtureData)
     {
         if ($fixtureFormat != DbItf::FIXTURE_FORMAT_SQL) {
             throw new DatabaseException('MySQL driver currently supports only SQL fixture format.');
         }
 
-        $this->dbRunQuery($fixture);
+        $this->dbRunQuery($fixtureData);
     }
 
     public function dbClose()

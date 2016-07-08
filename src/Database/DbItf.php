@@ -111,9 +111,9 @@ interface DbItf extends DbConnector
      * Load fixture to database.
      *
      * @param string $fixtureFormat The one of FIXTURE_FORMAT_* constants.
-     * @param mixed  $fixture       The fixture to load to database.
+     * @param mixed  $fixtureData   The fixture to load to database.
      *
      * @throws DatabaseException
      */
-    public function dbLoadFixture($fixtureFormat, $fixture);
+    public function dbLoadFixture($fixtureFormat, $fixtureData);
 }

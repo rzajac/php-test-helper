@@ -17,8 +17,10 @@
  */
 namespace Kicaj\Test\TestHelperTest\Database\Driver;
 
+use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\Database\Driver\MySQL;
 use Kicaj\Test\TestHelperTest\MySQLHelper;
+use ReflectionClass;
 
 /**
  * DbGet tests.
@@ -62,6 +64,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      *
      * @covers ::dbSetup
      * @covers ::dbConnect
+     * @covers ::isConnected
      *
      * @param string $host     The database host.
      * @param string $username The database username.
@@ -134,9 +137,28 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers ::dbConnect
+     *
+     * @expectedException \Kicaj\Tools\Db\DatabaseException
+     * @expectedExceptionMessage Setting timezone (UTC) for MySQL driver failed. Please load timezone information using mysql_tzinfo_to_sql.
+     */
+    public function test_dbConnect_timezoneError()
+    {
+        $driver = new MySQL();
+        $reflection = new ReflectionClass($driver);
+        $reflection_property = $reflection->getProperty('sqlSetTimezone');
+        $reflection_property->setAccessible(true);
+        $reflection_property->setValue($driver, 'BAD SQL IS ENOUGH');
+
+        $driver->dbSetup(getUnitTestDbConfig('HELPER1'))->dbConnect();
+    }
+
+    /**
+     * @covers ::dbConnect
+     * @covers ::isConnected
      */
     public function test_dbConnect_return_if_connected()
     {
+        $this->assertTrue($this->driver->isConnected());
         $driver = $this->driver->dbConnect();
 
         $this->assertSame($this->driver, $driver);
@@ -174,15 +196,17 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::dbCountTableRows
+     * @covers ::dbGetTableNames
+     *
+     * @expectedException \Kicaj\Tools\Db\DatabaseException
+     * @expectedExceptionMessageRegExp /Incorrect database name/
      */
-    public function test_countTableRows()
+    public function test_getDbTableNames_error()
     {
-        $t1Rows = $this->driver->dbCountTableRows('test1');
-        $this->assertSame(1, $t1Rows);
-
-        $t2Rows = $this->driver->dbCountTableRows('test2');
-        $this->assertSame(2, $t2Rows);
+        // Connect to default database.
+        $driver = new MySQL();
+        $driver->dbSetup(getUnitTestDbConfig('HELPER_NOT_THERE'))->dbConnect();
+        $driver->dbGetTableNames();
     }
 
     /**
@@ -197,36 +221,58 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ::dbCountTableRows
+     */
+    public function test_countTableRows()
+    {
+        $this->assertSame(1, $this->driver->dbCountTableRows('test1'));
+        $this->assertSame(2, $this->driver->dbCountTableRows('test2'));
+        $this->assertSame(0, $this->driver->dbCountTableRows('test3'));
+    }
+
+    /**
      * @covers ::dbTruncateTables
      *
      * @depends test_countTableRows
      */
-    public function test_truncateTables()
+    public function test_truncateTables_emptyArray()
     {
         $this->driver->dbTruncateTables([]);
 
-        // No changes in database.
-        $t1Rows = $this->driver->dbCountTableRows('test1');
-        $this->assertSame(1, $t1Rows);
+        // No changes.
+        $this->assertSame(1, $this->driver->dbCountTableRows('test1'));
+        $this->assertSame(2, $this->driver->dbCountTableRows('test2'));
+        $this->assertSame(0, $this->driver->dbCountTableRows('test3'));
+    }
 
-        $t2Rows = $this->driver->dbCountTableRows('test2');
-        $this->assertSame(2, $t2Rows);
-
-        $t3Rows = $this->driver->dbCountTableRows('test3');
-        $this->assertSame(0, $t3Rows);
-
-        // Truncate tables.
+    /**
+     * @covers ::dbTruncateTables
+     *
+     * @depends test_countTableRows
+     */
+    public function test_truncateTables_array()
+    {
         $this->driver->dbTruncateTables(['test2', 'test3']);
 
         // Test changes visible.
-        $t1Rows = $this->driver->dbCountTableRows('test1');
-        $this->assertSame(1, $t1Rows);
+        $this->assertSame(1, $this->driver->dbCountTableRows('test1'));
+        $this->assertSame(0, $this->driver->dbCountTableRows('test2'));
+        $this->assertSame(0, $this->driver->dbCountTableRows('test3'));
+    }
 
-        $t2Rows = $this->driver->dbCountTableRows('test2');
-        $this->assertSame(0, $t2Rows);
+    /**
+     * @covers ::dbTruncateTables
+     *
+     * @depends test_countTableRows
+     */
+    public function test_truncateTables_string()
+    {
+        $this->driver->dbTruncateTables('test1');
 
-        $t3Rows = $this->driver->dbCountTableRows('test3');
-        $this->assertSame(0, $t3Rows);
+        // Test changes visible.
+        $this->assertSame(0, $this->driver->dbCountTableRows('test1'));
+        $this->assertSame(2, $this->driver->dbCountTableRows('test2'));
+        $this->assertSame(0, $this->driver->dbCountTableRows('test3'));
     }
 
     /**
@@ -234,11 +280,72 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_dropTables()
     {
-        $this->assertSame(3, count($this->driver->dbGetTableNames()));
-
         $this->driver->dbDropTables(['test1', 'test3']);
 
         $this->assertSame(1, count($this->driver->dbGetTableNames()));
+
+        $this->driver->dbDropTables('test2');
+        $this->assertSame(0, count($this->driver->dbGetTableNames()));
+    }
+
+    /**
+     * @covers ::dbGetTableData
+     */
+    public function test_dbGetTableData()
+    {
+        $got = $this->driver->dbGetTableData('test2');
+
+        $expected = [
+            ['id' => '1', 'col2' => '2'],
+            ['id' => '2', 'col2' => '22'],
+        ];
+
+        $this->assertSame($expected, $got);
+    }
+
+    /**
+     * @covers ::dbGetTableData
+     *
+     * @expectedException \Kicaj\Tools\Db\DatabaseException
+     * @expectedExceptionMessageRegExp /Table .* doesn't exist/
+     */
+    public function test_dbGetTableData_error()
+    {
+        $this->driver->dbGetTableData('not_existing');
+    }
+
+    /**
+     * @covers ::dbLoadFixture
+     */
+    public function test_dbLoadFixture()
+    {
+        $fixture = [
+            "INSERT INTO `test2` (`id`, `col2`) VALUES (NULL, '600')",
+            "INSERT INTO `test2` (`id`, `col2`) VALUES (NULL, '700')"
+        ];
+
+        $this->driver->dbLoadFixture(DbItf::FIXTURE_FORMAT_SQL, $fixture);
+
+        $got = $this->driver->dbGetTableData('test2');
+        $expected = [
+            ['id' => '1', 'col2' => '2'],
+            ['id' => '2', 'col2' => '22'],
+            ['id' => '3', 'col2' => '600'],
+            ['id' => '4', 'col2' => '700'],
+        ];
+        $this->assertSame($expected, $got);
+    }
+
+    /**
+     * @covers ::dbLoadFixture
+     *
+     * @expectedException \Kicaj\Tools\Db\DatabaseException
+     * @expectedExceptionMessage MySQL driver currently supports only SQL fixture format.
+     */
+    public function test_dbLoadFixture_notSupportedFormat()
+    {
+        $fixture = '{"key1": "val1"}';
+        $this->driver->dbLoadFixture(DbItf::FIXTURE_FORMAT_JSON, $fixture);
     }
 
     /**

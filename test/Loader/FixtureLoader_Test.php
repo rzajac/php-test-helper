@@ -143,6 +143,34 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider loadFixtureDataProvider
+     *
+     * @covers ::loadFixtureData
+     *
+     * @param string $fixturePath
+     * @param string $expFixtureType
+     * @param mixed  $expFixtureData
+     */
+    public function test_loadFixtureData($fixturePath, $expFixtureType, $expFixtureData)
+    {
+        $fixtureData = $this->fixtureLoader->loadFixtureData($fixturePath);
+
+        $this->assertSame($expFixtureType, $fixtureData[0]);
+        $this->assertSame($expFixtureData, $fixtureData[1]);
+    }
+
+    public function loadFixtureDataProvider()
+    {
+        return [
+            ['test1.json', DbItf::FIXTURE_FORMAT_JSON, ['key1' => 'val1']],
+            ['test5.sql', DbItf::FIXTURE_FORMAT_SQL, ["INSERT INTO `test2` (`id`, `col2`) VALUES (NULL, '500');"]],
+            ['text.txt', DbItf::FIXTURE_FORMAT_TXT, "Some text file.\nWith many lines.\n"],
+            ['arr.php', DbItf::FIXTURE_FORMAT_PHP, ['test' => 1]],
+        ];
+    }
+
+
+    /**
      * @dataProvider loadFixtureFileErrProvider
      *
      * @covers ::loadFixtureData
