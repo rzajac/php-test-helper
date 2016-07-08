@@ -50,4 +50,16 @@ abstract class FixtureTestCase extends TestCase
     {
         return new FixtureLoader(self::getFixturesRootPath(), $dbDrv);
     }
+
+    /**
+     * Return content of the given fixture file.
+     *
+     * @param string $fixturePath The fixture path relative to fixturesRootPath.
+     *
+     * @return mixed
+     */
+    public static function getFixtureData($fixturePath)
+    {
+        return self::getFixtureLoader()->getFixtureData($fixturePath);
+    }
 }
