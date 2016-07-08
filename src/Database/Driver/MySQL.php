@@ -71,13 +71,17 @@ class MySQL implements DbItf
 
         mysqli_report(MYSQLI_REPORT_STRICT);
 
-        $this->mysql = new \mysqli(
-            $this->config[DbConnector::DB_CFG_HOST],
-            $this->config[DbConnector::DB_CFG_USERNAME],
-            $this->config[DbConnector::DB_CFG_PASSWORD],
-            $this->config[DbConnector::DB_CFG_DATABASE],
-            $this->config[DbConnector::DB_CFG_PORT]);
-        $this->mysql->set_charset('utf8');
+        try {
+            $this->mysql = new \mysqli(
+                $this->config[DbConnector::DB_CFG_HOST],
+                $this->config[DbConnector::DB_CFG_USERNAME],
+                $this->config[DbConnector::DB_CFG_PASSWORD],
+                $this->config[DbConnector::DB_CFG_DATABASE],
+                $this->config[DbConnector::DB_CFG_PORT]);
+            $this->mysql->set_charset('utf8');
+        } catch (\Exception $e) {
+            throw DatabaseException::makeFromException($e);
+        }
 
         $timezone = $this->config[DbConnector::DB_CFG_TIMEZONE];
         if ($timezone) {

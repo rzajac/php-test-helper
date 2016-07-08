@@ -20,6 +20,7 @@ namespace Kicaj\Test\TestHelperTest\Database\Driver;
 use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\Database\Driver\MySQL;
 use Kicaj\Test\TestHelperTest\MySQLHelper;
+use Kicaj\Tools\Db\DatabaseException;
 use ReflectionClass;
 
 /**
@@ -99,7 +100,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
             $this->assertTrue($driver->isConnected());
 
             $driver->dbGetTableNames(); // Call method that is actually doing something with database.
-        } catch (\Exception $e) {
+        } catch (DatabaseException $e) {
             $thrown = true;
 
             if ($expMsg === '') {
@@ -377,7 +378,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
             $resp   = $this->driver->dbRunQuery($sql);
             $thrown = false;
             $gotMsg = '';
-        } catch (\Exception $e) {
+        } catch (DatabaseException $e) {
             $thrown = true;
             $gotMsg = $e->getMessage();
         }

@@ -4,18 +4,21 @@ Unit testing helper classes.
 
 ## What does it help with?
 
-- Load file fixtures (`sql`, `json`).
-- Tests where you interact with database.
 - Load database fixtures (`sql`).
-- Optimize database tearDown and setUp by introducing fixtures and residentFixtures. Where resident fixtures are loaded once pest test class.
+- Load file fixtures (`json`, `txt`, `php`).
+- Tests where you interact with database.
 - Database helper methods [see database interface](src/Database/DbItf.php).
+
+## Supported databases
+
+- MySQL
 
 ## Install
 
 ```json
 {
     "require": {
-        "rzajac/php-test-helper": "0.3.*"
+        "rzajac/php-test-helper": "0.5.*"
     }
 }
 ```
@@ -28,7 +31,9 @@ Yes! The package has it's own unit tests.
 $ vendor/bin/phpunit --coverage-html=./coverage 
 ```
 
-## Setup test database
+## Setup database for unit tests
+
+### MySQL
 
 ```sql
 CREATE DATABASE testHelper1 DEFAULT CHARACTER SET = 'utf8' DEFAULT COLLATE = 'utf8_general_ci';
