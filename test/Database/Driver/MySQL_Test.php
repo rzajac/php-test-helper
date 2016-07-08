@@ -80,19 +80,19 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     {
         // Database config
         $dbConfig = [
-            DbConnector::DB_CFG_HOST => $host,
+            DbConnector::DB_CFG_HOST     => $host,
             DbConnector::DB_CFG_USERNAME => $username,
             DbConnector::DB_CFG_PASSWORD => $password,
             DbConnector::DB_CFG_DATABASE => $database,
-            DbConnector::DB_CFG_PORT => $port,
-            DbConnector::DB_CFG_TIMEZONE => $timezone
+            DbConnector::DB_CFG_PORT     => $port,
+            DbConnector::DB_CFG_TIMEZONE => $timezone,
         ];
 
         $driver = new MySQL();
 
         try {
             $thrown = false;
-            $db     = $driver->dbSetup($dbConfig);
+            $db = $driver->dbSetup($dbConfig);
 
             $this->assertSame($driver, $db);
             $this->assertFalse($driver->isConnected());
@@ -125,7 +125,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
                 $GLOBALS['TEST_DB_HELPER1_DATABASE'],
                 3306,
                 'UTC',
-                ''
+                '',
             ],
 
             [
@@ -135,7 +135,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
                 $GLOBALS['TEST_DB_HELPER1_DATABASE'],
                 3306,
                 'NOT_EXISTING',
-                '/Setting timezone \(NOT_EXISTING\) for MySQL driver failed.*/'
+                '/Setting timezone \(NOT_EXISTING\) for MySQL driver failed.*/',
             ],
 
             [
@@ -145,7 +145,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
                 'not_existing',
                 3306,
                 'UTC',
-                "/Access denied for user .* to database 'not_existing'/"
+                "/Access denied for user .* to database 'not_existing'/",
             ],
         ];
     }
@@ -158,8 +158,8 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_dbConnect_timezoneError()
     {
-        $driver              = new MySQL();
-        $reflection          = new ReflectionClass($driver);
+        $driver = new MySQL();
+        $reflection = new ReflectionClass($driver);
         $reflection_property = $reflection->getProperty('sqlSetTimezone');
         $reflection_property->setAccessible(true);
         $reflection_property->setValue($driver, 'BAD SQL IS ENOUGH');
@@ -336,12 +336,12 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     {
         $fixture = [
             "INSERT INTO `test2` (`id`, `col2`) VALUES (NULL, '600')",
-            "INSERT INTO `test2` (`id`, `col2`) VALUES (NULL, '700')"
+            "INSERT INTO `test2` (`id`, `col2`) VALUES (NULL, '700')",
         ];
 
         $this->driver->dbLoadFixture(DbItf::FIXTURE_FORMAT_SQL, $fixture);
 
-        $got      = $this->driver->dbGetTableData('test2');
+        $got = $this->driver->dbGetTableData('test2');
         $expected = [
             ['id' => '1', 'col2' => '2'],
             ['id' => '2', 'col2' => '22'],
@@ -376,7 +376,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
         $resp = null;
 
         try {
-            $resp   = $this->driver->dbRunQuery($sql);
+            $resp = $this->driver->dbRunQuery($sql);
             $thrown = false;
             $gotMsg = '';
         } catch (DatabaseException $e) {

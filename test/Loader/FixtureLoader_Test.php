@@ -137,8 +137,8 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
                 'multi_line.sql',
                 [
                     "INSERT INTO `test2`\n  (`id`, `col2`) VALUES (NULL, '200');",
-                    "INSERT INTO `test2`\n  (`id`, `col2`)\n  VALUES\n  (NULL, '202');"
-                ]
+                    "INSERT INTO `test2`\n  (`id`, `col2`)\n  VALUES\n  (NULL, '202');",
+                ],
             ],
             ['text.txt', "Some text file.\nWith many lines.\n"],
             ['arr.php', ['test' => 1]],
@@ -185,10 +185,10 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     {
         try {
             $this->fixtureLoader->loadFixtureData($fixtureName);
-            $thrown     = false;
+            $thrown = false;
             $gotMessage = '';
         } catch (\Exception $e) {
-            $thrown     = true;
+            $thrown = true;
             $gotMessage = $e->getMessage();
 
             // Make path relative to FIXTURE_PATH.

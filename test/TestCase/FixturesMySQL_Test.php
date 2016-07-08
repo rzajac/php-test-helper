@@ -20,7 +20,6 @@ namespace Kicaj\Test\TestHelperTest\TestCase;
 use Kicaj\Test\Helper\Database\DbGet;
 use Kicaj\Test\Helper\Database\Driver\MySQL;
 use Kicaj\Test\Helper\Loader\FixtureLoader;
-use Kicaj\Test\Helper\TestCase\DbTestCase;
 use Kicaj\Test\Helper\TestCase\FixtureTestCase;
 use Kicaj\Test\TestHelperTest\MySQLHelper;
 
@@ -50,7 +49,7 @@ class FixturesMySQL_Test extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         MySQLHelper::resetMySQLDatabases();
-        $this->dbDriver      = DbGet::factory(getUnitTestDbConfig('HELPER1'));
+        $this->dbDriver = DbGet::factory(getUnitTestDbConfig('HELPER1'));
         $this->fixtureLoader = new FixtureLoader(FixtureTestCase::getFixturesRootPath(), $this->dbDriver);
 
         parent::setUp();

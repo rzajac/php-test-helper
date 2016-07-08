@@ -52,7 +52,7 @@ class FixtureLoader
     public function __construct($fixturesRootPath, DbItf $database = null)
     {
         $this->fixturesRootPath = $fixturesRootPath;
-        $this->db               = $database;
+        $this->db = $database;
     }
 
     /**
@@ -119,7 +119,7 @@ class FixtureLoader
      */
     public function loadFixtureData($fixturePath)
     {
-        $fixturePath   = $this->fixturesRootPath . '/' . $fixturePath;
+        $fixturePath = $this->fixturesRootPath . '/' . $fixturePath;
         $fixtureFormat = $this->detectFormat($fixturePath);
 
         $fixtureData = null;
@@ -157,8 +157,8 @@ class FixtureLoader
      */
     public function detectFormat($fixturePath)
     {
-        $info         = new SplFileInfo($fixturePath);
-        $extension    = $info->getExtension();
+        $info = new SplFileInfo($fixturePath);
+        $extension = $info->getExtension();
         $knownFormats = [
             DbItf::FIXTURE_FORMAT_JSON,
             DbItf::FIXTURE_FORMAT_PHP,
@@ -204,7 +204,7 @@ class FixtureLoader
             }
 
             $isMultiLineSql = array_key_exists($index, $sqlArr);
-            $isEndOfSql     = substr($sql, -2, 1) == ';';
+            $isEndOfSql = substr($sql, -2, 1) == ';';
 
             if ($isMultiLineSql) {
                 $sqlArr[$index] .= $sql;

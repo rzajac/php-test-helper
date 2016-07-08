@@ -123,7 +123,7 @@ class MySQL implements DbItf
         }
 
         foreach ($tableNames as $tableName) {
-            $sql    = sprintf('DROP TABLE `%s`', $tableName);
+            $sql = sprintf('DROP TABLE `%s`', $tableName);
             $result = $this->mysql->query($sql);
             if (!$result) {
                 throw new DatabaseException($this->mysql->error);
@@ -138,7 +138,7 @@ class MySQL implements DbItf
         }
 
         foreach ($tableNames as $tableName) {
-            $sql    = sprintf('TRUNCATE TABLE `%s`', $tableName);
+            $sql = sprintf('TRUNCATE TABLE `%s`', $tableName);
             $result = $this->mysql->query($sql);
             if (!$result) {
                 throw new DatabaseException($this->mysql->error);
@@ -148,7 +148,7 @@ class MySQL implements DbItf
 
     public function dbCountTableRows($tableName)
     {
-        $sql  = sprintf('SELECT COUNT(1) AS c FROM `%s`', $tableName);
+        $sql = sprintf('SELECT COUNT(1) AS c FROM `%s`', $tableName);
         $resp = $this->mysql->query($sql);
         if ($resp === false) {
             throw new DatabaseException($this->mysql->error);
@@ -159,7 +159,7 @@ class MySQL implements DbItf
 
     public function dbGetTableNames()
     {
-        $sql  = sprintf('SHOW TABLES FROM `%s`', $this->config[DbItf::DB_CFG_DATABASE]);
+        $sql = sprintf('SHOW TABLES FROM `%s`', $this->config[DbItf::DB_CFG_DATABASE]);
         $resp = $this->mysql->query($sql);
         if ($resp === false) {
             throw new DatabaseException($this->mysql->error);
