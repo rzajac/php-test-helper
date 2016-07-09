@@ -694,16 +694,16 @@
         },
         {
             "name": "rzajac/phptools",
-            "version": "0.5.0",
+            "version": "0.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rzajac/phptools.git",
-                "reference": "2ad950bfff98fa86d8658a2f838b457978d6c542"
+                "reference": "83ff5e6d42e3a088a67dd6c11eb15fe6b7f01454"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rzajac/phptools/zipball/2ad950bfff98fa86d8658a2f838b457978d6c542",
-                "reference": "2ad950bfff98fa86d8658a2f838b457978d6c542",
+                "url": "https://api.github.com/repos/rzajac/phptools/zipball/83ff5e6d42e3a088a67dd6c11eb15fe6b7f01454",
+                "reference": "83ff5e6d42e3a088a67dd6c11eb15fe6b7f01454",
                 "shasum": ""
             },
             "require": {
@@ -732,7 +732,7 @@
                 }
             ],
             "description": "Collection of utility classes",
-            "time": "2016-07-09 11:10:00"
+            "time": "2016-07-09 20:39:15"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",

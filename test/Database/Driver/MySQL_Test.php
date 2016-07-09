@@ -186,7 +186,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     public function test_getDbTableNames()
     {
         $tableNames = $this->driver->dbGetTableNames();
-        $this->assertSame(['test1', 'test2', 'test3'], $tableNames);
+        $this->assertSame(['my_view', 'test1', 'test2', 'test3'], $tableNames);
     }
 
     /**
@@ -276,9 +276,12 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     {
         $this->driver->dbDropTables(['test1', 'test3']);
 
-        $this->assertSame(1, count($this->driver->dbGetTableNames()));
+        $this->assertSame(2, count($this->driver->dbGetTableNames()));
 
         $this->driver->dbDropTables('test2');
+        $this->assertSame(1, count($this->driver->dbGetTableNames()));
+
+        $this->driver->dbDropTables('my_view');
         $this->assertSame(0, count($this->driver->dbGetTableNames()));
     }
 

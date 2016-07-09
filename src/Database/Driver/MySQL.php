@@ -20,6 +20,7 @@ namespace Kicaj\Test\Helper\Database\Driver;
 use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Tools\Db\DatabaseException;
 use Kicaj\Tools\Db\DbConnector;
+use Kicaj\Tools\Helper\Str;
 
 /**
  * Class MySQL.
@@ -114,10 +115,15 @@ class MySQL implements DbItf
         }
 
         foreach ($tableNames as $tableName) {
-            $sql = sprintf('DROP TABLE `%s`', $tableName);
-            $result = $this->mysql->query($sql);
-            if (!$result) {
-                throw new DatabaseException($this->mysql->error);
+            try {
+                $this->dbRunQuery(sprintf('DROP TABLE `%s`', $tableName));
+            } catch (DatabaseException $dbe) {
+                if (Str::contains($dbe->getMessage(), 'Unknown table')) {
+                    // Try dropping view.
+                    $this->dbRunQuery(sprintf('DROP VIEW `%s`', $tableName));
+                } else {
+                    throw $dbe;
+                }
             }
         }
     }
@@ -129,32 +135,20 @@ class MySQL implements DbItf
         }
 
         foreach ($tableNames as $tableName) {
-            $sql = sprintf('TRUNCATE TABLE `%s`', $tableName);
-            $result = $this->mysql->query($sql);
-            if (!$result) {
-                throw new DatabaseException($this->mysql->error);
-            }
+            $this->dbRunQuery(sprintf('TRUNCATE TABLE `%s`', $tableName));
         }
     }
 
     public function dbCountTableRows($tableName)
     {
-        $sql = sprintf('SELECT COUNT(1) AS c FROM `%s`', $tableName);
-        $resp = $this->mysql->query($sql);
-        if ($resp === false) {
-            throw new DatabaseException($this->mysql->error);
-        }
+        $resp = $this->dbRunQuery(sprintf('SELECT COUNT(1) AS c FROM `%s`', $tableName));
 
         return (int) $resp->fetch_array(MYSQLI_ASSOC)['c'];
     }
 
     public function dbGetTableNames()
     {
-        $sql = sprintf('SHOW TABLES FROM `%s`', $this->config[DbItf::DB_CFG_DATABASE]);
-        $resp = $this->mysql->query($sql);
-        if ($resp === false) {
-            throw new DatabaseException($this->mysql->error);
-        }
+        $resp = $this->dbRunQuery(sprintf('SHOW TABLES FROM `%s`', $this->config[DbItf::DB_CFG_DATABASE]));
 
         $tableNames = [];
         while ($row = $resp->fetch_assoc()) {
@@ -168,10 +162,7 @@ class MySQL implements DbItf
 
     public function dbGetTableData($tableName)
     {
-        $resp = $this->mysql->query('SELECT * FROM ' . $tableName);
-        if (!$resp) {
-            throw new DatabaseException($this->mysql->error);
-        }
+        $resp = $this->dbRunQuery('SELECT * FROM ' . $tableName);
 
         $data = [];
         while ($row = $resp->fetch_assoc()) {

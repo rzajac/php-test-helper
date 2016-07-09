@@ -52,6 +52,7 @@ class MySQLHelper
         $mysql1->query('CREATE TABLE `test1` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT, `col1` int(11) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB');
         $mysql1->query('CREATE TABLE `test2` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT, `col2` int(11) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB');
         $mysql1->query('CREATE TABLE `test3` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT, `col2` int(11) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB');
+        $mysql1->query('CREATE VIEW `my_view`AS SELECT * FROM `test1`;');
 
         // Insert into testHelper1 database.
         $mysql1->query("INSERT INTO `test1` (`id`, `col1`) VALUES (NULL, '1')");
@@ -113,9 +114,12 @@ class MySQLHelper
         }
 
         foreach ($tableNames as $tableName) {
-            $result = (bool) $mysql->query("DROP TABLE IF EXISTS $tableName");
+            $result = (bool) $mysql->query("DROP TABLE $tableName");
             if (!$result) {
-                throw new DatabaseException($mysql->error);
+                $result = (bool) $mysql->query("DROP VIEW $tableName");
+                if (!$result) {
+                    throw new DatabaseException($mysql->error);
+                }
             }
         }
     }
