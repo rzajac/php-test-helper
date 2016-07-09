@@ -97,15 +97,6 @@ class MySQL implements DbItf
         return $this;
     }
 
-    public function useDatabase($dbName)
-    {
-        if (!$this->mysql->select_db($dbName)) {
-            throw new DatabaseException($this->mysql->error);
-        }
-
-        return $this;
-    }
-
     /**
      * Returns true if connected to database.
      *

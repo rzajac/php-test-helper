@@ -63,4 +63,14 @@ class FixtureTestCase_Test extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\Kicaj\Test\Helper\Loader\FixtureLoader', $fLoader);
         $this->assertTrue($fLoader->isDbSet());
     }
+
+    /**
+     * @covers ::getFixtureData
+     */
+    public function test_getFixtureData()
+    {
+        $gotData = FixtureTestCase::getFixtureData('text.txt');
+
+        $this->assertSame("Some text file.\nWith many lines.\n", $gotData);
+    }
 }

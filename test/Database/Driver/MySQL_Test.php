@@ -181,27 +181,6 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers ::useDatabase
-     */
-    public function test_useDatabase()
-    {
-        $driver = $this->driver->useDatabase('testHelper1');
-
-        $this->assertSame($this->driver, $driver);
-    }
-
-    /**
-     * @covers ::useDatabase
-     *
-     * @expectedException \Kicaj\Tools\Db\DatabaseException
-     * @expectedExceptionMessage __not_existing__
-     */
-    public function test_useDatabase_error()
-    {
-        $this->driver->useDatabase('__not_existing__');
-    }
-
-    /**
      * @covers ::dbGetTableNames
      */
     public function test_getDbTableNames()

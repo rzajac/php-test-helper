@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "582eb453930f04940d87d05e422f4c6f",
-    "content-hash": "f49acb0a1b49ba2f31a6c6e36ed8fc56",
+    "hash": "eab2aa8f2457827a685f46074c06358d",
+    "content-hash": "37c20c6dfbaea60e2a26522ffce181dc",
     "packages": [
         {
             "name": "doctrine/instantiator",
@@ -694,16 +694,16 @@
         },
         {
             "name": "rzajac/phptools",
-            "version": "0.4.0",
+            "version": "0.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rzajac/phptools.git",
-                "reference": "c5e4b624302b104c4ea496d8a9922524fda9e7c8"
+                "reference": "2ad950bfff98fa86d8658a2f838b457978d6c542"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rzajac/phptools/zipball/c5e4b624302b104c4ea496d8a9922524fda9e7c8",
-                "reference": "c5e4b624302b104c4ea496d8a9922524fda9e7c8",
+                "url": "https://api.github.com/repos/rzajac/phptools/zipball/2ad950bfff98fa86d8658a2f838b457978d6c542",
+                "reference": "2ad950bfff98fa86d8658a2f838b457978d6c542",
                 "shasum": ""
             },
             "require": {
@@ -732,7 +732,7 @@
                 }
             ],
             "description": "Collection of utility classes",
-            "time": "2016-07-07 21:02:14"
+            "time": "2016-07-09 11:10:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
