@@ -73,4 +73,14 @@ class FixtureTestCase_Test extends \PHPUnit_Framework_TestCase
 
         $this->assertSame("Some text file.\nWith many lines.\n", $gotData);
     }
+
+    /**
+     * @covers ::getFixtureRawData
+     */
+    public function test_getFixtureRawData()
+    {
+        $gotData = FixtureTestCase::getFixtureRawData('test5.sql');
+
+        $this->assertSame("-- This is a comment\nINSERT INTO `test2` (`id`, `col2`) VALUES (NULL, '500');\n", $gotData);
+    }
 }

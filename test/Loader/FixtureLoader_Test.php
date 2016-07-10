@@ -173,6 +173,31 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider getFixtureRawDataProvider
+     *
+     * @covers ::getFixtureRawData
+     *
+     * @param string $fixturePath
+     * @param mixed  $expFixtureData
+     */
+    public function test_getFixtureRawData($fixturePath, $expFixtureData)
+    {
+        $fixtureRawData = $this->fixtureLoader->getFixtureRawData($fixturePath);
+
+        $this->assertSame($expFixtureData, $fixtureRawData);
+    }
+
+    public function getFixtureRawDataProvider()
+    {
+        return [
+            ['test1.json', '{"key1": "val1"}'."\n"],
+            ['test5.sql', "-- This is a comment\nINSERT INTO `test2` (`id`, `col2`) VALUES (NULL, '500');\n"],
+            ['text.txt', "Some text file.\nWith many lines.\n"],
+            ['arr.php', "<?php\n\n\$fixture = [\n    'test' => 1,\n];\n\nreturn \$fixture;\n"],
+        ];
+    }
+
+    /**
      * @dataProvider loadFixtureFileErrProvider
      *
      * @covers ::loadFixtureData

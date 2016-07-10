@@ -62,4 +62,16 @@ abstract class FixtureTestCase extends TestCase
     {
         return self::getFixtureLoader()->getFixtureData($fixturePath);
     }
+
+    /**
+     * Return raw content of the given fixture file.
+     *
+     * @param string $fixturePath The fixture path relative to fixturesRootPath.
+     *
+     * @return string
+     */
+    public static function getFixtureRawData($fixturePath)
+    {
+        return self::getFixtureLoader()->getFixtureRawData($fixturePath);
+    }
 }

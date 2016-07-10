@@ -109,6 +109,20 @@ class FixtureLoader
     }
 
     /**
+     * Get fixture file contents.
+     *
+     * @param string $fixturePath The fixture path relative to fixturesRootPath.
+     *
+     * @return string
+     */
+    public function getFixtureRawData($fixturePath)
+    {
+        $fixturePath = $this->fixturesRootPath . '/' . $fixturePath;
+
+        return file_get_contents($fixturePath);
+    }
+
+    /**
      * Load fixture file from disk.
      *
      * @param string $fixturePath The path to fixture file.
