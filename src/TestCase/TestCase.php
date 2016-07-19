@@ -18,6 +18,7 @@
 namespace Kicaj\Test\Helper\TestCase;
 
 use PHPUnit_Framework_TestCase;
+use ReflectionClass;
 
 /**
  * Base test case.
@@ -28,4 +29,35 @@ use PHPUnit_Framework_TestCase;
  */
 abstract class TestCase extends PHPUnit_Framework_TestCase
 {
+    /**
+     * Get object property even if it's private or protected.
+     *
+     * @param object $obj      The object to get property value from.
+     * @param string $propName The property name.
+     *
+     * @return mixed
+     */
+    public static function objectGetProperty($obj, $propName)
+    {
+        $reflection = new ReflectionClass($obj);
+        $reflectionProperty = $reflection->getProperty($propName);
+        $reflectionProperty->setAccessible(true);
+
+        return $reflectionProperty->getValue($obj);
+    }
+
+    /**
+     * Set object property even if it's private or protected.
+     *
+     * @param object $obj      The object to get property value from.
+     * @param string $propName The property name.
+     * @param mixed  $value    The value to set.
+     */
+    public static function objectSetProperty($obj, $propName, $value)
+    {
+        $reflection = new ReflectionClass($obj);
+        $reflectionProperty = $reflection->getProperty($propName);
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($obj, $value);
+    }
 }

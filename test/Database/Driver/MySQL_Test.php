@@ -160,9 +160,9 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     {
         $driver = new MySQL();
         $reflection = new ReflectionClass($driver);
-        $reflection_property = $reflection->getProperty('sqlSetTimezone');
-        $reflection_property->setAccessible(true);
-        $reflection_property->setValue($driver, 'BAD SQL IS ENOUGH');
+        $reflectionProperty = $reflection->getProperty('sqlSetTimezone');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($driver, 'BAD SQL IS ENOUGH');
 
         $driver->dbSetup(getUnitTestDbConfig('HELPER1'))->dbConnect();
     }
