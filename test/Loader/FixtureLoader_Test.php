@@ -39,10 +39,18 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     protected $fixtureLoader;
 
     /**
+     * Fixtures root directory.
+     *
+     * @var string
+     */
+    protected $fixturesRootPath;
+
+    /**
      * @throws \Exception
      */
     public function setUp()
     {
+        $this->fixturesRootPath = getFixturesRootPath();
         $this->fixtureLoader = new FixtureLoader(FixtureTestCase::getFixturesRootPath());
     }
 
@@ -215,9 +223,6 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
         } catch (\Exception $e) {
             $thrown = true;
             $gotMessage = $e->getMessage();
-
-            // Make path relative to FIXTURE_PATH.
-            $gotMessage = str_replace(FIXTURE_PATH . DIRECTORY_SEPARATOR, '', $gotMessage);
         }
 
         $this->assertTrue($thrown);

@@ -34,6 +34,13 @@ use org\bovigo\vfs\vfsStream;
 class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
 {
     /**
+     * Fixtures root directory.
+     *
+     * @var string
+     */
+    protected $fixturesRootPath;
+
+    /**
      * Fixture loader.
      *
      * @var FixtureLoader
@@ -52,9 +59,11 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
+        $this->fixturesRootPath = getFixturesRootPath();
+
         MySQLHelper::resetMySQLDatabases();
         $this->dbDriver = DbGet::factory(getUnitTestDbConfig('HELPER1'));
-        $this->fixtureLoader = new FixtureLoader(FIXTURE_PATH, $this->dbDriver);
+        $this->fixtureLoader = new FixtureLoader($this->fixturesRootPath, $this->dbDriver);
     }
 
     /**
@@ -64,7 +73,7 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
     public function test___construct()
     {
         $db = DbGet::factory(getUnitTestDbConfig('HELPER1'));
-        $fixtureLoader = new FixtureLoader(FIXTURE_PATH, $db);
+        $fixtureLoader = new FixtureLoader($this->fixturesRootPath, $db);
 
         $this->assertNotNull($fixtureLoader);
         $this->assertTrue($fixtureLoader->isDbSet());
@@ -179,7 +188,7 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
             $gotMessage = $e->getMessage();
 
             // Make path relative to FIXTURE_PATH
-            $gotMessage = str_replace(FIXTURE_PATH . DIRECTORY_SEPARATOR, '', $gotMessage);
+            $gotMessage = str_replace($this->fixturesRootPath . DIRECTORY_SEPARATOR, '', $gotMessage);
         }
 
         $this->assertTrue($thrown);
@@ -246,7 +255,7 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
         $dbConfig['password'] = 'wrongOne';
 
         $db = DbGet::factory($dbConfig);
-        $fixtureLoader = new FixtureLoader(FIXTURE_PATH, $db);
+        $fixtureLoader = new FixtureLoader($this->fixturesRootPath, $db);
 
         $fixtureLoader->loadDbFixture('test2.sql');
     }
@@ -271,7 +280,7 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
             $gotMessage = $e->getMessage();
 
             // Make path relative to FIXTURE_PATH
-            $gotMessage = str_replace(FIXTURE_PATH . DIRECTORY_SEPARATOR, '', $gotMessage);
+            $gotMessage = str_replace($this->fixturesRootPath . DIRECTORY_SEPARATOR, '', $gotMessage);
         }
 
         $this->assertTrue($thrown);
