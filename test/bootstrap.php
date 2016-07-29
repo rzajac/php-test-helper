@@ -16,7 +16,7 @@
  * under the License.
  */
 
-use Kicaj\Tools\Db\DbConnector;
+use Kicaj\DbKit\DbConnector;
 use Kicaj\Tools\Helper\Arr;
 
 ini_set('display_errors', true);

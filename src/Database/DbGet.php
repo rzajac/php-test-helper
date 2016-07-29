@@ -17,10 +17,10 @@
  */
 namespace Kicaj\Test\Helper\Database;
 
+use Kicaj\DbKit\DatabaseException;
+use Kicaj\DbKit\DbConnect;
+use Kicaj\DbKit\DbConnector;
 use Kicaj\Test\Helper\Database\Driver\MySQL;
-use Kicaj\Tools\Db\DatabaseException;
-use Kicaj\Tools\Db\DbConnect;
-use Kicaj\Tools\Db\DbConnector;
 
 /**
  * MySQLHelper class for getting database driver.

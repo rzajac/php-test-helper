@@ -19,7 +19,7 @@ namespace Kicaj\Test\Helper\Loader;
 
 use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Tools\Api\JSON;
-use Kicaj\Tools\Db\DatabaseException;
+use Kicaj\DbKit\DatabaseException;
 use SplFileInfo;
 
 /**

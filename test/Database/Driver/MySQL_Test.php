@@ -17,11 +17,11 @@
  */
 namespace Kicaj\Test\TestHelperTest\Database\Driver;
 
+use Kicaj\DbKit\DatabaseException;
+use Kicaj\DbKit\DbConnector;
 use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\Database\Driver\MySQL;
 use Kicaj\Test\TestHelperTest\MySQLHelper;
-use Kicaj\Tools\Db\DatabaseException;
-use Kicaj\Tools\Db\DbConnector;
 use ReflectionClass;
 
 /**
@@ -153,7 +153,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::dbConnect
      *
-     * @expectedException \Kicaj\Tools\Db\DatabaseException
+     * @expectedException \Kicaj\DbKit\DatabaseException
      * @expectedExceptionMessage Setting timezone (UTC) for MySQL driver failed. Please load timezone information using mysql_tzinfo_to_sql.
      */
     public function test_dbConnect_timezoneError()
@@ -192,7 +192,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::dbGetTableNames
      *
-     * @expectedException \Kicaj\Tools\Db\DatabaseException
+     * @expectedException \Kicaj\DbKit\DatabaseException
      * @expectedExceptionMessageRegExp /Incorrect database name/
      */
     public function test_getDbTableNames_error()
@@ -206,7 +206,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::dbCountTableRows
      *
-     * @expectedException \Kicaj\Tools\Db\DatabaseException
+     * @expectedException \Kicaj\DbKit\DatabaseException
      * @expectedExceptionMessageRegExp /Table .* doesn't exist/
      */
     public function test_countTableRows_not_existing_table()
@@ -303,7 +303,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::dbGetTableData
      *
-     * @expectedException \Kicaj\Tools\Db\DatabaseException
+     * @expectedException \Kicaj\DbKit\DatabaseException
      * @expectedExceptionMessageRegExp /Table .* doesn't exist/
      */
     public function test_dbGetTableData_error()
@@ -336,7 +336,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::dbLoadFixture
      *
-     * @expectedException \Kicaj\Tools\Db\DatabaseException
+     * @expectedException \Kicaj\DbKit\DatabaseException
      * @expectedExceptionMessage MySQL driver currently supports only SQL fixture format.
      */
     public function test_dbLoadFixture_notSupportedFormat()

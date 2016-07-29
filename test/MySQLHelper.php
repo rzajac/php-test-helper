@@ -17,8 +17,8 @@
  */
 namespace Kicaj\Test\TestHelperTest;
 
-use Kicaj\Tools\Db\DatabaseException;
-use Kicaj\Tools\Db\DbConnector;
+use Kicaj\DbKit\DatabaseException;
+use Kicaj\DbKit\DbConnector;
 
 class MySQLHelper
 {

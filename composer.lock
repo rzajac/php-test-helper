@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "eab2aa8f2457827a685f46074c06358d",
-    "content-hash": "37c20c6dfbaea60e2a26522ffce181dc",
+    "hash": "e96a9dbc9bd44350abd2a6615a0df9a6",
+    "content-hash": "f2a76cbae5eaf0806b1277cd8fbf1931",
     "packages": [
         {
             "name": "doctrine/instantiator",
@@ -313,16 +313,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "4.0.0",
+            "version": "4.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "900370c81280cc0d942ffbc5912d80464eaee7e9"
+                "reference": "5f3f7e736d6319d5f1fc402aff8b026da26709a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/900370c81280cc0d942ffbc5912d80464eaee7e9",
-                "reference": "900370c81280cc0d942ffbc5912d80464eaee7e9",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/5f3f7e736d6319d5f1fc402aff8b026da26709a3",
+                "reference": "5f3f7e736d6319d5f1fc402aff8b026da26709a3",
                 "shasum": ""
             },
             "require": {
@@ -331,7 +331,7 @@
                 "phpunit/php-text-template": "~1.2",
                 "phpunit/php-token-stream": "^1.4.2",
                 "sebastian/code-unit-reverse-lookup": "~1.0",
-                "sebastian/environment": "^1.3.2",
+                "sebastian/environment": "^1.3.2 || ^2.0",
                 "sebastian/version": "~1.0|~2.0"
             },
             "require-dev": {
@@ -372,7 +372,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-06-03 05:03:56"
+            "time": "2016-07-26 14:39:29"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -557,16 +557,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "5.4.6",
+            "version": "5.4.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "2f1fc94b77ea6418bd6a06c64a1dac0645fbce59"
+                "reference": "3132365e1430c091f208e120b8845d39c25f20e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/2f1fc94b77ea6418bd6a06c64a1dac0645fbce59",
-                "reference": "2f1fc94b77ea6418bd6a06c64a1dac0645fbce59",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3132365e1430c091f208e120b8845d39c25f20e6",
+                "reference": "3132365e1430c091f208e120b8845d39c25f20e6",
                 "shasum": ""
             },
             "require": {
@@ -578,7 +578,7 @@
                 "myclabs/deep-copy": "~1.3",
                 "php": "^5.6 || ^7.0",
                 "phpspec/prophecy": "^1.3.1",
-                "phpunit/php-code-coverage": "^4.0",
+                "phpunit/php-code-coverage": "^4.0.1",
                 "phpunit/php-file-iterator": "~1.4",
                 "phpunit/php-text-template": "~1.2",
                 "phpunit/php-timer": "^1.0.6",
@@ -631,7 +631,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-06-16 06:01:15"
+            "time": "2016-07-26 14:48:00"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -693,17 +693,58 @@
             "time": "2016-06-12 07:37:26"
         },
         {
-            "name": "rzajac/phptools",
-            "version": "0.5.1",
+            "name": "rzajac/dbkit",
+            "version": "0.0.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/rzajac/phptools.git",
-                "reference": "83ff5e6d42e3a088a67dd6c11eb15fe6b7f01454"
+                "url": "https://github.com/rzajac/DbKit.git",
+                "reference": "358b3a3cbc5f746df826fd71d0e3ce90f718158e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rzajac/phptools/zipball/83ff5e6d42e3a088a67dd6c11eb15fe6b7f01454",
-                "reference": "83ff5e6d42e3a088a67dd6c11eb15fe6b7f01454",
+                "url": "https://api.github.com/repos/rzajac/DbKit/zipball/358b3a3cbc5f746df826fd71d0e3ce90f718158e",
+                "reference": "358b3a3cbc5f746df826fd71d0e3ce90f718158e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "phpdocumentor/phpdocumentor": "~2.8",
+                "phpunit/phpunit": "^4.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kicaj\\DbKit\\": "src/",
+                    "Kicaj\\Test\\DbKit\\": "test/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache License 2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Rafal Zajac",
+                    "email": "rzajac@gmail.com"
+                }
+            ],
+            "description": "Database related interfaces",
+            "time": "2016-07-29 21:03:12"
+        },
+        {
+            "name": "rzajac/phptools",
+            "version": "0.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rzajac/phptools.git",
+                "reference": "170f5ccbd1721df5822b83041d0afaf925081e48"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rzajac/phptools/zipball/170f5ccbd1721df5822b83041d0afaf925081e48",
+                "reference": "170f5ccbd1721df5822b83041d0afaf925081e48",
                 "shasum": ""
             },
             "require": {
@@ -732,7 +773,7 @@
                 }
             ],
             "description": "Collection of utility classes",
-            "time": "2016-07-09 20:39:15"
+            "time": "2016-07-29 20:04:49"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -1349,16 +1390,16 @@
     "packages-dev": [
         {
             "name": "mikey179/vfsStream",
-            "version": "v1.6.3",
+            "version": "v1.6.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mikey179/vfsStream.git",
-                "reference": "c19925cd0390d3c436a0203ae859afa460d0474b"
+                "reference": "0247f57b2245e8ad2e689d7cee754b45fbabd592"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mikey179/vfsStream/zipball/c19925cd0390d3c436a0203ae859afa460d0474b",
-                "reference": "c19925cd0390d3c436a0203ae859afa460d0474b",
+                "url": "https://api.github.com/repos/mikey179/vfsStream/zipball/0247f57b2245e8ad2e689d7cee754b45fbabd592",
+                "reference": "0247f57b2245e8ad2e689d7cee754b45fbabd592",
                 "shasum": ""
             },
             "require": {
@@ -1391,7 +1432,7 @@
             ],
             "description": "Virtual file system to mock the real file system in unit tests.",
             "homepage": "http://vfs.bovigo.org/",
-            "time": "2016-04-09 09:42:01"
+            "time": "2016-07-18 14:02:57"
         }
     ],
     "aliases": [],

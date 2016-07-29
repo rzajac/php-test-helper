@@ -20,8 +20,8 @@ namespace Kicaj\Test\Helper\TestCase;
 use Kicaj\Test\Helper\Database\DbGet;
 use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\Loader\FixtureLoader;
-use Kicaj\Tools\Db\DatabaseException;
-use Kicaj\Tools\Db\DbConnect;
+use Kicaj\DbKit\DatabaseException;
+use Kicaj\DbKit\DbConnect;
 
 /**
  * Database test case.

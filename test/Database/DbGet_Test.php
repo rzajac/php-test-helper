@@ -17,9 +17,9 @@
  */
 namespace Kicaj\Test\TestHelperTest\Database;
 
+use Kicaj\DbKit\DatabaseException;
+use Kicaj\DbKit\DbConnector;
 use Kicaj\Test\Helper\Database\DbGet;
-use Kicaj\Tools\Db\DatabaseException;
-use Kicaj\Tools\Db\DbConnector;
 
 /**
  * DbGet tests.

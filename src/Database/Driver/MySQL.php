@@ -17,9 +17,9 @@
  */
 namespace Kicaj\Test\Helper\Database\Driver;
 
+use Kicaj\DbKit\DatabaseException;
+use Kicaj\DbKit\DbConnector;
 use Kicaj\Test\Helper\Database\DbItf;
-use Kicaj\Tools\Db\DatabaseException;
-use Kicaj\Tools\Db\DbConnector;
 use Kicaj\Tools\Helper\Str;
 
 /**

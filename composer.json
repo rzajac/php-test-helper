@@ -7,7 +7,8 @@
   "require": {
     "php": ">=5.5",
     "phpunit/phpunit": "*",
-    "rzajac/phptools": "0.5.*"
+    "rzajac/phptools": "0.6.*",
+    "rzajac/dbkit": "0.0.*"
   },
   "require-dev": {
     "mikey179/vfsStream": "~1.6"

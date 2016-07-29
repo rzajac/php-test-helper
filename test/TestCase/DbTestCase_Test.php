@@ -17,8 +17,8 @@
  */
 namespace Kicaj\Test\TestHelperTest\TestCase;
 
+use Kicaj\DbKit\DbConnector;
 use Kicaj\Test\Helper\TestCase\DbTestCase;
-use Kicaj\Tools\Db\DbConnector;
 
 /**
  * Tests for DbTextCase class.
