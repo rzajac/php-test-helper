@@ -78,7 +78,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_connection($host, $username, $password, $database, $port, $timezone, $expMsg)
     {
-        // Database config
+        // Given
         $dbConfig = [
             DbConnector::DB_CFG_HOST     => $host,
             DbConnector::DB_CFG_USERNAME => $username,
@@ -88,8 +88,10 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
             DbConnector::DB_CFG_TIMEZONE => $timezone,
         ];
 
+        // When
         $driver = new MySQL();
 
+        // Then
         try {
             $thrown = false;
             $db = $driver->dbSetup($dbConfig);
@@ -158,12 +160,14 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_dbConnect_timezoneError()
     {
+        // Given
         $driver = new MySQL();
         $reflection = new ReflectionClass($driver);
         $reflectionProperty = $reflection->getProperty('sqlSetTimezone');
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($driver, 'BAD SQL IS ENOUGH');
 
+        // Then
         $driver->dbSetup(getUnitTestDbConfig('HELPER1'))->dbConnect();
     }
 
@@ -173,9 +177,10 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_dbConnect_return_if_connected()
     {
-        $this->assertTrue($this->driver->isConnected());
+        // When
         $driver = $this->driver->dbConnect();
 
+        // Then
         $this->assertSame($this->driver, $driver);
         $this->assertTrue($this->driver->isConnected());
     }
@@ -185,7 +190,10 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_getDbTableNames()
     {
+        // When
         $tableNames = $this->driver->dbGetTableNames();
+
+        // Then
         $this->assertSame(['my_view', 'test1', 'test2', 'test3'], $tableNames);
     }
 
@@ -197,9 +205,13 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_getDbTableNames_error()
     {
-        // Connect to default database.
+        // Given
         $driver = new MySQL();
+
+        // When
         $driver->dbSetup(getUnitTestDbConfig('HELPER_NOT_THERE'))->dbConnect();
+
+        // Then
         $driver->dbGetTableNames();
     }
 
@@ -231,9 +243,10 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_truncateTables_emptyArray()
     {
+        // When
         $this->driver->dbTruncateTables([]);
 
-        // No changes.
+        // Then - no changes
         $this->assertSame(1, $this->driver->dbCountTableRows('test1'));
         $this->assertSame(2, $this->driver->dbCountTableRows('test2'));
         $this->assertSame(0, $this->driver->dbCountTableRows('test3'));
@@ -246,9 +259,10 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_truncateTables_array()
     {
+        // When
         $this->driver->dbTruncateTables(['test2', 'test3']);
 
-        // Test changes visible.
+        // Then
         $this->assertSame(1, $this->driver->dbCountTableRows('test1'));
         $this->assertSame(0, $this->driver->dbCountTableRows('test2'));
         $this->assertSame(0, $this->driver->dbCountTableRows('test3'));
@@ -261,9 +275,10 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_truncateTables_string()
     {
+        // When
         $this->driver->dbTruncateTables('test1');
 
-        // Test changes visible.
+        // Then
         $this->assertSame(0, $this->driver->dbCountTableRows('test1'));
         $this->assertSame(2, $this->driver->dbCountTableRows('test2'));
         $this->assertSame(0, $this->driver->dbCountTableRows('test3'));
@@ -272,17 +287,37 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::dbDropTables
      */
-    public function test_dropTables()
+    public function test_dropTables_multiple()
     {
+        // When
         $this->driver->dbDropTables(['test1', 'test3']);
 
+        // Then
         $this->assertSame(2, count($this->driver->dbGetTableNames()));
+    }
 
+    /**
+     * @covers ::dbDropTables
+     */
+    public function test_dropTables_single()
+    {
+        // When
         $this->driver->dbDropTables('test2');
-        $this->assertSame(1, count($this->driver->dbGetTableNames()));
 
+        // Then
+        $this->assertSame(3, count($this->driver->dbGetTableNames()));
+    }
+
+    /**
+     * @covers ::dbDropTables
+     */
+    public function test_dropTables_view()
+    {
+        // When
         $this->driver->dbDropTables('my_view');
-        $this->assertSame(0, count($this->driver->dbGetTableNames()));
+
+        // Then
+        $this->assertSame(3, count($this->driver->dbGetTableNames()));
     }
 
     /**
@@ -290,13 +325,14 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_dbGetTableData()
     {
+        // When
         $got = $this->driver->dbGetTableData('test2');
 
+        // Then
         $expected = [
             ['id' => '1', 'col2' => '2'],
             ['id' => '2', 'col2' => '22'],
         ];
-
         $this->assertSame($expected, $got);
     }
 
@@ -316,14 +352,17 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_dbLoadFixture()
     {
+        // Given
         $fixture = [
             "INSERT INTO `test2` (`id`, `col2`) VALUES (NULL, '600')",
             "INSERT INTO `test2` (`id`, `col2`) VALUES (NULL, '700')",
         ];
 
+        // When
         $this->driver->dbLoadFixture(DbItf::FIXTURE_FORMAT_SQL, $fixture);
-
         $got = $this->driver->dbGetTableData('test2');
+
+        // Then
         $expected = [
             ['id' => '1', 'col2' => '2'],
             ['id' => '2', 'col2' => '22'],
@@ -341,7 +380,10 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_dbLoadFixture_notSupportedFormat()
     {
+        // When
         $fixture = '{"key1": "val1"}';
+
+        // Then
         $this->driver->dbLoadFixture(DbItf::FIXTURE_FORMAT_JSON, $fixture);
     }
 
@@ -355,8 +397,10 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_runQuery($sql, $expMsg)
     {
+        // Given
         $resp = null;
 
+        // When
         try {
             $resp = $this->driver->dbRunQuery($sql);
             $thrown = false;
@@ -366,6 +410,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
             $gotMsg = $e->getMessage();
         }
 
+        // Then
         if ($expMsg) {
             $this->assertTrue($thrown);
             $this->assertContains($expMsg, $gotMsg);
@@ -392,10 +437,10 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_dbClose()
     {
-        $this->assertTrue($this->driver->isConnected());
-
+        // When
         $this->driver->dbClose();
 
+        // Then
         $this->assertFalse($this->driver->isConnected());
     }
 }

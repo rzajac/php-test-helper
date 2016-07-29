@@ -45,24 +45,48 @@ class TestCase_Test extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::objectGetProperty
      */
-    public function test_objectGetProperty()
+    public function test_objectGetProperty_protected()
     {
+        // When
         $this->helperClass->setProt('abc');
-        $this->assertSame('abc', TestCase::objectGetProperty($this->helperClass, 'prot'));
 
+        // Then
+        $this->assertSame('abc', TestCase::objectGetProperty($this->helperClass, 'prot'));
+    }
+
+    /**
+     * @covers ::objectGetProperty
+     */
+    public function test_objectGetProperty_private()
+    {
+        // When
         $this->helperClass->setPriv('def');
+
+        // Then
         $this->assertSame('def', TestCase::objectGetProperty($this->helperClass, 'priv'));
     }
 
     /**
      * @covers ::objectSetProperty
      */
-    public function test_objectSetProperty()
+    public function test_objectSetProperty_protected()
     {
+        // When
         TestCase::objectSetProperty($this->helperClass, 'prot', 123);
-        $this->assertSame(123, $this->helperClass->getProt());
 
+        // Then
+        $this->assertSame(123, $this->helperClass->getProt());
+    }
+
+    /**
+     * @covers ::objectSetProperty
+     */
+    public function test_objectSetProperty_private()
+    {
+        // When
         TestCase::objectSetProperty($this->helperClass, 'priv', 456);
+
+        // Then
         $this->assertSame(456, $this->helperClass->getPriv());
     }
 }

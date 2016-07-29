@@ -74,7 +74,10 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_detectFormat($fixturePath, $expected)
     {
+        // When
         $got = $this->fixtureLoader->detectFormat($fixturePath);
+
+        // Then
         $this->assertSame($expected, $got);
     }
 
@@ -99,9 +102,11 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_detectFormat_exception($fixturePath, $expMsg)
     {
+        // Given
         $thrown = false;
         $gotMsg = '';
 
+        // When
         try {
             $this->fixtureLoader->detectFormat($fixturePath);
         } catch (\Exception $e) {
@@ -109,6 +114,7 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
             $gotMsg = $e->getMessage();
         }
 
+        // Then
         $this->assertTrue($thrown);
         $this->assertSame($expMsg, $gotMsg);
     }
@@ -132,7 +138,10 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_loadFixtureFile($fixtureName, $expected)
     {
+        // When
         $loaded = $this->fixtureLoader->getFixtureData($fixtureName);
+
+        // Then
         $this->assertSame($expected, $loaded);
     }
 
@@ -164,8 +173,10 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_loadFixtureData($fixturePath, $expFixtureType, $expFixtureData)
     {
+        // When
         $fixtureData = $this->fixtureLoader->loadFixtureData($fixturePath);
 
+        // Then
         $this->assertSame($expFixtureType, $fixtureData[0]);
         $this->assertSame($expFixtureData, $fixtureData[1]);
     }
@@ -190,8 +201,10 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_getFixtureRawData($fixturePath, $expFixtureData)
     {
+        // When
         $fixtureRawData = $this->fixtureLoader->getFixtureRawData($fixturePath);
 
+        // Then
         $this->assertSame($expFixtureData, $fixtureRawData);
     }
 
@@ -216,6 +229,7 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_loadFixtureFileErr($fixtureName, $expMsg)
     {
+        // When
         try {
             $this->fixtureLoader->loadFixtureData($fixtureName);
             $thrown = false;
@@ -225,6 +239,7 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
             $gotMessage = $e->getMessage();
         }
 
+        // Then
         $this->assertTrue($thrown);
         $this->assertSame($expMsg, $gotMessage);
     }
@@ -245,10 +260,14 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_loadSal_file_permissions_error()
     {
+        // Given
         $vFsRoot = vfsStream::setup();
         vfsStream::newFile('fixture.sql', 0000)->at($vFsRoot);
 
+        // When
         $fixtureLoader = new FixtureLoader($vFsRoot->url());
+
+        // Then
         $fixtureLoader->getFixtureData('fixture.sql');
     }
 }

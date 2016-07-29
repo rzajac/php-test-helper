@@ -34,8 +34,10 @@ class DbTestCase_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_dbGetConfig()
     {
+        // When
         $dbConfig = DbTestCase::dbGetConfig('HELPER1');
 
+        // Then
         $this->assertSame(9, count($dbConfig));
         $this->assertArrayHasKey(DbConnector::DB_CFG_DRIVER, $dbConfig);
         $this->assertArrayHasKey(DbConnector::DB_CFG_HOST, $dbConfig);
@@ -61,8 +63,10 @@ class DbTestCase_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_dbGetHelper()
     {
+        // When
         $db = DbTestCase::dbGetHelper('HELPER1');
 
+        // Then
         $this->assertInstanceOf('\Kicaj\Test\Helper\Database\DbItf', $db);
     }
 
@@ -71,8 +75,10 @@ class DbTestCase_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_dbGetFixtureLoader_noDb()
     {
+        // When
         $fLoader = DbTestCase::dbGetFixtureLoader();
 
+        // Then
         $this->assertInstanceOf('\Kicaj\Test\Helper\Loader\FixtureLoader', $fLoader);
         $this->assertFalse($fLoader->isDbSet());
     }
@@ -82,8 +88,10 @@ class DbTestCase_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_dbGetFixtureLoader_db()
     {
+        // When
         $fLoader = DbTestCase::dbGetFixtureLoader('HELPER2');
 
+        // Then
         $this->assertInstanceOf('\Kicaj\Test\Helper\Loader\FixtureLoader', $fLoader);
         $this->assertTrue($fLoader->isDbSet());
     }

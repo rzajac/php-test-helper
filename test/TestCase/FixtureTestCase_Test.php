@@ -45,8 +45,10 @@ class FixtureTestCase_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_getFixtureLoader()
     {
+        // When
         $fLoader = FixtureTestCase::getFixtureLoader();
 
+        // Then
         $this->assertInstanceOf('\Kicaj\Test\Helper\Loader\FixtureLoader', $fLoader);
         $this->assertFalse($fLoader->isDbSet());
     }
@@ -56,10 +58,14 @@ class FixtureTestCase_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_getFixtureLoader_dbSet()
     {
+        // Given
         $db = new MySQL();
         $db->dbSetup(getUnitTestDbConfig('HELPER1'))->dbConnect();
+
+        // When
         $fLoader = FixtureTestCase::getFixtureLoader($db);
 
+        // Then
         $this->assertInstanceOf('\Kicaj\Test\Helper\Loader\FixtureLoader', $fLoader);
         $this->assertTrue($fLoader->isDbSet());
     }
@@ -69,8 +75,10 @@ class FixtureTestCase_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_getFixtureData()
     {
+        // When
         $gotData = FixtureTestCase::getFixtureData('text.txt');
 
+        // Then
         $this->assertSame("Some text file.\nWith many lines.\n", $gotData);
     }
 
@@ -79,8 +87,10 @@ class FixtureTestCase_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_getFixtureRawData()
     {
+        // When
         $gotData = FixtureTestCase::getFixtureRawData('test5.sql');
 
+        // Then
         $this->assertSame("-- This is a comment\nINSERT INTO `test2` (`id`, `col2`) VALUES (NULL, '500');\n", $gotData);
     }
 }

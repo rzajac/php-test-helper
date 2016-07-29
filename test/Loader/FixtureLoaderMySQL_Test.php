@@ -72,9 +72,13 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test___construct()
     {
+        // Given
         $db = DbGet::factory(getUnitTestDbConfig('HELPER1'));
+
+        // When
         $fixtureLoader = new FixtureLoader($this->fixturesRootPath, $db);
 
+        // Then
         $this->assertNotNull($fixtureLoader);
         $this->assertTrue($fixtureLoader->isDbSet());
     }
@@ -89,7 +93,10 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_detectFormat($fixturePath, $expected)
     {
+        // When
         $got = $this->fixtureLoader->detectFormat($fixturePath);
+
+        // Then
         $this->assertSame($expected, $got);
     }
 
@@ -114,9 +121,11 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_detectFormat_exception($fixturePath, $expMsg)
     {
+        // Given
         $thrown = false;
         $gotMsg = '';
 
+        // When
         try {
             $this->fixtureLoader->detectFormat($fixturePath);
         } catch (\Exception $e) {
@@ -124,6 +133,7 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
             $gotMsg = $e->getMessage();
         }
 
+        // Then
         $this->assertTrue($thrown);
         $this->assertSame($expMsg, $gotMsg);
     }
@@ -147,7 +157,10 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_loadFixtureFile($fixtureName, $expected)
     {
+        // When
         $loaded = $this->fixtureLoader->getFixtureData($fixtureName);
+
+        // Then
         $this->assertSame($expected, $loaded);
     }
 
@@ -179,6 +192,7 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_loadFixtureFileErr($fixtureName, $expMsg)
     {
+        // When
         try {
             $this->fixtureLoader->loadFixtureData($fixtureName);
             $thrown = false;
@@ -191,6 +205,7 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
             $gotMessage = str_replace($this->fixturesRootPath . DIRECTORY_SEPARATOR, '', $gotMessage);
         }
 
+        // Then
         $this->assertTrue($thrown);
         $this->assertSame($expMsg, $gotMessage);
     }
@@ -207,10 +222,10 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_loadFixture()
     {
+        // Given
         $this->fixtureLoader->loadDbFixture('test2.sql');
 
-        $this->assertSame(4, $this->dbDriver->dbCountTableRows('test2'));
-
+        // When
         $gotData = $this->dbDriver->dbGetTableData('test2');
         $expData = [
             ['id' => '1', 'col2' => '2'],
@@ -219,6 +234,7 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
             ['id' => '4', 'col2' => '202'],
         ];
 
+        // Then
         $this->assertSame($expData, $gotData);
     }
 
@@ -227,10 +243,10 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_loadFixtures()
     {
+        // Given
         $this->fixtureLoader->loadDbFixtures(['test2.sql', 'test5.sql']);
 
-        $this->assertSame(5, $this->dbDriver->dbCountTableRows('test2'));
-
+        // When
         $gotData = $this->dbDriver->dbGetTableData('test2');
         $expData = [
             ['id' => '1', 'col2' => '2'],
@@ -240,6 +256,7 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
             ['id' => '5', 'col2' => '500'],
         ];
 
+        // Then
         $this->assertSame($expData, $gotData);
     }
 
@@ -251,12 +268,15 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_loadFixtureDbConnectionError()
     {
+        // Given
         $dbConfig = getUnitTestDbConfig('HELPER1');
         $dbConfig['password'] = 'wrongOne';
-
         $db = DbGet::factory($dbConfig);
+
+        // When
         $fixtureLoader = new FixtureLoader($this->fixturesRootPath, $db);
 
+        // Then
         $fixtureLoader->loadDbFixture('test2.sql');
     }
 
@@ -271,6 +291,7 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_loadFixtureErr($fixtureName, $expMsg)
     {
+        // When
         try {
             $this->fixtureLoader->loadDbFixture($fixtureName);
             $thrown = false;
@@ -283,6 +304,7 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
             $gotMessage = str_replace($this->fixturesRootPath . DIRECTORY_SEPARATOR, '', $gotMessage);
         }
 
+        // Then
         $this->assertTrue($thrown);
         $this->assertTrue(Str::startsWith($gotMessage, $expMsg));
     }
@@ -302,10 +324,14 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_loadSal_file_permissions_error()
     {
+        // Given
         $vFsRoot = vfsStream::setup();
         vfsStream::newFile('fixture.sql', 0000)->at($vFsRoot);
 
+        // When
         $db = DbGet::factory(getUnitTestDbConfig('HELPER1'));
+
+        // Then
         $fixtureLoader = new FixtureLoader($vFsRoot->url(), $db);
         $fixtureLoader->loadDbFixture('fixture.sql');
     }

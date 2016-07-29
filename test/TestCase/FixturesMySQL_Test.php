@@ -60,11 +60,14 @@ class FixturesMySQL_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_setUp()
     {
+        // Given
         $this->assertSame(1, $this->dbDriver->dbCountTableRows('test1'));
         $this->assertSame(2, $this->dbDriver->dbCountTableRows('test2'));
 
+        // When
         $this->fixtureLoader->loadDbFixture('test4.sql');
 
+        // Then
         $this->assertSame(1, $this->dbDriver->dbCountTableRows('test1'));
         $this->assertSame(4, $this->dbDriver->dbCountTableRows('test2'));
     }

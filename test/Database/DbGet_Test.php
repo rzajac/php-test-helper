@@ -40,11 +40,12 @@ class DbGet_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_factory($driverName, $expErrorMsg)
     {
+        // Given
         $dbConfig = getUnitTestDbConfig('HELPER1');
         $dbConfig['driver'] = $driverName;
-
         $mysql = null;
 
+        // When
         try {
             $mysql = DbGet::factory($dbConfig);
             $gotErrorMsg = '';
@@ -52,6 +53,7 @@ class DbGet_Test extends \PHPUnit_Framework_TestCase
             $gotErrorMsg = $e->getMessage();
         }
 
+        // Then
         if ($expErrorMsg) {
             $this->assertSame($expErrorMsg, $gotErrorMsg);
             $this->assertNull($mysql);
@@ -74,9 +76,11 @@ class DbGet_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_factory_sameInstance()
     {
+        // When
         $db1 = DbGet::factory(getUnitTestDbConfig('HELPER1'));
         $db2 = DbGet::factory(getUnitTestDbConfig('HELPER1'));
 
+        // Then
         $this->assertSame($db1, $db2);
     }
 
@@ -85,9 +89,11 @@ class DbGet_Test extends \PHPUnit_Framework_TestCase
      */
     public function test_factory_notSameInstance()
     {
+        // When
         $db1 = DbGet::factory(getUnitTestDbConfig('HELPER1'));
         $db2 = DbGet::factory(getUnitTestDbConfig('HELPER2'));
 
+        // Then
         $this->assertNotSame($db1, $db2);
     }
 }
