@@ -21,7 +21,7 @@ use Kicaj\DbKit\DbConnector;
 use Kicaj\Test\Helper\TestCase\DbTestCase;
 
 /**
- * Tests for DbTextCase class.
+ * Tests for DbTestCase class.
  *
  * @coversDefaultClass \Kicaj\Test\Helper\TestCase\DbTestCase
  *

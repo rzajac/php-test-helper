@@ -17,11 +17,11 @@
  */
 namespace Kicaj\Test\Helper\TestCase;
 
+use Kicaj\DbKit\DatabaseException;
+use Kicaj\DbKit\DbConnect;
 use Kicaj\Test\Helper\Database\DbGet;
 use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\Loader\FixtureLoader;
-use Kicaj\DbKit\DatabaseException;
-use Kicaj\DbKit\DbConnect;
 
 /**
  * Database test case.
@@ -137,5 +137,20 @@ abstract class DbTestCase extends FixtureTestCase
         $db = self::dbGetHelper($testDbName);
 
         $db->dbDropTables($db->dbGetTableNames());
+    }
+
+    /**
+     * Check table exists.
+     *
+     * @param string $testDbName The name of database connection details form phpunit.xml.
+     * @param string $tableName  The table or tables to drop from the database.
+     *
+     * @return bool
+     */
+    public static function dbTableExists($testDbName, $tableName)
+    {
+        $tableNames = self::dbGetHelper($testDbName)->dbGetTableNames();
+
+        return in_array($tableName, $tableNames);
     }
 }

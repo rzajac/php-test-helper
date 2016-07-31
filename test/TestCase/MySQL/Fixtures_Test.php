@@ -15,7 +15,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\Test\TestHelperTest\TestCase;
+namespace Kicaj\Test\TestHelperTest\MySQL\TestCase;
 
 use Kicaj\Test\Helper\Database\DbGet;
 use Kicaj\Test\Helper\Database\Driver\MySQL;
@@ -30,7 +30,7 @@ use Kicaj\Test\TestHelperTest\MySQLHelper;
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class FixturesMySQL_Test extends \PHPUnit_Framework_TestCase
+class Fixtures_Test extends \PHPUnit_Framework_TestCase
 {
     /**
      * Database helper.
