@@ -17,9 +17,10 @@
  */
 namespace Kicaj\Test\Helper\Loader;
 
+use Kicaj\DbKit\DatabaseException;
 use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Tools\Api\JSON;
-use Kicaj\DbKit\DatabaseException;
+use Kicaj\Tools\Helper\Str;
 use SplFileInfo;
 
 /**
@@ -62,7 +63,7 @@ class FixtureLoader
      */
     public function isDbSet()
     {
-        return (bool) $this->db;
+        return (bool)$this->db;
     }
 
     /**
@@ -70,6 +71,7 @@ class FixtureLoader
      *
      * @param string $fixturePath The fixture path relative to fixturesRootPath.
      *
+     * @throws \Exception
      * @throws DatabaseException
      */
     public function loadDbFixture($fixturePath)
@@ -87,6 +89,7 @@ class FixtureLoader
      *
      * @param array $fixtureNames The array of fixture paths to load to database.
      *
+     * @throws \Exception
      * @throws DatabaseException
      */
     public function loadDbFixtures(array $fixtureNames)
@@ -100,6 +103,8 @@ class FixtureLoader
      * Get fixture data.
      *
      * @param string $fixturePath The fixture path relative to fixturesRootPath.
+     *
+     * @throws \Exception
      *
      * @return mixed
      */
@@ -140,11 +145,11 @@ class FixtureLoader
 
         switch ($fixtureFormat) {
             case DbItf::FIXTURE_FORMAT_JSON:
-                $fixtureData = JSON::decode(file_get_contents($fixturePath));
+                $fixtureData = JSON::decode($this->loadJson($fixturePath));
                 break;
 
             case DbItf::FIXTURE_FORMAT_TXT:
-                $fixtureData = file_get_contents($fixturePath);
+                $fixtureData = $this->loadTxt($fixturePath);
                 break;
 
             case DbItf::FIXTURE_FORMAT_PHP:
@@ -188,6 +193,56 @@ class FixtureLoader
     }
 
     /**
+     * Load text fixture.
+     *
+     * @param string $fixturePath The fixture path.
+     *
+     * @throws \Exception
+     *
+     * @return string
+     */
+    public function loadTxt($fixturePath)
+    {
+        if (!file_exists($fixturePath)) {
+            throw new \Exception("Fixture $fixturePath does not exist.");
+        }
+
+        return file_get_contents($fixturePath);
+    }
+
+    /**
+     * Load JSON fixture.
+     *
+     * @param string $fixturePath The fixture path.
+     *
+     * @throws \Exception
+     *
+     * @return string
+     */
+    public function loadJson($fixturePath)
+    {
+        if (!file_exists($fixturePath)) {
+            throw new \Exception("Fixture $fixturePath does not exist.");
+        }
+
+        $lines = file($fixturePath);
+        $endLine = -1;
+        foreach ($lines as $lineNo => $data) {
+            if (Str::startsWith($data, '--')) {
+                $endLine = $lineNo;
+            } else {
+                break;
+            }
+        }
+
+        if ($endLine != -1) {
+            array_splice($lines, 0, $endLine + 1);
+        }
+
+        return implode("\n", $lines);
+    }
+
+    /**
      * Get array of SQL statements form fixture file.
      *
      * @param string $fixturePath The fixture path.
@@ -196,7 +251,7 @@ class FixtureLoader
      *
      * @return array
      */
-    private function loadSql($fixturePath)
+    public function loadSql($fixturePath)
     {
         if (!file_exists($fixturePath)) {
             throw new \Exception("Fixture $fixturePath does not exist.");

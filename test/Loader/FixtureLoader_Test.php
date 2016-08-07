@@ -71,6 +71,8 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
      *
      * @param string $fixturePath
      * @param string $expected
+     *
+     * @throws \Exception
      */
     public function test_detectFormat($fixturePath, $expected)
     {
@@ -132,9 +134,13 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
      *
      * @covers ::getFixtureData
      * @covers ::loadSql
+     * @covers ::loadJson
+     * @covers ::loadTxt
      *
      * @param string $fixtureName
      * @param mixed  $expected
+     *
+     * @throws \Exception
      */
     public function test_loadFixtureFile($fixtureName, $expected)
     {
@@ -149,6 +155,8 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     {
         return [
             ['test1.json', ['key1' => 'val1']],
+            ['with_comment.json', ['key1' => 'val1']],
+            ['with_comments.json', ['key1' => 'val1']],
             ['test1.sql', ['SELECT * FROM test1;', 'SELECT * FROM test2;']],
             [
                 'multi_line.sql',
@@ -170,6 +178,8 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
      * @param string $fixturePath
      * @param string $expFixtureType
      * @param mixed  $expFixtureData
+     *
+     * @throws \Exception
      */
     public function test_loadFixtureData($fixturePath, $expFixtureType, $expFixtureData)
     {
@@ -185,6 +195,7 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     {
         return [
             ['test1.json', DbItf::FIXTURE_FORMAT_JSON, ['key1' => 'val1']],
+            ['with_comment.json', DbItf::FIXTURE_FORMAT_JSON, ['key1' => 'val1']],
             ['test5.sql', DbItf::FIXTURE_FORMAT_SQL, ["INSERT INTO `test2` (`id`, `col2`) VALUES (NULL, '500');"]],
             ['text.txt', DbItf::FIXTURE_FORMAT_TXT, "Some text file.\nWith many lines.\n"],
             ['arr.php', DbItf::FIXTURE_FORMAT_PHP, ['test' => 1]],
@@ -212,6 +223,8 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     {
         return [
             ['test1.json', '{"key1": "val1"}'."\n"],
+            ['with_comment.json', "-- Comment line 1\n{\"key1\": \"val1\"}"."\n"],
+            ['with_comments.json', "-- Comment line 1\n-- Comment line 2\n{\"key1\": \"val1\"}"."\n"],
             ['test5.sql', "-- This is a comment\nINSERT INTO `test2` (`id`, `col2`) VALUES (NULL, '500');\n"],
             ['text.txt', "Some text file.\nWith many lines.\n"],
             ['arr.php', "<?php\n\n\$fixture = [\n    'test' => 1,\n];\n\nreturn \$fixture;\n"],
@@ -223,6 +236,8 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
      *
      * @covers ::loadFixtureData
      * @covers ::loadSql
+     * @covers ::loadJson
+     * @covers ::loadTxt
      *
      * @param string $fixtureName
      * @param string $expMsg
@@ -248,6 +263,8 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     {
         return [
             ['notExisting.sql', 'Fixture test/fixtures/notExisting.sql does not exist.'],
+            ['notExisting.json', 'Fixture test/fixtures/notExisting.json does not exist.'],
+            ['notExisting.txt', 'Fixture test/fixtures/notExisting.txt does not exist.'],
             ['test1bad.json', 'JSON decoding error'],
         ];
     }
