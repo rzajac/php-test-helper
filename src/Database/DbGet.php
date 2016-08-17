@@ -23,7 +23,7 @@ use Kicaj\DbKit\DbConnector;
 use Kicaj\Test\Helper\Database\Driver\MySQL;
 
 /**
- * MySQLHelper class for getting database driver.
+ * DbGet helper class for getting database driver.
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
@@ -42,7 +42,7 @@ final class DbGet
      */
     public static function factory(array $dbConfig)
     {
-        /** @var DbConnector[] $instances */
+        /** @var DbItf[] $instances */
         static $instances = [];
 
         $key = md5(json_encode($dbConfig));

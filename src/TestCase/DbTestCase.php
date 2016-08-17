@@ -22,6 +22,8 @@ use Kicaj\DbKit\DbConnect;
 use Kicaj\Test\Helper\Database\DbGet;
 use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\Loader\FixtureLoader;
+use Kicaj\Test\Helper\Loader\FixtureLoaderException;
+use Kicaj\Tools\Api\JSONParseException;
 
 /**
  * Database test case.
@@ -97,6 +99,8 @@ abstract class DbTestCase extends FixtureTestCase
      * @param string|string[] $fixturePaths The array of fixture paths to load to database.
      *
      * @throws DatabaseException
+     * @throws FixtureLoaderException
+     * @throws JSONParseException
      */
     public static function dbLoadFixtures($testDbName, $fixturePaths)
     {
@@ -144,6 +148,8 @@ abstract class DbTestCase extends FixtureTestCase
      *
      * @param string $testDbName The name of database connection details form phpunit.xml.
      * @param string $tableName  The table or tables to drop from the database.
+     *
+     * @throws DatabaseException
      *
      * @return bool
      */

@@ -23,7 +23,7 @@ use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Tools\Helper\Str;
 
 /**
- * Class MySQL.
+ * MySQL database driver.
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */

@@ -20,7 +20,9 @@ namespace Kicaj\Test\TestHelperTest\Loader;
 use Kicaj\Test\Helper\Database\DbGet;
 use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\Loader\FixtureLoader;
+use Kicaj\Test\Helper\Loader\FixtureLoaderException;
 use Kicaj\Test\TestHelperTest\MySQLHelper;
+use Kicaj\Tools\Api\JSONParseException;
 use Kicaj\Tools\Helper\Str;
 use org\bovigo\vfs\vfsStream;
 
@@ -90,6 +92,8 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
      *
      * @param string $fixturePath
      * @param string $expected
+     *
+     * @throws FixtureLoaderException
      */
     public function test_detectFormat($fixturePath, $expected)
     {
@@ -154,6 +158,9 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
      *
      * @param string $fixtureName
      * @param mixed  $expected
+     *
+     * @throws FixtureLoaderException
+     * @throws JSONParseException
      */
     public function test_loadFixtureFile($fixtureName, $expected)
     {

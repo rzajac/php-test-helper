@@ -19,6 +19,8 @@ namespace Kicaj\Test\Helper\TestCase;
 
 use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\Loader\FixtureLoader;
+use Kicaj\Test\Helper\Loader\FixtureLoaderException;
+use Kicaj\Tools\Api\JSONParseException;
 
 /**
  * Test case with fixtures.
@@ -55,6 +57,9 @@ abstract class FixtureTestCase extends TestCase
      * Return content of the given fixture file.
      *
      * @param string $fixturePath The fixture path relative to fixturesRootPath.
+     *
+     * @throws FixtureLoaderException
+     * @throws JSONParseException
      *
      * @return mixed
      */
