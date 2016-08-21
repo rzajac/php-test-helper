@@ -6,12 +6,12 @@
   "license": "Apache License 2.0",
   "require": {
     "php": ">=5.5",
-    "phpunit/phpunit": "5.4",
-    "rzajac/phptools": "0.6.*",
-    "rzajac/dbkit": "0.0.*"
+    "phpunit/phpunit": "^4.8",
+    "rzajac/phptools": "^0.7",
+    "rzajac/dbkit": "^0.0"
   },
   "require-dev": {
-    "mikey179/vfsStream": "~1.6"
+    "mikey179/vfsStream": "^1.6"
   },
   "autoload": {
     "psr-4": {
