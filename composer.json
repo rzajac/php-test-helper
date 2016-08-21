@@ -1,9 +1,15 @@
 {
   "name": "rzajac/php-test-helper",
-  "description": "Tools and classes helping with unit tests",
+  "description": "Classes helping with unit tests",
   "keywords": ["unit test", "testing"],
   "type": "library",
   "license": "Apache License 2.0",
+  "authors": [
+    {
+      "name": "Rafal Zajac",
+      "email": "rzajac@gmail.com"
+    }
+  ],
   "require": {
     "php": ">=5.5",
     "phpunit/phpunit": "^4.8",
