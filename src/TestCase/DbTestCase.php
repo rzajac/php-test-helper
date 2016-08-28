@@ -130,6 +130,23 @@ abstract class DbTestCase extends FixtureTestCase
     }
 
     /**
+     * Drop view or views from given test database.
+     *
+     * @param string          $testDbName The name of database connection details form phpunit.xml.
+     * @param string|string[] $viewNames  The view or views to drop from the database.
+     *
+     * @throws DatabaseException
+     */
+    public static function dbDropViews($testDbName, $viewNames)
+    {
+        if (is_string($viewNames)) {
+            $viewNames = [$viewNames];
+        }
+
+        self::dbGetHelper($testDbName)->dbDropViews($viewNames);
+    }
+
+    /**
      * Drop all tables from given test database.
      *
      * @param string $testDbName The name of database connection details form phpunit.xml.
@@ -144,10 +161,24 @@ abstract class DbTestCase extends FixtureTestCase
     }
 
     /**
+     * Drop all views from given test database.
+     *
+     * @param string $testDbName The name of database connection details form phpunit.xml.
+     *
+     * @throws DatabaseException
+     */
+    public static function dbDropAllViews($testDbName)
+    {
+        $db = self::dbGetHelper($testDbName);
+
+        $db->dbDropViews($db->dbGetViewNames());
+    }
+
+    /**
      * Check table exists.
      *
      * @param string $testDbName The name of database connection details form phpunit.xml.
-     * @param string $tableName  The table or tables to drop from the database.
+     * @param string $tableName  The table name to check.
      *
      * @throws DatabaseException
      *
@@ -158,5 +189,22 @@ abstract class DbTestCase extends FixtureTestCase
         $tableNames = self::dbGetHelper($testDbName)->dbGetTableNames();
 
         return in_array($tableName, $tableNames);
+    }
+
+    /**
+     * Check view exists.
+     *
+     * @param string $testDbName The name of database connection details form phpunit.xml.
+     * @param string $viewName   The view name to check.
+     *
+     * @throws DatabaseException
+     *
+     * @return bool
+     */
+    public static function dbViewExists($testDbName, $viewName)
+    {
+        $viewNames = self::dbGetHelper($testDbName)->dbGetViewNames();
+
+        return in_array($viewName, $viewNames);
     }
 }

@@ -20,7 +20,6 @@ namespace Kicaj\Test\Helper\Database\Driver;
 use Kicaj\DbKit\DatabaseException;
 use Kicaj\DbKit\DbConnector;
 use Kicaj\Test\Helper\Database\DbItf;
-use Kicaj\Tools\Helper\Str;
 
 /**
  * MySQL database driver.
@@ -115,16 +114,18 @@ class MySQL implements DbItf
         }
 
         foreach ($tableNames as $tableName) {
-            try {
-                $this->dbRunQuery(sprintf('DROP TABLE `%s`', $tableName));
-            } catch (DatabaseException $dbe) {
-                if (Str::contains($dbe->getMessage(), 'Unknown table')) {
-                    // Try dropping view.
-                    $this->dbRunQuery(sprintf('DROP VIEW `%s`', $tableName));
-                } else {
-                    throw $dbe;
-                }
-            }
+            $this->dbRunQuery(sprintf('DROP TABLE IF EXISTS `%s`', $tableName));
+        }
+    }
+
+    public function dbDropViews($viewNames)
+    {
+        if (is_string($viewNames)) {
+            $viewNames = [$viewNames];
+        }
+
+        foreach ($viewNames as $viewName) {
+            $this->dbRunQuery(sprintf('DROP VIEW IF EXISTS `%s`', $viewName));
         }
     }
 
@@ -143,21 +144,57 @@ class MySQL implements DbItf
     {
         $resp = $this->dbRunQuery(sprintf('SELECT COUNT(1) AS c FROM `%s`', $tableName));
 
-        return (int) $resp->fetch_array(MYSQLI_ASSOC)['c'];
+        return (int)$resp->fetch_array(MYSQLI_ASSOC)['c'];
+    }
+
+    /**
+     * Return table and view names form the database.
+     *
+     * @throws DatabaseException
+     *
+     * @return array
+     */
+    protected function getTableNames()
+    {
+        $dbName = mb_strtolower($this->config[DbItf::DB_CFG_DATABASE]);
+        $resp = $this->dbRunQuery(sprintf('SHOW FULL TABLES FROM `%s`', $dbName));
+
+        $tableAndViewNames = [];
+        while ($row = $resp->fetch_assoc()) {
+            $tableAndViewNames[] = array_change_key_case($row);
+        }
+
+        return $tableAndViewNames;
     }
 
     public function dbGetTableNames()
     {
-        $resp = $this->dbRunQuery(sprintf('SHOW TABLES FROM `%s`', $this->config[DbItf::DB_CFG_DATABASE]));
+        $tableAndViewNames = $this->getTableNames();
 
+        $dbName = mb_strtolower($this->config[DbItf::DB_CFG_DATABASE]);
         $tableNames = [];
-        while ($row = $resp->fetch_assoc()) {
-            foreach ($row as $tableName) {
-                $tableNames[] = $tableName;
+        foreach ($tableAndViewNames as $table) {
+            if ($table['table_type'] == 'BASE TABLE') {
+                $tableNames[] = $table['tables_in_' . $dbName];
             }
         }
 
         return $tableNames;
+    }
+
+    public function dbGetViewNames()
+    {
+        $tableAndViewNames = $this->getTableNames();
+
+        $dbName = mb_strtolower($this->config[DbItf::DB_CFG_DATABASE]);
+        $viewNames = [];
+        foreach ($tableAndViewNames as $table) {
+            if ($table['table_type'] == 'VIEW') {
+                $viewNames[] = $table['tables_in_' . $dbName];
+            }
+        }
+
+        return $viewNames;
     }
 
     public function dbGetTableData($tableName)

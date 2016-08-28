@@ -20,6 +20,7 @@ namespace Kicaj\Test\TestHelperTest\Database\Driver;
 use Kicaj\DbKit\DatabaseException;
 use Kicaj\DbKit\DbConnector;
 use Kicaj\Test\Helper\Database\DbItf;
+use Kicaj\Test\Helper\Database\Driver\_WhatMysqliReport;
 use Kicaj\Test\Helper\Database\Driver\MySQL;
 use Kicaj\Test\TestHelperTest\MySQLHelper;
 use ReflectionClass;
@@ -47,8 +48,17 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      */
     protected $mysql;
 
+    public static function setUpBeforeClass()
+    {
+        /** @noinspection PhpIncludeInspection */
+        require_once getFixturesRootPath() . '/inject_mysqli_report.php';
+    }
+
     public function setUp()
     {
+        _WhatMysqliReport::$throw = false;
+
+        // NOTE: THIS IS RESETTING DATABASE TO KNOWN STATE BEFORE EACH TEST!
         MySQLHelper::resetMySQLDatabases();
 
         // Connect to default database.
@@ -58,7 +68,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        $this->driver->dbClose();
+        _WhatMysqliReport::$throw = false;
     }
 
     /**
@@ -74,11 +84,14 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      * @param string $database The database name.
      * @param string $port     The database port.
      * @param string $timezone The timezone to set for connection.
-     * @param string $expMsg   The expected error message.
+     * @param string $errorMsg The expected error message.
      */
-    public function test_connection($host, $username, $password, $database, $port, $timezone, $expMsg)
+    public function test_connection($host, $username, $password, $database, $port, $timezone, $errorMsg)
     {
         // Given
+        $this->driver = null;
+        $thrown = false;
+
         $dbConfig = [
             DbConnector::DB_CFG_HOST     => $host,
             DbConnector::DB_CFG_USERNAME => $username,
@@ -93,27 +106,16 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
 
         // Then
         try {
-            $thrown = false;
-            $db = $driver->dbSetup($dbConfig);
+            $db = $driver->dbSetup($dbConfig)->dbConnect();
 
             $this->assertSame($driver, $db);
-            $this->assertFalse($driver->isConnected());
-            $db = $driver->dbConnect();
-            $this->assertSame($driver, $db);
-            $this->assertTrue($driver->isConnected());
-
-            $driver->dbGetTableNames(); // Call method that is actually doing something with database.
+            // Call method that is actually doing something with database.
+            $driver->dbGetTableNames();
         } catch (DatabaseException $e) {
             $thrown = true;
-
-            if ($expMsg === '') {
-                $this->fail('Did not expect to see error: ' . $e->getMessage());
-            }
-            $this->assertRegExp($expMsg, $e->getMessage());
+            $this->assertFalse('' == $errorMsg, 'Did not expect to see error: ' . $e->getMessage());
         } finally {
-            if ($expMsg !== '' && $thrown === false) {
-                $this->fail('Expected to see error: ' . $expMsg);
-            }
+            $this->assertFalse('' !== $errorMsg && false === $thrown, 'Expected to see error: ' . $errorMsg);
         }
     }
 
@@ -173,28 +175,83 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers ::dbConnect
-     * @covers ::isConnected
      */
-    public function test_dbConnect_return_if_connected()
+    public function test_dbConnect_calledTwice()
     {
-        // When
-        $driver = $this->driver->dbConnect();
+        // Given
+        _WhatMysqliReport::$throw = true;
 
         // Then
+        $driver = $this->driver->dbConnect();
         $this->assertSame($this->driver, $driver);
-        $this->assertTrue($this->driver->isConnected());
+    }
+
+    /**
+     * @covers ::dbConnect
+     * @covers ::isConnected
+     */
+    public function test_isConnected_notConnected()
+    {
+        // When
+        $driver = new MySQL();
+
+        // Then
+        $this->assertFalse($driver->isConnected());
+    }
+
+    /**
+     * @covers ::dbConnect
+     * @covers ::isConnected
+     */
+    public function test_isConnected_connected()
+    {
+        // When
+        $driver = new MySQL();
+        $driver->dbSetup(getUnitTestDbConfig('HELPER1'))->dbConnect();
+
+        // Then
+        $this->assertTrue($driver->isConnected());
     }
 
     /**
      * @covers ::dbGetTableNames
+     * @covers ::getTableNames
      */
-    public function test_getDbTableNames()
+    public function test_dbGetTableNames()
     {
         // When
         $tableNames = $this->driver->dbGetTableNames();
 
         // Then
-        $this->assertSame(['my_view', 'test1', 'test2', 'test3'], $tableNames);
+        $this->assertSame(['test1', 'test2', 'test3'], $tableNames);
+    }
+
+    /**
+     * @covers ::dbGetViewNames
+     */
+    public function test_dbGetViewNames()
+    {
+        // When
+        $viewNames = $this->driver->dbGetViewNames();
+
+        // Then
+        $this->assertSame(['my_view'], $viewNames);
+    }
+
+    /**
+     * @covers ::dbDropViews
+     * @covers ::dbGetViewNames
+     */
+    public function test_dbDropViews()
+    {
+        // Given
+        $this->driver->dbDropViews('my_view');
+
+        // When
+        $viewNames = $this->driver->dbGetViewNames();
+
+        // Then
+        $this->assertSame([], $viewNames);
     }
 
     /**
@@ -203,7 +260,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      * @expectedException \Kicaj\DbKit\DatabaseException
      * @expectedExceptionMessageRegExp /Incorrect database name/
      */
-    public function test_getDbTableNames_error()
+    public function test_dbGetTableNames_error()
     {
         // Given
         $driver = new MySQL();
@@ -221,7 +278,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      * @expectedException \Kicaj\DbKit\DatabaseException
      * @expectedExceptionMessageRegExp /Table .* doesn't exist/
      */
-    public function test_countTableRows_not_existing_table()
+    public function test_dbCountTableRows_not_existing_table()
     {
         $this->driver->dbCountTableRows('notExisting');
     }
@@ -229,7 +286,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::dbCountTableRows
      */
-    public function test_countTableRows()
+    public function test_dbCountTableRows()
     {
         $this->assertSame(1, $this->driver->dbCountTableRows('test1'));
         $this->assertSame(2, $this->driver->dbCountTableRows('test2'));
@@ -239,9 +296,9 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::dbTruncateTables
      *
-     * @depends test_countTableRows
+     * @depends test_dbCountTableRows
      */
-    public function test_truncateTables_emptyArray()
+    public function test_dbTruncateTables_emptyArray()
     {
         // When
         $this->driver->dbTruncateTables([]);
@@ -255,9 +312,9 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::dbTruncateTables
      *
-     * @depends test_countTableRows
+     * @depends test_dbCountTableRows
      */
-    public function test_truncateTables_array()
+    public function test_dbTruncateTables_array()
     {
         // When
         $this->driver->dbTruncateTables(['test2', 'test3']);
@@ -271,9 +328,9 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::dbTruncateTables
      *
-     * @depends test_countTableRows
+     * @depends test_dbCountTableRows
      */
-    public function test_truncateTables_string()
+    public function test_dbTruncateTables_string()
     {
         // When
         $this->driver->dbTruncateTables('test1');
@@ -287,10 +344,22 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::dbDropTables
      */
-    public function test_dropTables_multiple()
+    public function test_dbDropTables_multiple()
     {
         // When
         $this->driver->dbDropTables(['test1', 'test3']);
+
+        // Then
+        $this->assertSame(1, count($this->driver->dbGetTableNames()));
+    }
+
+    /**
+     * @covers ::dbDropTables
+     */
+    public function test_dbDropTables_single()
+    {
+        // When
+        $this->driver->dbDropTables('test2');
 
         // Then
         $this->assertSame(2, count($this->driver->dbGetTableNames()));
@@ -299,19 +368,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::dbDropTables
      */
-    public function test_dropTables_single()
-    {
-        // When
-        $this->driver->dbDropTables('test2');
-
-        // Then
-        $this->assertSame(3, count($this->driver->dbGetTableNames()));
-    }
-
-    /**
-     * @covers ::dbDropTables
-     */
-    public function test_dropTables_view()
+    public function test_dbDropTables_view()
     {
         // When
         $this->driver->dbDropTables('my_view');
@@ -444,3 +501,4 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->driver->isConnected());
     }
 }
+

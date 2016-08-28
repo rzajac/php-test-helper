@@ -51,6 +51,15 @@ interface DbItf extends DbConnector
     public function dbDropTables($tableNames);
 
     /**
+     * Drop view or list of views.
+     *
+     * @param string|string[] $viewNames The view name or array of view names to drop.
+     *
+     * @throws DatabaseException
+     */
+    public function dbDropViews($viewNames);
+
+    /**
      * Truncate table or list of tables.
      *
      * @param string|string[] $tableNames The table name or array of table names to truncate.
@@ -89,6 +98,15 @@ interface DbItf extends DbConnector
      * @return string[]
      */
     public function dbGetTableNames();
+
+    /**
+     * Return list of database views.
+     *
+     * @throws DatabaseException
+     *
+     * @return string[]
+     */
+    public function dbGetViewNames();
 
     /**
      * Run database query.
