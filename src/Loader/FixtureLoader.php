@@ -19,9 +19,6 @@ namespace Kicaj\Test\Helper\Loader;
 
 use Kicaj\DbKit\DatabaseException;
 use Kicaj\Test\Helper\Database\DbItf;
-use Kicaj\Tools\Api\JSON;
-use Kicaj\Tools\Api\JSONParseException;
-use Kicaj\Tools\Helper\Str;
 use SplFileInfo;
 
 /**
@@ -74,7 +71,6 @@ class FixtureLoader
      *
      * @throws DatabaseException
      * @throws FixtureLoaderException
-     * @throws JSONParseException
      */
     public function loadDbFixture($fixturePath)
     {
@@ -93,7 +89,6 @@ class FixtureLoader
      *
      * @throws DatabaseException
      * @throws FixtureLoaderException
-     * @throws JSONParseException
      */
     public function loadDbFixtures(array $fixtureNames)
     {
@@ -108,7 +103,6 @@ class FixtureLoader
      * @param string $fixturePath The fixture path relative to fixturesRootPath.
      *
      * @throws FixtureLoaderException
-     * @throws JSONParseException
      *
      * @return mixed
      */
@@ -137,7 +131,6 @@ class FixtureLoader
      * @param string $fixturePath The path to fixture file.
      *
      * @throws FixtureLoaderException
-     * @throws JSONParseException
      *
      * @return array The array where index 0 holds fixture format and index 1 holds the fixture content.
      */
@@ -150,7 +143,7 @@ class FixtureLoader
 
         switch ($fixtureFormat) {
             case DbItf::FIXTURE_FORMAT_JSON:
-                $fixtureData = JSON::decode($this->loadJson($fixturePath));
+                $fixtureData = $this->decode($this->loadJson($fixturePath));
                 break;
 
             case DbItf::FIXTURE_FORMAT_TXT:
@@ -233,7 +226,7 @@ class FixtureLoader
         $lines = file($fixturePath);
         $endLine = -1;
         foreach ($lines as $lineNo => $data) {
-            if (Str::startsWith($data, '--')) {
+            if (substr($data, 0, 2) === '--') {
                 $endLine = $lineNo;
             } else {
                 break;
@@ -295,5 +288,37 @@ class FixtureLoader
         fclose($handle);
 
         return $sqlArr;
+    }
+
+    /**
+     * Decode JSON string.
+     *
+     * @param string     $json    The JOSN string being decoded
+     * @param bool|false $asClass Set to true to get stdClass
+     * @param int        $depth   The user specified recursion depth
+     * @param int        $options The bitmask of JSON decode options
+     *
+     * @return mixed
+     *
+     * @throws FixtureLoaderException If passed $json string is not JSON
+     */
+    public function decode($json, $asClass = false, $depth = 512, $options = 0)
+    {
+        $result = json_decode($json, !$asClass, $depth, $options);
+
+        $le = json_last_error();
+        switch ($le) {
+            case JSON_ERROR_NONE:
+                return $result;
+            case JSON_ERROR_DEPTH:
+                throw new FixtureLoaderException('Maximum stack depth exceeded', $le);
+            case JSON_ERROR_SYNTAX:
+            case JSON_ERROR_STATE_MISMATCH:
+            case JSON_ERROR_CTRL_CHAR:
+            case JSON_ERROR_UTF8:
+                throw new FixtureLoaderException('JSON decoding error', $le);
+            default:
+                throw new FixtureLoaderException('Unknown error ' . $le);
+        }
     }
 }

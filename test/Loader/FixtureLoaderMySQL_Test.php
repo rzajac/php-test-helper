@@ -22,8 +22,6 @@ use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\Loader\FixtureLoader;
 use Kicaj\Test\Helper\Loader\FixtureLoaderException;
 use Kicaj\Test\TestHelperTest\MySQLHelper;
-use Kicaj\Tools\Api\JSONParseException;
-use Kicaj\Tools\Helper\Str;
 use org\bovigo\vfs\vfsStream;
 
 /**
@@ -160,7 +158,6 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
      * @param mixed  $expected
      *
      * @throws FixtureLoaderException
-     * @throws JSONParseException
      */
     public function test_loadFixtureFile($fixtureName, $expected)
     {
@@ -313,7 +310,7 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
 
         // Then
         $this->assertTrue($thrown);
-        $this->assertTrue(Str::startsWith($gotMessage, $expMsg));
+        $this->assertStringStartsWith($expMsg, $gotMessage);
     }
 
     public function loadFixtureErrProvider()

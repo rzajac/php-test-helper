@@ -17,7 +17,6 @@
  */
 
 use Kicaj\DbKit\DbConnector;
-use Kicaj\Tools\Helper\Arr;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -30,19 +29,37 @@ require_once __DIR__ . '/../vendor/autoload.php';
  */
 function getUnitTestDbConfig($dbName)
 {
-    $timezone = Arr::get($GLOBALS, 'TEST_DB_' . $dbName . '_TIMEZONE', '');
+    $timezone = ArrGet($GLOBALS, 'TEST_DB_' . $dbName . '_TIMEZONE', '');
 
     return [
-        DbConnector::DB_CFG_DRIVER   => Arr::get($GLOBALS, 'TEST_DB_' . $dbName . '_DRIVER', ''),
-        DbConnector::DB_CFG_HOST     => Arr::get($GLOBALS, 'TEST_DB_' . $dbName . '_HOST', ''),
-        DbConnector::DB_CFG_USERNAME => Arr::get($GLOBALS, 'TEST_DB_' . $dbName . '_USERNAME', ''),
-        DbConnector::DB_CFG_PASSWORD => Arr::get($GLOBALS, 'TEST_DB_' . $dbName . '_PASSWORD', ''),
-        DbConnector::DB_CFG_DATABASE => Arr::get($GLOBALS, 'TEST_DB_' . $dbName . '_DATABASE', ''),
-        DbConnector::DB_CFG_PORT     => Arr::get($GLOBALS, 'TEST_DB_' . $dbName . '_PORT', 3306),
+        DbConnector::DB_CFG_DRIVER   => ArrGet($GLOBALS, 'TEST_DB_' . $dbName . '_DRIVER', ''),
+        DbConnector::DB_CFG_HOST     => ArrGet($GLOBALS, 'TEST_DB_' . $dbName . '_HOST', ''),
+        DbConnector::DB_CFG_USERNAME => ArrGet($GLOBALS, 'TEST_DB_' . $dbName . '_USERNAME', ''),
+        DbConnector::DB_CFG_PASSWORD => ArrGet($GLOBALS, 'TEST_DB_' . $dbName . '_PASSWORD', ''),
+        DbConnector::DB_CFG_DATABASE => ArrGet($GLOBALS, 'TEST_DB_' . $dbName . '_DATABASE', ''),
+        DbConnector::DB_CFG_PORT     => ArrGet($GLOBALS, 'TEST_DB_' . $dbName . '_PORT', 3306),
         DbConnector::DB_CFG_CONNECT  => true,
         DbConnector::DB_CFG_TIMEZONE => $timezone,
         DbConnector::DB_CFG_DEBUG    => true,
     ];
+}
+
+/**
+ * Return array key value or default if it does not exist.
+ *
+ * @param array  $array   The array
+ * @param string $key     The key to get value for
+ * @param mixed  $default The default value to return if key doesn't exist
+ *
+ * @return mixed
+ */
+function ArrGet($array, $key, $default = null)
+{
+    if (!is_array($array)) {
+        return $default;
+    }
+
+    return array_key_exists($key, $array) ? $array[$key] : $default;
 }
 
 /**
