@@ -24,13 +24,13 @@ use Kicaj\Test\Helper\TestCase\FixtureTestCase;
 use Kicaj\Test\TestHelperTest\MySQLHelper;
 
 /**
- * Class DbTestCase_Test.
+ * FixturesTest.
  *
  * @coversDefaultClass \Kicaj\Test\Helper\TestCase\FixtureTestCase
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class Fixtures_Test extends \PHPUnit_Framework_TestCase
+class FixturesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Database helper.
@@ -56,9 +56,11 @@ class Fixtures_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::setUp
      */
-    public function test_setUp()
+    public function setUpTest()
     {
         // Given
         $this->assertSame(1, $this->dbDriver->dbCountTableRows('test1'));

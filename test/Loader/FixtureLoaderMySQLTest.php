@@ -25,13 +25,13 @@ use Kicaj\Test\TestHelperTest\MySQLHelper;
 use org\bovigo\vfs\vfsStream;
 
 /**
- * Tests for FixtureLoader class.
+ * FixtureLoaderMySQLTest.
  *
  * @coversDefaultClass \Kicaj\Test\Helper\Loader\FixtureLoader
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
+class FixtureLoaderMySQLTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Fixtures root directory.
@@ -67,10 +67,12 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::__construct
      * @covers ::isDbSet
      */
-    public function test___construct()
+    public function construct()
     {
         // Given
         $db = DbGet::factory(getUnitTestDbConfig('HELPER1'));
@@ -84,6 +86,8 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @dataProvider detectFormatProvider
      *
      * @covers ::detectFormat
@@ -93,7 +97,7 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
      *
      * @throws FixtureLoaderException
      */
-    public function test_detectFormat($fixturePath, $expected)
+    public function detectFormat($fixturePath, $expected)
     {
         // When
         $got = $this->fixtureLoader->detectFormat($fixturePath);
@@ -114,6 +118,8 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @dataProvider detectFormatErrProvider
      *
      * @covers ::detectFormat
@@ -121,7 +127,7 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
      * @param string $fixturePath
      * @param string $expMsg
      */
-    public function test_detectFormat_exception($fixturePath, $expMsg)
+    public function detectFormatException($fixturePath, $expMsg)
     {
         // Given
         $thrown = false;
@@ -149,6 +155,8 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @dataProvider loadFixtureFileProvider
      *
      * @covers ::getFixtureData
@@ -159,7 +167,7 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
      *
      * @throws FixtureLoaderException
      */
-    public function test_loadFixtureFile($fixtureName, $expected)
+    public function loadFixtureFile($fixtureName, $expected)
     {
         // When
         $loaded = $this->fixtureLoader->getFixtureData($fixtureName);
@@ -186,6 +194,8 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @dataProvider loadFixtureFileErrProvider
      *
      * @covers ::loadFixtureData
@@ -194,7 +204,7 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
      * @param string $fixtureName
      * @param string $expMsg
      */
-    public function test_loadFixtureFileErr($fixtureName, $expMsg)
+    public function loadFixtureFileErr($fixtureName, $expMsg)
     {
         // When
         try {
@@ -222,9 +232,11 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::loadDbFixture
      */
-    public function test_loadFixture()
+    public function loadFixture()
     {
         // Given
         $this->fixtureLoader->loadDbFixture('test2.sql');
@@ -243,9 +255,11 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::loadDbFixtures
      */
-    public function test_loadFixtures()
+    public function loadFixtures()
     {
         // Given
         $this->fixtureLoader->loadDbFixtures(['test2.sql', 'test5.sql']);
@@ -265,12 +279,14 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::loadDbFixture
      *
      * @expectedException \Exception
      * @expectedExceptionMessageRegExp /.*Access denied for user.+/
      */
-    public function test_loadFixtureDbConnectionError()
+    public function loadFixtureDbConnectionError()
     {
         // Given
         $dbConfig = getUnitTestDbConfig('HELPER1');
@@ -285,6 +301,8 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @dataProvider loadFixtureErrProvider
      *
      * @covers ::loadDbFixture
@@ -293,7 +311,7 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
      * @param string $fixtureName
      * @param string $expMsg
      */
-    public function test_loadFixtureErr($fixtureName, $expMsg)
+    public function loadFixtureErr($fixtureName, $expMsg)
     {
         // When
         try {
@@ -321,12 +339,14 @@ class FixtureLoaderMySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::loadSql
      *
      * @expectedException \Exception
      * @expectedExceptionMessage Error opening fixture vfs://root/fixture.sql
      */
-    public function test_loadSal_file_permissions_error()
+    public function loadSqlFilePermissionsError()
     {
         // Given
         $vFsRoot = vfsStream::setup();

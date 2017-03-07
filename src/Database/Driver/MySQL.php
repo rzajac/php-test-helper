@@ -156,7 +156,7 @@ class MySQL implements DbItf
      */
     protected function getTableNames()
     {
-        $dbName = mb_strtolower($this->config[DbItf::DB_CFG_DATABASE]);
+        $dbName = $this->config[DbItf::DB_CFG_DATABASE];
         $resp = $this->dbRunQuery(sprintf('SHOW FULL TABLES FROM `%s`', $dbName));
 
         $tableAndViewNames = [];

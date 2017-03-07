@@ -23,13 +23,13 @@ use Kicaj\Test\Helper\TestCase\FixtureTestCase;
 use org\bovigo\vfs\vfsStream;
 
 /**
- * Tests for FixtureLoader class.
+ * FixtureLoaderTest.
  *
  * @coversDefaultClass \Kicaj\Test\Helper\Loader\FixtureLoader
  *
  * @author             Rafal Zajac <rzajac@gmail.com>
  */
-class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
+class FixtureLoaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Fixture loader.
@@ -55,16 +55,20 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::__construct
      * @covers ::isDbSet
      */
-    public function test___construct()
+    public function construct()
     {
         $this->assertNotNull($this->fixtureLoader);
         $this->assertFalse($this->fixtureLoader->isDbSet());
     }
 
     /**
+     * @test
+     *
      * @dataProvider detectFormatProvider
      *
      * @covers ::detectFormat
@@ -74,7 +78,7 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
      *
      * @throws \Exception
      */
-    public function test_detectFormat($fixturePath, $expected)
+    public function detectFormat($fixturePath, $expected)
     {
         // When
         $got = $this->fixtureLoader->detectFormat($fixturePath);
@@ -95,6 +99,8 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @dataProvider detectFormatErrProvider
      *
      * @covers ::detectFormat
@@ -102,7 +108,7 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
      * @param string $fixturePath
      * @param string $expMsg
      */
-    public function test_detectFormat_exception($fixturePath, $expMsg)
+    public function detectFormatException($fixturePath, $expMsg)
     {
         // Given
         $thrown = false;
@@ -130,6 +136,8 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @dataProvider loadFixtureFileProvider
      *
      * @covers ::getFixtureData
@@ -142,7 +150,7 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
      *
      * @throws \Exception
      */
-    public function test_loadFixtureFile($fixtureName, $expected)
+    public function loadFixtureFile($fixtureName, $expected)
     {
         // When
         $loaded = $this->fixtureLoader->getFixtureData($fixtureName);
@@ -171,6 +179,8 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @dataProvider loadFixtureDataProvider
      *
      * @covers ::loadFixtureData
@@ -181,7 +191,7 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
      *
      * @throws \Exception
      */
-    public function test_loadFixtureData($fixturePath, $expFixtureType, $expFixtureData)
+    public function loadFixtureData($fixturePath, $expFixtureType, $expFixtureData)
     {
         // When
         $fixtureData = $this->fixtureLoader->loadFixtureData($fixturePath);
@@ -203,6 +213,8 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @dataProvider getFixtureRawDataProvider
      *
      * @covers ::getFixtureRawData
@@ -210,7 +222,7 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
      * @param string $fixturePath
      * @param mixed  $expFixtureData
      */
-    public function test_getFixtureRawData($fixturePath, $expFixtureData)
+    public function getFixtureRawData($fixturePath, $expFixtureData)
     {
         // When
         $fixtureRawData = $this->fixtureLoader->getFixtureRawData($fixturePath);
@@ -222,9 +234,9 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     public function getFixtureRawDataProvider()
     {
         return [
-            ['test1.json', '{"key1": "val1"}'."\n"],
-            ['with_comment.json', "-- Comment line 1\n{\"key1\": \"val1\"}"."\n"],
-            ['with_comments.json', "-- Comment line 1\n-- Comment line 2\n{\"key1\": \"val1\"}"."\n"],
+            ['test1.json', '{"key1": "val1"}' . "\n"],
+            ['with_comment.json', "-- Comment line 1\n{\"key1\": \"val1\"}" . "\n"],
+            ['with_comments.json', "-- Comment line 1\n-- Comment line 2\n{\"key1\": \"val1\"}" . "\n"],
             ['test5.sql', "-- This is a comment\nINSERT INTO `test2` (`id`, `col2`) VALUES (NULL, '500');\n"],
             ['text.txt', "Some text file.\nWith many lines.\n"],
             ['arr.php', "<?php\n\n\$fixture = [\n    'test' => 1,\n];\n\nreturn \$fixture;\n"],
@@ -232,6 +244,8 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @dataProvider loadFixtureFileErrProvider
      *
      * @covers ::loadFixtureData
@@ -242,7 +256,7 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
      * @param string $fixtureName
      * @param string $expMsg
      */
-    public function test_loadFixtureFileErr($fixtureName, $expMsg)
+    public function loadFixtureFileErr($fixtureName, $expMsg)
     {
         // When
         try {
@@ -270,12 +284,14 @@ class FixtureLoader_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::loadSql
      *
      * @expectedException \Exception
      * @expectedExceptionMessage Error opening fixture vfs://root/fixture.sql
      */
-    public function test_loadSal_file_permissions_error()
+    public function loadSqlFilePermissionsError()
     {
         // Given
         $vFsRoot = vfsStream::setup();

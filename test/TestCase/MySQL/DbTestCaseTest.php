@@ -21,13 +21,13 @@ use Kicaj\Test\Helper\TestCase\DbTestCase;
 use Kicaj\Test\TestHelperTest\MySQLHelper;
 
 /**
- * Tests for DbTestCase class.
+ * DbTestCaseTest.
  *
  * @coversDefaultClass \Kicaj\Test\Helper\TestCase\DbTestCase
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class DbTestCase_Test extends \PHPUnit_Framework_TestCase
+class DbTestCaseTest extends \PHPUnit_Framework_TestCase
 {
     public static function setUpBeforeClass()
     {
@@ -35,9 +35,11 @@ class DbTestCase_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbTableExists
      */
-    public function test_dbTableExists_doesNotExist()
+    public function dbTableExistsDoesNotExist()
     {
         // When
         $exists = DbTestCase::dbTableExists('HELPER1', '__not_exists__');
@@ -47,9 +49,11 @@ class DbTestCase_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbTableExists
      */
-    public function test_dbTableExists_exist()
+    public function dbTableExistsExist()
     {
         // When
         $exists = DbTestCase::dbTableExists('HELPER1', 'test1');

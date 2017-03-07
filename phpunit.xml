@@ -15,7 +15,7 @@
          processUncoveredFilesFromWhitelist="true">
 
     <php>
-        <var name="TEST_DB_HELPER1_HOST" value="127.0.0.1"/>
+        <var name="TEST_DB_HELPER1_HOST" value="192.168.42.42"/>
         <var name="TEST_DB_HELPER1_USERNAME" value="testUser"/>
         <var name="TEST_DB_HELPER1_PASSWORD" value="testUserPass"/>
         <var name="TEST_DB_HELPER1_DATABASE" value="testHelper1"/>
@@ -23,7 +23,7 @@
         <var name="TEST_DB_HELPER1_TIMEZONE" value="UTC"/>
         <var name="TEST_DB_HELPER1_DRIVER" value="mysql"/>
 
-        <var name="TEST_DB_HELPER2_HOST" value="127.0.0.1"/>
+        <var name="TEST_DB_HELPER2_HOST" value="192.168.42.42"/>
         <var name="TEST_DB_HELPER2_USERNAME" value="testUser"/>
         <var name="TEST_DB_HELPER2_PASSWORD" value="testUserPass"/>
         <var name="TEST_DB_HELPER2_DATABASE" value="testHelper2"/>

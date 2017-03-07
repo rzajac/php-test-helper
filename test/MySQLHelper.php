@@ -114,9 +114,9 @@ class MySQLHelper
         }
 
         foreach ($tableNames as $tableName) {
-            $result = (bool) $mysql->query("DROP TABLE $tableName");
+            $result = (bool)$mysql->query("DROP TABLE $tableName");
             if (!$result) {
-                $result = (bool) $mysql->query("DROP VIEW $tableName");
+                $result = (bool)$mysql->query("DROP VIEW $tableName");
                 if (!$result) {
                     throw new DatabaseException($mysql->error);
                 }

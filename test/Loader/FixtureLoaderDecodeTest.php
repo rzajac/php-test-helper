@@ -24,13 +24,13 @@ namespace Kicaj\Test\TestHelperTest\Loader {
 
 
     /**
-     * JSON class unit tests.
+     * FixtureLoaderDecodeTest.
      *
      * @coversDefaultClass \Kicaj\Test\Helper\Loader\FixtureLoader
      *
      * @author             Rafal Zajac <rzajac@gmail.com>
      */
-    class FixtureLoader_decode_Test extends \PHPUnit_Framework_TestCase
+    class FixtureLoaderDecodeTest extends \PHPUnit_Framework_TestCase
     {
         protected function tearDown()
         {
@@ -38,6 +38,8 @@ namespace Kicaj\Test\TestHelperTest\Loader {
         }
 
         /**
+         * @test
+         *
          * @dataProvider decodeProvider
          *
          * @covers ::decode
@@ -48,7 +50,7 @@ namespace Kicaj\Test\TestHelperTest\Loader {
          * @param string $expErrMsg
          * @param int    $expErrCode
          */
-        public function test_decode($json, $asClass, $depth, $expErrMsg, $expErrCode)
+        public function decode($json, $asClass, $depth, $expErrMsg, $expErrCode)
         {
             // Given
             $fixtureLoader = new FixtureLoader(FixtureTestCase::getFixturesRootPath());
@@ -74,17 +76,35 @@ namespace Kicaj\Test\TestHelperTest\Loader {
                 ['{"aaa": 1}', false, 512, '', ''], // 0
                 ['{"aaa: 1}', false, 512, 'JSON decoding error', 4], // 1
                 ['{"aaa": {"aaa": {"aaa": {}}}', false, 1, 'Maximum stack depth exceeded', 1], // 2
-                ['{"j": 1 ] }', false, 512, 'JSON decoding error', 2], // 3
             ];
         }
 
         /**
+         * @test
+         *
+         * @covers ::decode
+         *
+         * @expectedException \Kicaj\Test\Helper\Loader\FixtureLoaderException
+         * @expectedExceptionMessage JSON decoding error
+         */
+        public function decodeError()
+        {
+            // Given
+            $fixtureLoader = new FixtureLoader(FixtureTestCase::getFixturesRootPath());
+
+            // Then
+            $fixtureLoader->decode('{"j": 1 ] }');
+        }
+
+        /**
+         * @test
+         *
          * @covers ::decode
          *
          * @expectedException \Kicaj\Test\Helper\Loader\FixtureLoaderException
          * @expectedExceptionMessage Unknown error
          */
-        public function test_decode_unknown_error()
+        public function decodeUnknownError()
         {
             // Given
             $fixtureLoader = new FixtureLoader(FixtureTestCase::getFixturesRootPath());

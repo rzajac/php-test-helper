@@ -21,18 +21,20 @@ use Kicaj\DbKit\DbConnector;
 use Kicaj\Test\Helper\TestCase\DbTestCase;
 
 /**
- * Tests for DbTestCase class.
+ * DbTestCaseTest.
  *
  * @coversDefaultClass \Kicaj\Test\Helper\TestCase\DbTestCase
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class DbTestCase_Test extends \PHPUnit_Framework_TestCase
+class DbTestCaseTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @test
+     *
      * @covers ::dbGetConfig
      */
-    public function test_dbGetConfig()
+    public function dbGetConfig()
     {
         // When
         $dbConfig = DbTestCase::dbGetConfig('HELPER1');
@@ -49,7 +51,7 @@ class DbTestCase_Test extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey(DbConnector::DB_CFG_TIMEZONE, $dbConfig);
         $this->assertArrayHasKey(DbConnector::DB_CFG_DEBUG, $dbConfig);
 
-        $this->assertSame('127.0.0.1', $dbConfig[DbConnector::DB_CFG_HOST]);
+        $this->assertSame('192.168.42.42', $dbConfig[DbConnector::DB_CFG_HOST]);
         $this->assertSame('testUser', $dbConfig[DbConnector::DB_CFG_USERNAME]);
         $this->assertSame('testUserPass', $dbConfig[DbConnector::DB_CFG_PASSWORD]);
         $this->assertSame('testHelper1', $dbConfig[DbConnector::DB_CFG_DATABASE]);
@@ -59,9 +61,11 @@ class DbTestCase_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbGetHelper
      */
-    public function test_dbGetHelper()
+    public function dbGetHelper()
     {
         // When
         $db = DbTestCase::dbGetHelper('HELPER1');
@@ -71,9 +75,11 @@ class DbTestCase_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbGetFixtureLoader
      */
-    public function test_dbGetFixtureLoader_noDb()
+    public function dbGetFixtureLoaderNoDb()
     {
         // When
         $fLoader = DbTestCase::dbGetFixtureLoader();
@@ -84,9 +90,11 @@ class DbTestCase_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbGetFixtureLoader
      */
-    public function test_dbGetFixtureLoader_db()
+    public function dbGetFixtureLoaderDb()
     {
         // When
         $fLoader = DbTestCase::dbGetFixtureLoader('HELPER2');

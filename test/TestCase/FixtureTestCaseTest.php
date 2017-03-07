@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -22,18 +23,20 @@ use Kicaj\Test\Helper\Database\Driver\MySQL;
 use Kicaj\Test\Helper\TestCase\FixtureTestCase;
 
 /**
- * FixtureTestCase_Test.
+ * FixtureTestCaseTest.
  *
  * @coversDefaultClass \Kicaj\Test\Helper\TestCase\FixtureTestCase
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class FixtureTestCase_Test extends \PHPUnit_Framework_TestCase
+class FixtureTestCaseTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @test
+     *
      * @covers ::getFixturesRootPath
      */
-    public function test_fixtureRootDirPath()
+    public function fixtureRootDirPath()
     {
         $got = FixtureTestCase::getFixturesRootPath();
 
@@ -41,9 +44,11 @@ class FixtureTestCase_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::getFixtureLoader
      */
-    public function test_getFixtureLoader()
+    public function getFixtureLoader()
     {
         // When
         $fLoader = FixtureTestCase::getFixtureLoader();
@@ -54,9 +59,11 @@ class FixtureTestCase_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::getFixtureLoader
      */
-    public function test_getFixtureLoader_dbSet()
+    public function getFixtureLoaderDbSet()
     {
         // Given
         $db = new MySQL();
@@ -71,9 +78,11 @@ class FixtureTestCase_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::getFixtureData
      */
-    public function test_getFixtureData()
+    public function getFixtureData()
     {
         // When
         $gotData = FixtureTestCase::getFixtureData('text.txt');
@@ -83,9 +92,11 @@ class FixtureTestCase_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::getFixtureRawData
      */
-    public function test_getFixtureRawData()
+    public function getFixtureRawData()
     {
         // When
         $gotData = FixtureTestCase::getFixtureRawData('test5.sql');

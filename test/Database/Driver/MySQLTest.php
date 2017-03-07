@@ -26,13 +26,13 @@ use Kicaj\Test\TestHelperTest\MySQLHelper;
 use ReflectionClass;
 
 /**
- * DbGet tests.
+ * MySQLTest.
  *
  * @coversDefaultClass \Kicaj\Test\Helper\Database\Driver\MySQL
  *
  * @author             Rafal Zajac <rzajac@gmail.com>
  */
-class MySQL_Test extends \PHPUnit_Framework_TestCase
+class MySQLTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Database driver we are testing.
@@ -72,11 +72,13 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider connectionProvider
+     * @test
      *
      * @covers ::dbSetup
      * @covers ::dbConnect
      * @covers ::isConnected
+     *
+     * @dataProvider connectionProvider
      *
      * @param string $host     The database host.
      * @param string $username The database username.
@@ -86,7 +88,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      * @param string $timezone The timezone to set for connection.
      * @param string $errorMsg The expected error message.
      */
-    public function test_connection($host, $username, $password, $database, $port, $timezone, $errorMsg)
+    public function connection($host, $username, $password, $database, $port, $timezone, $errorMsg)
     {
         // Given
         $this->driver = null;
@@ -155,12 +157,14 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbConnect
      *
      * @expectedException \Kicaj\DbKit\DatabaseException
      * @expectedExceptionMessage Setting timezone (UTC) for MySQL driver failed. Please load timezone information using mysql_tzinfo_to_sql.
      */
-    public function test_dbConnect_timezoneError()
+    public function dbConnectTimezoneError()
     {
         // Given
         $driver = new MySQL();
@@ -174,9 +178,11 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbConnect
      */
-    public function test_dbConnect_calledTwice()
+    public function dbConnectCalledTwice()
     {
         // Given
         _WhatMysqliReport::$throw = true;
@@ -187,10 +193,12 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbConnect
      * @covers ::isConnected
      */
-    public function test_isConnected_notConnected()
+    public function isConnectedNotConnected()
     {
         // When
         $driver = new MySQL();
@@ -200,10 +208,12 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbConnect
      * @covers ::isConnected
      */
-    public function test_isConnected_connected()
+    public function isConnectedConnected()
     {
         // When
         $driver = new MySQL();
@@ -214,10 +224,12 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbGetTableNames
      * @covers ::getTableNames
      */
-    public function test_dbGetTableNames()
+    public function dbGetTableNames()
     {
         // When
         $tableNames = $this->driver->dbGetTableNames();
@@ -227,9 +239,11 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbGetViewNames
      */
-    public function test_dbGetViewNames()
+    public function dbGetViewNames()
     {
         // When
         $viewNames = $this->driver->dbGetViewNames();
@@ -239,10 +253,12 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbDropViews
      * @covers ::dbGetViewNames
      */
-    public function test_dbDropViews()
+    public function dbDropViews()
     {
         // Given
         $this->driver->dbDropViews('my_view');
@@ -255,12 +271,13 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbGetTableNames
      *
      * @expectedException \Kicaj\DbKit\DatabaseException
-     * @expectedExceptionMessageRegExp /Incorrect database name/
      */
-    public function test_dbGetTableNames_error()
+    public function dbGetTableNamesError()
     {
         // Given
         $driver = new MySQL();
@@ -273,20 +290,24 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbCountTableRows
      *
      * @expectedException \Kicaj\DbKit\DatabaseException
      * @expectedExceptionMessageRegExp /Table .* doesn't exist/
      */
-    public function test_dbCountTableRows_not_existing_table()
+    public function dbCountTableRowsNotExistingTable()
     {
         $this->driver->dbCountTableRows('notExisting');
     }
 
     /**
+     * @test
+     *
      * @covers ::dbCountTableRows
      */
-    public function test_dbCountTableRows()
+    public function dbCountTableRows()
     {
         $this->assertSame(1, $this->driver->dbCountTableRows('test1'));
         $this->assertSame(2, $this->driver->dbCountTableRows('test2'));
@@ -294,11 +315,13 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbTruncateTables
      *
-     * @depends test_dbCountTableRows
+     * @depends dbCountTableRows
      */
-    public function test_dbTruncateTables_emptyArray()
+    public function dbTruncateTablesEmptyArray()
     {
         // When
         $this->driver->dbTruncateTables([]);
@@ -310,11 +333,13 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbTruncateTables
      *
-     * @depends test_dbCountTableRows
+     * @depends dbCountTableRows
      */
-    public function test_dbTruncateTables_array()
+    public function dbTruncateTables_array()
     {
         // When
         $this->driver->dbTruncateTables(['test2', 'test3']);
@@ -326,11 +351,13 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbTruncateTables
      *
-     * @depends test_dbCountTableRows
+     * @depends dbCountTableRows
      */
-    public function test_dbTruncateTables_string()
+    public function dbTruncateTablesString()
     {
         // When
         $this->driver->dbTruncateTables('test1');
@@ -342,9 +369,11 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbDropTables
      */
-    public function test_dbDropTables_multiple()
+    public function dbDropTablesMultiple()
     {
         // When
         $this->driver->dbDropTables(['test1', 'test3']);
@@ -354,9 +383,11 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbDropTables
      */
-    public function test_dbDropTables_single()
+    public function dbDropTablesSingle()
     {
         // When
         $this->driver->dbDropTables('test2');
@@ -366,9 +397,11 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbDropTables
      */
-    public function test_dbDropTables_view()
+    public function dbDropTablesView()
     {
         // When
         $this->driver->dbDropTables('my_view');
@@ -378,9 +411,11 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbGetTableData
      */
-    public function test_dbGetTableData()
+    public function dbGetTableData()
     {
         // When
         $got = $this->driver->dbGetTableData('test2');
@@ -394,20 +429,24 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbGetTableData
      *
      * @expectedException \Kicaj\DbKit\DatabaseException
      * @expectedExceptionMessageRegExp /Table .* doesn't exist/
      */
-    public function test_dbGetTableData_error()
+    public function dbGetTableDataError()
     {
         $this->driver->dbGetTableData('not_existing');
     }
 
     /**
+     * @test
+     *
      * @covers ::dbLoadFixture
      */
-    public function test_dbLoadFixture()
+    public function dbLoadFixture()
     {
         // Given
         $fixture = [
@@ -430,12 +469,14 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbLoadFixture
      *
      * @expectedException \Kicaj\DbKit\DatabaseException
      * @expectedExceptionMessage MySQL driver currently supports only SQL fixture format.
      */
-    public function test_dbLoadFixture_notSupportedFormat()
+    public function dbLoadFixtureNotSupportedFormat()
     {
         // When
         $fixture = '{"key1": "val1"}';
@@ -445,6 +486,8 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @dataProvider runQueryProvider
      *
      * @covers ::dbRunQuery
@@ -452,7 +495,7 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
      * @param string $sql
      * @param string $expMsg
      */
-    public function test_runQuery($sql, $expMsg)
+    public function runQuery($sql, $expMsg)
     {
         // Given
         $resp = null;
@@ -489,6 +532,8 @@ class MySQL_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::dbClose
      * @covers ::dbConnect
      */

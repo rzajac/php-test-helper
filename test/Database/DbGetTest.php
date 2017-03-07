@@ -22,15 +22,17 @@ use Kicaj\DbKit\DbConnector;
 use Kicaj\Test\Helper\Database\DbGet;
 
 /**
- * DbGet tests.
+ * DbGetTest.
  *
  * @coversDefaultClass \Kicaj\Test\Helper\Database\DbGet
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class DbGet_Test extends \PHPUnit_Framework_TestCase
+class DbGetTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @test
+     *
      * @dataProvider factoryProvider
      *
      * @covers ::factory
@@ -38,7 +40,7 @@ class DbGet_Test extends \PHPUnit_Framework_TestCase
      * @param string $driverName
      * @param string $expErrorMsg
      */
-    public function test_factory($driverName, $expErrorMsg)
+    public function factory($driverName, $expErrorMsg)
     {
         // Given
         $dbConfig = getUnitTestDbConfig('HELPER1');
@@ -72,9 +74,11 @@ class DbGet_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::factory
      */
-    public function test_factory_sameInstance()
+    public function factorySameInstance()
     {
         // When
         $db1 = DbGet::factory(getUnitTestDbConfig('HELPER1'));
@@ -85,9 +89,11 @@ class DbGet_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::factory
      */
-    public function test_factory_notSameInstance()
+    public function factoryNotSameInstance()
     {
         // When
         $db1 = DbGet::factory(getUnitTestDbConfig('HELPER1'));

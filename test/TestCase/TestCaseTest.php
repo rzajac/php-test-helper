@@ -20,13 +20,13 @@ namespace Kicaj\Test\TestHelperTest\TestCase;
 use Kicaj\Test\Helper\TestCase\TestCase;
 
 /**
- * FixtureTestCase_Test.
+ * TestCaseTest.
  *
  * @coversDefaultClass \Kicaj\Test\Helper\TestCase\TestCase
  *
  * @author Rafal Zajac <rzajac@gmail.com>
  */
-class TestCase_Test extends \PHPUnit_Framework_TestCase
+class TestCaseTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var HelperPropClass
@@ -43,9 +43,11 @@ class TestCase_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::objectGetProperty
      */
-    public function test_objectGetProperty_protected()
+    public function objectGetPropertyProtected()
     {
         // When
         $this->helperClass->setProt('abc');
@@ -55,9 +57,11 @@ class TestCase_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::objectGetProperty
      */
-    public function test_objectGetProperty_private()
+    public function objectGetPropertyPrivate()
     {
         // When
         $this->helperClass->setPriv('def');
@@ -67,9 +71,11 @@ class TestCase_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::objectSetProperty
      */
-    public function test_objectSetProperty_protected()
+    public function objectSetPropertyProtected()
     {
         // When
         TestCase::objectSetProperty($this->helperClass, 'prot', 123);
@@ -79,9 +85,11 @@ class TestCase_Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
      * @covers ::objectSetProperty
      */
-    public function test_objectSetProperty_private()
+    public function objectSetPropertyPrivate()
     {
         // When
         TestCase::objectSetProperty($this->helperClass, 'priv', 456);
