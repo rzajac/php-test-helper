@@ -34,7 +34,7 @@ class HttpServerTest extends \PHPUnit_Framework_TestCase
     public function construct()
     {
         // Given
-        $srv = new HttpServer($this->docRoot, 1111, '127.0.0.1');
+        $srv = new HttpServer($this->docRoot, '127.0.0.1', 1111);
 
         // When
         $pid = $srv->start();
@@ -68,10 +68,10 @@ class HttpServerTest extends \PHPUnit_Framework_TestCase
     public function getURLProvider()
     {
         return [
-            ['/path', 9706, '127.0.0.1', 'http://127.0.0.1:9706'],
-            ['/path', 9706, '127.0.0.1', 'http://127.0.0.1:9706'],
-            ['/path', 9706, '192.168.0.10', 'http://192.168.0.10:9706'],
-            ['/path', 9706, 'localhost', 'http://localhost:9706'],
+            ['/path', '127.0.0.1', 9706, 'http://127.0.0.1:9706'],
+            ['/path', '127.0.0.1', 9706, 'http://127.0.0.1:9706'],
+            ['/path', '192.168.0.10', 9706, 'http://192.168.0.10:9706'],
+            ['/path', 'localhost', 9706, 'http://localhost:9706'],
         ];
     }
 
@@ -84,7 +84,7 @@ class HttpServerTest extends \PHPUnit_Framework_TestCase
     public function stop()
     {
         // Given
-        $srv = new HttpServer($this->docRoot, 1111, '127.0.0.1');
+        $srv = new HttpServer($this->docRoot, '127.0.0.1', 1111);
 
         // When
         $srv->start();
@@ -103,7 +103,7 @@ class HttpServerTest extends \PHPUnit_Framework_TestCase
     public function stopTwice()
     {
         // Given
-        $srv = new HttpServer($this->docRoot, 1111, '127.0.0.1');
+        $srv = new HttpServer($this->docRoot, '127.0.0.1', 1111);
 
         // When
         $srv->start();

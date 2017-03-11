@@ -59,10 +59,10 @@ class HttpServer
      * Constructor.
      *
      * @param string $docRoot The absolute path to document root directory.
-     * @param int    $port    The port to start server on.
      * @param string $host    The host or IP to start server on.
+     * @param int    $port    The port to start server on.
      */
-    public function __construct($docRoot, $port = null, $host = '127.0.0.1')
+    public function __construct($docRoot, $host = '127.0.0.1', $port = null)
     {
         $this->docRoot = $docRoot;
         $this->port = $port ?: rand(9000, 10000);
