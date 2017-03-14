@@ -56,6 +56,20 @@ class HttpServer
     private $pid;
 
     /**
+     * Path to custom ini file.
+     *
+     * @var string
+     */
+    private $iniPath = '';
+
+    /**
+     * The custom directives to set.
+     *
+     * @var string
+     */
+    private $directives = '';
+
+    /**
      * Constructor.
      *
      * @param string $docRoot The absolute path to document root directory.
@@ -67,6 +81,40 @@ class HttpServer
         $this->docRoot = $docRoot;
         $this->port = $port ?: rand(9000, 10000);
         $this->host = $host;
+    }
+
+    /**
+     * Set path to php.ini file.
+     *
+     * @param string $iniPath The path to php.ini file to use.
+     *
+     * @return string
+     */
+    public function setIniPath($iniPath)
+    {
+        $this->iniPath = $iniPath ? '-c ' . $iniPath : '';
+
+        return $this->iniPath;
+    }
+
+    /**
+     * Set custom ini directives to pass to the server.
+     *
+     * @param array $directives The ini file directives.
+     *
+     * @return string
+     */
+    public function setDirectives(array $directives)
+    {
+        $this->directives = '';
+        foreach ($directives as $key => $value) {
+            $this->directives .= ' -d ' . $key;
+            if ($value !== null) {
+                $this->directives .= '=' .$value;
+            }
+        }
+
+        return trim($this->directives);
     }
 
     /**
@@ -138,10 +186,10 @@ class HttpServer
      *
      * @return string
      */
-    private function getStartCmd()
+    public function getStartCmd()
     {
-        $cmdFormat = 'php -S %s:%d -t %s >/dev/null 2>&1 & echo $!';
+        $cmdFormat = 'php -S %s:%d -t %s %s >/dev/null 2>&1 & echo $!';
 
-        return sprintf($cmdFormat, $this->host, $this->port, $this->docRoot);
+        return sprintf($cmdFormat, $this->host, $this->port, $this->docRoot, $this->directives, $this->iniPath);
     }
 }

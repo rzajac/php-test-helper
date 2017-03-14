@@ -30,6 +30,7 @@ class HttpServerTest extends \PHPUnit_Framework_TestCase
      *
      * @covers ::start
      * @covers ::__construct
+     * @covers ::getPort
      */
     public function construct()
     {
@@ -41,7 +42,8 @@ class HttpServerTest extends \PHPUnit_Framework_TestCase
 
         // Then
         $this->assertTrue(ctype_digit($pid));
-        $this->assertSame('Build-in HTTP server works.', file_get_contents($srv->getUrl() . '/test.php'));
+        $this->assertSame(1111, $srv->getPort());
+        $this->assertRegExp('/.*Build-in HTTP server works\..*/', file_get_contents($srv->getUrl() . '/test.php'));
     }
 
     /**
@@ -114,4 +116,70 @@ class HttpServerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(false, @file_get_contents($srv->getUrl() . '/test.php'));
     }
 
+    /**
+     * @test
+     *
+     * @dataProvider setDirectivesProvider
+     *
+     * @covers ::setDirectives
+     *
+     * @param array  $directives
+     * @param string $expected
+     */
+    public function setDirectives($directives, $expected)
+    {
+        // Given
+        $srv = new HttpServer($this->docRoot, '127.0.0.1', 1111);
+
+        // When
+        $got = $srv->setDirectives($directives);
+
+        // Then
+        $this->assertSame($expected, $got);
+    }
+
+    public function setDirectivesProvider()
+    {
+        return [
+            [['session.save_path' => '/tmp', 'directive' => null], '-d session.save_path=/tmp -d directive'],
+        ];
+    }
+
+    /**
+     * @test
+     *
+     * @covers ::setIniPath
+     */
+    public function setIniPath()
+    {
+        // Given
+        $srv = new HttpServer($this->docRoot, '127.0.0.1', 1111);
+
+        // When
+        $path = $srv->setIniPath('/some/path');
+
+        // Then
+        $this->assertSame('-c /some/path', $path);
+    }
+
+    /**
+     * @test
+     *
+     * @covers ::getStartCmd
+     */
+    public function getStartCmd()
+    {
+        // Given
+        $srv = new HttpServer($this->docRoot, '127.0.0.1', 1111);
+        $srv->setIniPath('/some/path');
+        $srv->setDirectives(['session.save_path' => '/tmp', 'something_empty' => null]);
+
+        // When
+        $cmd = $srv->getStartCmd();
+        $srv->start();
+
+        // Then
+        $this->assertSame('php -S 127.0.0.1:1111 -t test/fixtures/docRoot  -d session.save_path=/tmp -d something_empty >/dev/null 2>&1 & echo $!', $cmd);
+        $this->assertSame("Build-in HTTP server works.\nsession.save_path=/tmp", file_get_contents($srv->getUrl() . '/test.php'));
+    }
 }
