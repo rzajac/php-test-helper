@@ -135,8 +135,11 @@ class MySQL implements DbItf
             $tableNames = [$tableNames];
         }
 
+        $existingTables = $this->dbGetTableNames();
         foreach ($tableNames as $tableName) {
-            $this->dbRunQuery(sprintf('TRUNCATE TABLE `%s`', $tableName));
+            if (in_array($tableName, $existingTables)) {
+                $this->dbRunQuery(sprintf('TRUNCATE TABLE `%s`', $tableName));
+            }
         }
     }
 

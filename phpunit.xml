@@ -2,7 +2,7 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/5.4/phpunit.xsd"
          bootstrap="test/bootstrap.php"
-         colors="always"
+         colors="true"
          backupGlobals="false"
          beStrictAboutOutputDuringTests="true"
          beStrictAboutTestsThatDoNotTestAnything="true"
@@ -10,9 +10,7 @@
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
-         verbose="true"
-         addUncoveredFilesFromWhitelist="true"
-         processUncoveredFilesFromWhitelist="true">
+         verbose="true">
 
     <php>
         <var name="TEST_DB_HELPER1_HOST" value="192.168.42.42"/>

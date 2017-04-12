@@ -339,6 +339,24 @@ class MySQLTest extends \PHPUnit_Framework_TestCase
      *
      * @depends dbCountTableRows
      */
+    public function dbTruncateTablesNotExistingTable()
+    {
+        // When
+        $this->driver->dbTruncateTables('not_existing');
+
+        // Then - no changes
+        $this->assertSame(1, $this->driver->dbCountTableRows('test1'));
+        $this->assertSame(2, $this->driver->dbCountTableRows('test2'));
+        $this->assertSame(0, $this->driver->dbCountTableRows('test3'));
+    }
+
+    /**
+     * @test
+     *
+     * @covers ::dbTruncateTables
+     *
+     * @depends dbCountTableRows
+     */
     public function dbTruncateTables_array()
     {
         // When

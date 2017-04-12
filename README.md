@@ -44,6 +44,8 @@ CREATE DATABASE testHelper2 DEFAULT CHARACTER SET = 'utf8' DEFAULT COLLATE = 'ut
 CREATE USER 'testUser'@'localhost' IDENTIFIED BY 'testUserPass';
 CREATE USER 'testUser'@'%' IDENTIFIED BY 'testUserPass';
 GRANT ALL ON `testHelper1`.* TO 'testUser'@'localhost';
+GRANT ALL ON `testHelper2`.* TO 'testUser'@'localhost';
+GRANT ALL ON `testHelper1`.* TO 'testUser'@'%';
 GRANT ALL ON `testHelper2`.* TO 'testUser'@'%';
 FLUSH PRIVILEGES;
 ```
