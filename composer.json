@@ -3,7 +3,7 @@
   "description": "Classes helping with unit tests",
   "keywords": ["unit test", "testing"],
   "type": "library",
-  "license": "Apache License 2.0",
+  "license": "Apache-2.0",
   "authors": [
     {
       "name": "Rafal Zajac",
