@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -21,6 +21,7 @@ use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\Loader\FixtureLoader;
 use Kicaj\Test\Helper\TestCase\FixtureTestCase;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
 
 /**
  * FixtureLoaderTest.
@@ -29,7 +30,7 @@ use org\bovigo\vfs\vfsStream;
  *
  * @author             Rafal Zajac <rzajac@gmail.com>
  */
-class FixtureLoaderTest extends \PHPUnit_Framework_TestCase
+class FixtureLoaderTest extends TestCase
 {
     /**
      * Fixture loader.

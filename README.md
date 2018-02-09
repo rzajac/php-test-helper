@@ -1,4 +1,4 @@
-## PHP Test helper classes
+## PHP Test helper classes.
 
 Unit testing helper.
 
@@ -9,21 +9,21 @@ Unit testing helper.
 - Tests where you interact with database.
 - Database helper methods [see database interface](src/Database/DbItf.php).
 
-## Supported databases
+## Supported databases.
 
 - MySQL
 
-## Install
+## Install.
 
 ```json
 {
     "require": {
-        "rzajac/php-test-helper": "^0.7"
+        "rzajac/php-test-helper": "^1.0"
     }
 }
 ```
 
-## Run unit tests
+## Run unit tests.
 
 Yes! The package has it's own unit tests.
 
@@ -31,9 +31,9 @@ Yes! The package has it's own unit tests.
 $ vendor/bin/phpunit --coverage-html=./coverage 
 ```
 
-## Setup database for unit tests
+## Setup database for unit tests.
 
-### MySQL
+### MySQL.
 
 Create test users and database tables:
 
@@ -58,6 +58,10 @@ $ vendor/bin/phpunit
 
 When you have XDebug enabled running unit tests creates coverage report in `coverage` directory.
 
-## License
+## Loading time zone tables.
+
+`$ mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql -p`
+
+## License.
 
 Apache License Version 2.0

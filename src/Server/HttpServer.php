@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -22,8 +22,6 @@ use Exception;
 
 /**
  * Manages PHP build in web server.
- *
- * @author Rafal Zajac <rzajac@gmail.com>
  */
 class HttpServer
 {
@@ -51,7 +49,7 @@ class HttpServer
     /**
      * The pid of the started server.
      *
-     * @var
+     * @var int
      */
     private $pid;
 
@@ -76,7 +74,7 @@ class HttpServer
      * @param string $host    The host or IP to start server on.
      * @param int    $port    The port to start server on.
      */
-    public function __construct($docRoot, $host = '127.0.0.1', $port = null)
+    public function __construct(string $docRoot, string $host = '127.0.0.1', int $port = 0)
     {
         $this->docRoot = $docRoot;
         $this->port = $port ?: rand(9000, 10000);
@@ -90,7 +88,7 @@ class HttpServer
      *
      * @return string
      */
-    public function setIniPath($iniPath)
+    public function setIniPath(string $iniPath): string
     {
         $this->iniPath = $iniPath ? '-c ' . $iniPath : '';
 
@@ -104,7 +102,7 @@ class HttpServer
      *
      * @return string
      */
-    public function setDirectives(array $directives)
+    public function setDirectives(array $directives): string
     {
         $this->directives = '';
         foreach ($directives as $key => $value) {
@@ -122,7 +120,7 @@ class HttpServer
      *
      * @return int
      */
-    public function getPort()
+    public function getPort(): int
     {
         return $this->port;
     }
@@ -132,13 +130,15 @@ class HttpServer
      *
      * @return string
      */
-    public function getUrl()
+    public function getUrl(): string
     {
         return 'http://' . $this->host . ':' . $this->port;
     }
 
     /**
      * Destructor.
+     *
+     * @throws Exception
      */
     public function __destruct()
     {
@@ -149,8 +149,10 @@ class HttpServer
      * Start web server.
      *
      * @throws Exception
+     *
+     * @return int Process PID.
      */
-    public function start()
+    public function start(): int
     {
         $cmd = $this->getStartCmd();
 
@@ -186,7 +188,7 @@ class HttpServer
      *
      * @return string
      */
-    public function getStartCmd()
+    public function getStartCmd(): string
     {
         $cmdFormat = 'php -S %s:%d -t %s %s >/dev/null 2>&1 & echo $!';
 

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -15,24 +15,23 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+
 namespace Kicaj\Test\TestHelperTest\Database\Driver;
 
-use Kicaj\DbKit\DatabaseException;
-use Kicaj\DbKit\DbConnector;
+use Kicaj\Test\Helper\Database\DatabaseEx;
 use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\Database\Driver\_WhatMysqliReport;
 use Kicaj\Test\Helper\Database\Driver\MySQL;
 use Kicaj\Test\TestHelperTest\MySQLHelper;
+use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
 /**
  * MySQLTest.
  *
  * @coversDefaultClass \Kicaj\Test\Helper\Database\Driver\MySQL
- *
- * @author             Rafal Zajac <rzajac@gmail.com>
  */
-class MySQLTest extends \PHPUnit_Framework_TestCase
+class MySQLTest extends TestCase
 {
     /**
      * Database driver we are testing.
@@ -54,6 +53,7 @@ class MySQLTest extends \PHPUnit_Framework_TestCase
         require_once getFixturesRootPath() . '/inject_mysqli_report.php';
     }
 
+    /** @inheritdoc */
     public function setUp()
     {
         _WhatMysqliReport::$throw = false;
@@ -95,12 +95,12 @@ class MySQLTest extends \PHPUnit_Framework_TestCase
         $thrown = false;
 
         $dbConfig = [
-            DbConnector::DB_CFG_HOST     => $host,
-            DbConnector::DB_CFG_USERNAME => $username,
-            DbConnector::DB_CFG_PASSWORD => $password,
-            DbConnector::DB_CFG_DATABASE => $database,
-            DbConnector::DB_CFG_PORT     => $port,
-            DbConnector::DB_CFG_TIMEZONE => $timezone,
+            DbItf::DB_CFG_HOST => $host,
+            DbItf::DB_CFG_USERNAME => $username,
+            DbItf::DB_CFG_PASSWORD => $password,
+            DbItf::DB_CFG_DATABASE => $database,
+            DbItf::DB_CFG_PORT => $port,
+            DbItf::DB_CFG_TIMEZONE => $timezone,
         ];
 
         // When
@@ -113,7 +113,7 @@ class MySQLTest extends \PHPUnit_Framework_TestCase
             $this->assertSame($driver, $db);
             // Call method that is actually doing something with database.
             $driver->dbGetTableNames();
-        } catch (DatabaseException $e) {
+        } catch (DatabaseEx $e) {
             $thrown = true;
             $this->assertFalse('' == $errorMsg, 'Did not expect to see error: ' . $e->getMessage());
         } finally {
@@ -161,8 +161,10 @@ class MySQLTest extends \PHPUnit_Framework_TestCase
      *
      * @covers ::dbConnect
      *
-     * @expectedException \Kicaj\DbKit\DatabaseException
+     * @expectedException \Kicaj\Test\Helper\Database\DatabaseEx
      * @expectedExceptionMessage Setting timezone (UTC) for MySQL driver failed. Please load timezone information using mysql_tzinfo_to_sql.
+     *
+     * @throws \ReflectionException
      */
     public function dbConnectTimezoneError()
     {
@@ -181,6 +183,8 @@ class MySQLTest extends \PHPUnit_Framework_TestCase
      * @test
      *
      * @covers ::dbConnect
+     *
+     * @throws DatabaseEx
      */
     public function dbConnectCalledTwice()
     {
@@ -212,6 +216,8 @@ class MySQLTest extends \PHPUnit_Framework_TestCase
      *
      * @covers ::dbConnect
      * @covers ::isConnected
+     *
+     * @throws DatabaseEx
      */
     public function isConnectedConnected()
     {
@@ -275,7 +281,7 @@ class MySQLTest extends \PHPUnit_Framework_TestCase
      *
      * @covers ::dbGetTableNames
      *
-     * @expectedException \Kicaj\DbKit\DatabaseException
+     * @expectedException \Kicaj\Test\Helper\Database\DatabaseEx
      */
     public function dbGetTableNamesError()
     {
@@ -294,7 +300,7 @@ class MySQLTest extends \PHPUnit_Framework_TestCase
      *
      * @covers ::dbCountTableRows
      *
-     * @expectedException \Kicaj\DbKit\DatabaseException
+     * @expectedException \Kicaj\Test\Helper\Database\DatabaseEx
      * @expectedExceptionMessageRegExp /Table .* doesn't exist/
      */
     public function dbCountTableRowsNotExistingTable()
@@ -451,7 +457,7 @@ class MySQLTest extends \PHPUnit_Framework_TestCase
      *
      * @covers ::dbGetTableData
      *
-     * @expectedException \Kicaj\DbKit\DatabaseException
+     * @expectedException \Kicaj\Test\Helper\Database\DatabaseEx
      * @expectedExceptionMessageRegExp /Table .* doesn't exist/
      */
     public function dbGetTableDataError()
@@ -463,6 +469,8 @@ class MySQLTest extends \PHPUnit_Framework_TestCase
      * @test
      *
      * @covers ::dbLoadFixture
+     *
+     * @throws DatabaseEx
      */
     public function dbLoadFixture()
     {
@@ -491,7 +499,7 @@ class MySQLTest extends \PHPUnit_Framework_TestCase
      *
      * @covers ::dbLoadFixture
      *
-     * @expectedException \Kicaj\DbKit\DatabaseException
+     * @expectedException \Kicaj\Test\Helper\Database\DatabaseEx
      * @expectedExceptionMessage MySQL driver currently supports only SQL fixture format.
      */
     public function dbLoadFixtureNotSupportedFormat()
@@ -523,7 +531,7 @@ class MySQLTest extends \PHPUnit_Framework_TestCase
             $resp = $this->driver->dbRunQuery($sql);
             $thrown = false;
             $gotMsg = '';
-        } catch (DatabaseException $e) {
+        } catch (DatabaseEx $e) {
             $thrown = true;
             $gotMsg = $e->getMessage();
         }

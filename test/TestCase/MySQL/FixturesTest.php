@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -22,15 +22,14 @@ use Kicaj\Test\Helper\Database\Driver\MySQL;
 use Kicaj\Test\Helper\Loader\FixtureLoader;
 use Kicaj\Test\Helper\TestCase\FixtureTestCase;
 use Kicaj\Test\TestHelperTest\MySQLHelper;
+use PHPUnit\Framework\TestCase;
 
 /**
  * FixturesTest.
  *
  * @coversDefaultClass \Kicaj\Test\Helper\TestCase\FixtureTestCase
- *
- * @author Rafal Zajac <rzajac@gmail.com>
  */
-class FixturesTest extends \PHPUnit_Framework_TestCase
+class FixturesTest extends TestCase
 {
     /**
      * Database helper.
@@ -46,6 +45,7 @@ class FixturesTest extends \PHPUnit_Framework_TestCase
      */
     protected $fixtureLoader;
 
+    /** @inheritdoc */
     public function setUp()
     {
         MySQLHelper::resetMySQLDatabases();
@@ -59,6 +59,9 @@ class FixturesTest extends \PHPUnit_Framework_TestCase
      * @test
      *
      * @covers ::setUp
+     *
+     * @throws \Kicaj\Test\Helper\Loader\FixtureLoaderEx
+     * @throws \Kicaj\Test\Helper\Database\DatabaseEx
      */
     public function setUpTest()
     {

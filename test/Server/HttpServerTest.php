@@ -1,17 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 
 /** Copyright 2016 ITHGroup. */
 
 namespace Kicaj\Test\Helper\Server;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * HttpServerTest.
  *
  * @coversDefaultClass \Kicaj\Test\Helper\Server\HttpServer
- *
- * @author Rafal Zajac <rzajac@gmail.com>
  */
-class HttpServerTest extends \PHPUnit_Framework_TestCase
+class HttpServerTest extends TestCase
 {
     /**
      * Server document root.
@@ -38,6 +38,7 @@ class HttpServerTest extends \PHPUnit_Framework_TestCase
         $srv = new HttpServer($this->docRoot, '127.0.0.1', 1111);
 
         // When
+        /** @noinspection PhpUnhandledExceptionInspection */
         $pid = $srv->start();
 
         // Then
@@ -54,14 +55,14 @@ class HttpServerTest extends \PHPUnit_Framework_TestCase
      * @covers ::getUrl
      *
      * @param string $docRoot
-     * @param int    $port
      * @param string $host
+     * @param int    $port
      * @param string $expected
      */
-    public function getURL($docRoot, $port, $host, $expected)
+    public function getURL($docRoot, $host, $port, $expected)
     {
         // When
-        $srv = new HttpServer($docRoot, $port, $host);
+        $srv = new HttpServer($docRoot, $host, $port);
 
         // Then
         $this->assertSame($expected, $srv->getUrl());
@@ -82,6 +83,8 @@ class HttpServerTest extends \PHPUnit_Framework_TestCase
      *
      * @covers ::start
      * @covers ::stop
+     *
+     * @throws \Exception
      */
     public function stop()
     {
@@ -101,6 +104,8 @@ class HttpServerTest extends \PHPUnit_Framework_TestCase
      *
      * @covers ::start
      * @covers ::stop
+     *
+     * @throws \Exception
      */
     public function stopTwice()
     {
@@ -166,6 +171,8 @@ class HttpServerTest extends \PHPUnit_Framework_TestCase
      * @test
      *
      * @covers ::getStartCmd
+     *
+     * @throws \Exception
      */
     public function getStartCmd()
     {
@@ -179,7 +186,9 @@ class HttpServerTest extends \PHPUnit_Framework_TestCase
         $srv->start();
 
         // Then
-        $this->assertSame('php -S 127.0.0.1:1111 -t test/fixtures/docRoot  -d session.save_path=/tmp -d something_empty >/dev/null 2>&1 & echo $!', $cmd);
-        $this->assertSame("Build-in HTTP server works.\nsession.save_path=/tmp", file_get_contents($srv->getUrl() . '/test.php'));
+        $this->assertSame('php -S 127.0.0.1:1111 -t test/fixtures/docRoot  -d session.save_path=/tmp -d something_empty >/dev/null 2>&1 & echo $!',
+            $cmd);
+        $this->assertSame("Build-in HTTP server works.\nsession.save_path=/tmp",
+            file_get_contents($srv->getUrl() . '/test.php'));
     }
 }

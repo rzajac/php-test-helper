@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -17,36 +17,36 @@
  */
 namespace Kicaj\Test\TestHelperTest;
 
-use Kicaj\DbKit\DatabaseException;
-use Kicaj\DbKit\DbConnector;
+use Kicaj\Test\Helper\Database\DatabaseEx;
+use Kicaj\Test\Helper\Database\DbItf;
 
 class MySQLHelper
 {
     /**
      * Reset MySQL databases.
      *
-     * @throws DatabaseException
+     * @throws DatabaseEx
      */
     public static function resetMySQLDatabases()
     {
         $dbConfig1 = getUnitTestDbConfig('HELPER1');
         $mysql1 = new \mysqli(
-            $dbConfig1[DbConnector::DB_CFG_HOST],
-            $dbConfig1[DbConnector::DB_CFG_USERNAME],
-            $dbConfig1[DbConnector::DB_CFG_PASSWORD],
-            $dbConfig1[DbConnector::DB_CFG_DATABASE],
-            $dbConfig1[DbConnector::DB_CFG_PORT]);
+            $dbConfig1[DbItf::DB_CFG_HOST],
+            $dbConfig1[DbItf::DB_CFG_USERNAME],
+            $dbConfig1[DbItf::DB_CFG_PASSWORD],
+            $dbConfig1[DbItf::DB_CFG_DATABASE],
+            $dbConfig1[DbItf::DB_CFG_PORT]);
 
         $dbConfig2 = getUnitTestDbConfig('HELPER2');
         $mysql2 = new \mysqli(
-            $dbConfig2[DbConnector::DB_CFG_HOST],
-            $dbConfig2[DbConnector::DB_CFG_USERNAME],
-            $dbConfig2[DbConnector::DB_CFG_PASSWORD],
-            $dbConfig2[DbConnector::DB_CFG_DATABASE],
-            $dbConfig2[DbConnector::DB_CFG_PORT]);
+            $dbConfig2[DbItf::DB_CFG_HOST],
+            $dbConfig2[DbItf::DB_CFG_USERNAME],
+            $dbConfig2[DbItf::DB_CFG_PASSWORD],
+            $dbConfig2[DbItf::DB_CFG_DATABASE],
+            $dbConfig2[DbItf::DB_CFG_PORT]);
 
         // Drop all tables from testHelper1.
-        self::dropAllMysqlTables($mysql1, $dbConfig1[DbConnector::DB_CFG_DATABASE]);
+        self::dropAllMysqlTables($mysql1, $dbConfig1[DbItf::DB_CFG_DATABASE]);
 
         // Create tables in testHelper1 database.
         $mysql1->query('CREATE TABLE `test1` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT, `col1` int(11) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB');
@@ -60,7 +60,7 @@ class MySQLHelper
         $mysql1->query("INSERT INTO `test2` (`id`, `col2`) VALUES (NULL, '22')");
 
         // Drop all tables from testHelper2.
-        self::dropAllMysqlTables($mysql2, $dbConfig2[DbConnector::DB_CFG_DATABASE]);
+        self::dropAllMysqlTables($mysql2, $dbConfig2[DbItf::DB_CFG_DATABASE]);
 
         // Create tables in testHelper2 database.
         $mysql2->query('CREATE TABLE `test2` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT, `col2` int(11) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB');
@@ -77,7 +77,7 @@ class MySQLHelper
      * @param \mysqli $mysql  The initialized MySQL connection.
      * @param string  $dbName The database name.
      *
-     * @throws DatabaseException
+     * @throws DatabaseEx
      *
      * @return \string[]
      */
@@ -86,7 +86,7 @@ class MySQLHelper
         $sql = sprintf('SHOW TABLES FROM `%s`', $dbName);
         $resp = $mysql->query($sql);
         if (!$resp) {
-            throw new DatabaseException($mysql->error);
+            throw new DatabaseEx($mysql->error);
         }
 
         $tableNames = [];
@@ -105,7 +105,7 @@ class MySQLHelper
      * @param \mysqli         $mysql      The initialized MySQL connection.
      * @param string|string[] $tableNames The table or table names to drop.
      *
-     * @throws DatabaseException
+     * @throws DatabaseEx
      */
     protected static function dropMysqlTables($mysql, $tableNames)
     {
@@ -118,7 +118,7 @@ class MySQLHelper
             if (!$result) {
                 $result = (bool)$mysql->query("DROP VIEW $tableName");
                 if (!$result) {
-                    throw new DatabaseException($mysql->error);
+                    throw new DatabaseEx($mysql->error);
                 }
             }
         }
@@ -130,7 +130,7 @@ class MySQLHelper
      * @param \mysqli $mysql  The initialized MySQL connection.
      * @param string  $dbName The database name.
      *
-     * @throws DatabaseException
+     * @throws DatabaseEx
      */
     protected static function dropAllMysqlTables($mysql, $dbName)
     {

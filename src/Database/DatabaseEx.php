@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -15,14 +16,28 @@
  * under the License.
  */
 
-namespace Kicaj\Test\Helper\Loader;
+namespace Kicaj\Test\Helper\Database;
 
 /**
- * FixtureLoaderException.
+ * DatabaseEx.
  *
- * @author Rafal Zajac <rzajac@gmail.com>
+ * Thrown on fatal database errors.
  */
-class FixtureLoaderException extends \Exception
+class DatabaseEx extends \Exception
 {
+    /**
+     * Creates ApiException from any other exception.
+     *
+     * @param \Exception $e
+     *
+     * @return static
+     */
+    public static function makeFromException($e)
+    {
+        if ($e instanceof self) {
+            return $e;
+        }
 
+        return new static($e->getMessage(), $e->getCode(), $e);
+    }
 }

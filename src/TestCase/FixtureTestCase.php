@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -19,14 +19,12 @@ namespace Kicaj\Test\Helper\TestCase;
 
 use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\Loader\FixtureLoader;
-use Kicaj\Test\Helper\Loader\FixtureLoaderException;
+use Kicaj\Test\Helper\Loader\FixtureLoaderEx;
 
 /**
  * Test case with fixtures.
  *
  * It manages fixtures.
- *
- * @author Rafal Zajac <rzajac@gmail.com>
  */
 abstract class FixtureTestCase extends TestCase
 {
@@ -35,7 +33,7 @@ abstract class FixtureTestCase extends TestCase
      *
      * @return string
      */
-    public static function getFixturesRootPath()
+    public static function getFixturesRootPath(): string
     {
         return $GLOBALS['TEST_FIXTURE_DIRECTORY'];
     }
@@ -47,7 +45,7 @@ abstract class FixtureTestCase extends TestCase
      *
      * @return FixtureLoader
      */
-    public static function getFixtureLoader(DbItf $dbDrv = null)
+    public static function getFixtureLoader(DbItf $dbDrv = null): FixtureLoader
     {
         return new FixtureLoader(self::getFixturesRootPath(), $dbDrv);
     }
@@ -57,11 +55,11 @@ abstract class FixtureTestCase extends TestCase
      *
      * @param string $fixturePath The fixture path relative to fixturesRootPath.
      *
-     * @throws FixtureLoaderException
+     * @throws FixtureLoaderEx
      *
      * @return mixed
      */
-    public static function getFixtureData($fixturePath)
+    public static function getFixtureData(string $fixturePath)
     {
         return self::getFixtureLoader()->getFixtureData($fixturePath);
     }
@@ -73,7 +71,7 @@ abstract class FixtureTestCase extends TestCase
      *
      * @return string
      */
-    public static function getFixtureRawData($fixturePath)
+    public static function getFixtureRawData(string $fixturePath): string
     {
         return self::getFixtureLoader()->getFixtureRawData($fixturePath);
     }

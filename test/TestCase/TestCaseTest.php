@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -18,15 +18,14 @@
 namespace Kicaj\Test\TestHelperTest\TestCase;
 
 use Kicaj\Test\Helper\TestCase\TestCase;
+use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 
 /**
  * TestCaseTest.
  *
  * @coversDefaultClass \Kicaj\Test\Helper\TestCase\TestCase
- *
- * @author Rafal Zajac <rzajac@gmail.com>
  */
-class TestCaseTest extends \PHPUnit_Framework_TestCase
+class TestCaseTest extends PHPUnitTestCase
 {
     /**
      * @var HelperPropClass
@@ -46,6 +45,8 @@ class TestCaseTest extends \PHPUnit_Framework_TestCase
      * @test
      *
      * @covers ::objectGetProperty
+     *
+     * @throws \ReflectionException
      */
     public function objectGetPropertyProtected()
     {
@@ -60,6 +61,8 @@ class TestCaseTest extends \PHPUnit_Framework_TestCase
      * @test
      *
      * @covers ::objectGetProperty
+     *
+     * @throws \ReflectionException
      */
     public function objectGetPropertyPrivate()
     {
@@ -74,6 +77,8 @@ class TestCaseTest extends \PHPUnit_Framework_TestCase
      * @test
      *
      * @covers ::objectSetProperty
+     *
+     * @throws \ReflectionException
      */
     public function objectSetPropertyProtected()
     {
@@ -88,6 +93,8 @@ class TestCaseTest extends \PHPUnit_Framework_TestCase
      * @test
      *
      * @covers ::objectSetProperty
+     *
+     * @throws \ReflectionException
      */
     public function objectSetPropertyPrivate()
     {

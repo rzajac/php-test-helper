@@ -11,9 +11,8 @@
     }
   ],
   "require": {
-    "php": ">=5.5",
-    "phpunit/phpunit": "<5.0",
-    "rzajac/dbkit": "*"
+    "php": ">=7.0",
+    "phpunit/phpunit": "^6.5"
   },
   "require-dev": {
     "mikey179/vfsStream": "^1.6"

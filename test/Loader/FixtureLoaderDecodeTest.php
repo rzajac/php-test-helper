@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -19,18 +19,17 @@ namespace Kicaj\Test\TestHelperTest\Loader {
 
     use Kicaj\Test\Helper\Loader\_WhatJsonLastError;
     use Kicaj\Test\Helper\Loader\FixtureLoader;
-    use Kicaj\Test\Helper\Loader\FixtureLoaderException;
+    use Kicaj\Test\Helper\Loader\FixtureLoaderEx;
     use Kicaj\Test\Helper\TestCase\FixtureTestCase;
+    use PHPUnit\Framework\TestCase;
 
 
     /**
      * FixtureLoaderDecodeTest.
      *
      * @coversDefaultClass \Kicaj\Test\Helper\Loader\FixtureLoader
-     *
-     * @author             Rafal Zajac <rzajac@gmail.com>
      */
-    class FixtureLoaderDecodeTest extends \PHPUnit_Framework_TestCase
+    class FixtureLoaderDecodeTest extends TestCase
     {
         protected function tearDown()
         {
@@ -60,7 +59,7 @@ namespace Kicaj\Test\TestHelperTest\Loader {
                 $gotErrMsg = '';
                 $gotErrCode = '';
                 $fixtureLoader->decode($json, $asClass, $depth);
-            } catch (FixtureLoaderException $e) {
+            } catch (FixtureLoaderEx $e) {
                 $gotErrMsg = $e->getMessage();
                 $gotErrCode = $e->getCode();
             }
@@ -74,7 +73,7 @@ namespace Kicaj\Test\TestHelperTest\Loader {
         {
             return [
                 ['{"aaa": 1}', false, 512, '', ''], // 0
-                ['{"aaa: 1}', false, 512, 'JSON decoding error', 4], // 1
+                ['{"aaa: 1}', false, 512, 'JSON decoding error', 3], // 1
                 ['{"aaa": {"aaa": {"aaa": {}}}', false, 1, 'Maximum stack depth exceeded', 1], // 2
             ];
         }
@@ -84,7 +83,7 @@ namespace Kicaj\Test\TestHelperTest\Loader {
          *
          * @covers ::decode
          *
-         * @expectedException \Kicaj\Test\Helper\Loader\FixtureLoaderException
+         * @expectedException \Kicaj\Test\Helper\Loader\FixtureLoaderEx
          * @expectedExceptionMessage JSON decoding error
          */
         public function decodeError()
@@ -101,7 +100,7 @@ namespace Kicaj\Test\TestHelperTest\Loader {
          *
          * @covers ::decode
          *
-         * @expectedException \Kicaj\Test\Helper\Loader\FixtureLoaderException
+         * @expectedException \Kicaj\Test\Helper\Loader\FixtureLoaderEx
          * @expectedExceptionMessage Unknown error
          */
         public function decodeUnknownError()

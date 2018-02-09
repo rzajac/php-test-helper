@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
  *
@@ -14,18 +14,41 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-namespace Kicaj\Test\Helper\Database;
 
-use Kicaj\DbKit\DatabaseException;
-use Kicaj\DbKit\DbConnector;
+namespace Kicaj\Test\Helper\Database;
 
 /**
  * Database interface.
- *
- * @author Rafal Zajac <rzajac@gmail.com>
  */
-interface DbItf extends DbConnector
+interface DbItf
 {
+    /** Database host address. */
+    const DB_CFG_HOST = 'host';
+
+    /** Database user name. */
+    const DB_CFG_USERNAME = 'username';
+
+    /** Database password. */
+    const DB_CFG_PASSWORD = 'password';
+
+    /** Database name. */
+    const DB_CFG_DATABASE = 'database';
+
+    /** Database port. */
+    const DB_CFG_PORT = 'port';
+
+    /** Connect true / false to database right away. */
+    const DB_CFG_CONNECT = 'connect';
+
+    /** Debugging true / false */
+    const DB_CFG_DEBUG = 'debug';
+
+    /** Database driver to use. One of the self::DB_DRIVER_* constants. */
+    const DB_CFG_DRIVER = 'driver';
+
+    /** The timezone to use for connection. Default UTC */
+    const DB_CFG_TIMEZONE = 'timezone';
+
     /** The default database name. */
     const DB_NAME_DEFAULT = 'DEFAULT';
 
@@ -41,12 +64,44 @@ interface DbItf extends DbConnector
     /** Fixture in PHP format */
     const FIXTURE_FORMAT_PHP = 'php';
 
+    /** MySQL driver. */
+    const DB_DRIVER_MYSQL = 'mysql';
+
+    /**
+     * Configure database.
+     *
+     * @param array $dbConfig The database configuration. See self::DB_CFG_* constants.
+     *
+     * @throws DatabaseEx
+     *
+     * @return $this
+     */
+    public function dbSetup(array $dbConfig);
+
+    /**
+     * Connect to database.
+     *
+     * This method might be called multiple times but only the first call should connect to database.
+     *
+     * @throws DatabaseEx
+     *
+     * @return $this
+     */
+    public function dbConnect();
+
+    /**
+     * Close database connection.
+     *
+     * @throws DatabaseEx
+     */
+    public function dbClose();
+
     /**
      * Drop table or list of tables.
      *
      * @param string|string[] $tableNames The table name or array of table names to drop.
      *
-     * @throws DatabaseException
+     * @throws DatabaseEx
      */
     public function dbDropTables($tableNames);
 
@@ -55,7 +110,7 @@ interface DbItf extends DbConnector
      *
      * @param string|string[] $viewNames The view name or array of view names to drop.
      *
-     * @throws DatabaseException
+     * @throws DatabaseEx
      */
     public function dbDropViews($viewNames);
 
@@ -64,7 +119,7 @@ interface DbItf extends DbConnector
      *
      * @param string|string[] $tableNames The table name or array of table names to truncate.
      *
-     * @throws DatabaseException
+     * @throws DatabaseEx
      */
     public function dbTruncateTables($tableNames);
 
@@ -73,40 +128,40 @@ interface DbItf extends DbConnector
      *
      * @param string $tableName The database table name.
      *
-     * @throws DatabaseException
+     * @throws DatabaseEx
      *
      * @return int
      */
-    public function dbCountTableRows($tableName);
+    public function dbCountTableRows(string $tableName): int;
 
     /**
      * Get database table data.
      *
      * @param string $tableName The database table name.
      *
-     * @throws DatabaseException
+     * @throws DatabaseEx
      *
      * @return array
      */
-    public function dbGetTableData($tableName);
+    public function dbGetTableData(string $tableName): array;
 
     /**
      * Return list of database tables.
      *
-     * @throws DatabaseException
+     * @throws DatabaseEx
      *
      * @return string[]
      */
-    public function dbGetTableNames();
+    public function dbGetTableNames(): array;
 
     /**
      * Return list of database views.
      *
-     * @throws DatabaseException
+     * @throws DatabaseEx
      *
      * @return string[]
      */
-    public function dbGetViewNames();
+    public function dbGetViewNames(): array;
 
     /**
      * Run database query.
@@ -115,7 +170,7 @@ interface DbItf extends DbConnector
      *
      * @param mixed $query
      *
-     * @throws DatabaseException
+     * @throws DatabaseEx
      *
      * @return mixed
      */
@@ -127,7 +182,7 @@ interface DbItf extends DbConnector
      * @param string $fixtureFormat The one of FIXTURE_FORMAT_* constants.
      * @param mixed  $fixtureData   The fixture to load to database.
      *
-     * @throws DatabaseException
+     * @throws DatabaseEx
      */
-    public function dbLoadFixture($fixtureFormat, $fixtureData);
+    public function dbLoadFixture(string $fixtureFormat, $fixtureData);
 }

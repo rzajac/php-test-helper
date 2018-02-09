@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -15,19 +15,18 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+
 namespace Kicaj\Test\Helper\TestCase;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use ReflectionClass;
 
 /**
  * Base test case.
  *
  * Base class for all unit tests.
- *
- * @author Rafal Zajac <rzajac@gmail.com>
  */
-abstract class TestCase extends PHPUnit_Framework_TestCase
+abstract class TestCase extends PHPUnitTestCase
 {
     /**
      * Get object property even if it's private or protected.
@@ -35,9 +34,11 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
      * @param object $obj      The object to get property value from.
      * @param string $propName The property name.
      *
+     * @throws \ReflectionException
+     *
      * @return mixed
      */
-    public static function objectGetProperty($obj, $propName)
+    public static function objectGetProperty($obj, string $propName)
     {
         $reflection = new ReflectionClass($obj);
         $reflectionProperty = $reflection->getProperty($propName);
@@ -52,6 +53,8 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
      * @param object $obj      The object to get property value from.
      * @param string $propName The property name.
      * @param mixed  $value    The value to set.
+     *
+     * @throws \ReflectionException
      */
     public static function objectSetProperty($obj, $propName, $value)
     {

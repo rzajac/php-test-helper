@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -15,20 +15,20 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+
 namespace Kicaj\Test\TestHelperTest\Database;
 
-use Kicaj\DbKit\DatabaseException;
-use Kicaj\DbKit\DbConnector;
+use Kicaj\Test\Helper\Database\DatabaseEx;
 use Kicaj\Test\Helper\Database\DbGet;
+use Kicaj\Test\Helper\Database\DbItf;
+use PHPUnit\Framework\TestCase;
 
 /**
  * DbGetTest.
  *
  * @coversDefaultClass \Kicaj\Test\Helper\Database\DbGet
- *
- * @author Rafal Zajac <rzajac@gmail.com>
  */
-class DbGetTest extends \PHPUnit_Framework_TestCase
+class DbGetTest extends TestCase
 {
     /**
      * @test
@@ -51,7 +51,7 @@ class DbGetTest extends \PHPUnit_Framework_TestCase
         try {
             $mysql = DbGet::factory($dbConfig);
             $gotErrorMsg = '';
-        } catch (DatabaseException $e) {
+        } catch (DatabaseEx $e) {
             $gotErrorMsg = $e->getMessage();
         }
 
@@ -68,7 +68,7 @@ class DbGetTest extends \PHPUnit_Framework_TestCase
     public function factoryProvider()
     {
         return [
-            [DbConnector::DB_DRIVER_MYSQL, ''],
+            [DbItf::DB_DRIVER_MYSQL, ''],
             ['unknown', 'Unknown database driver name: unknown'],
         ];
     }
@@ -77,6 +77,8 @@ class DbGetTest extends \PHPUnit_Framework_TestCase
      * @test
      *
      * @covers ::factory
+     *
+     * @throws DatabaseEx
      */
     public function factorySameInstance()
     {
@@ -92,6 +94,8 @@ class DbGetTest extends \PHPUnit_Framework_TestCase
      * @test
      *
      * @covers ::factory
+     *
+     * @throws DatabaseEx
      */
     public function factoryNotSameInstance()
     {

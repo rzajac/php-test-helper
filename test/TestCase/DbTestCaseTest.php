@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -17,17 +17,16 @@
  */
 namespace Kicaj\Test\TestHelperTest\TestCase;
 
-use Kicaj\DbKit\DbConnector;
+use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\TestCase\DbTestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * DbTestCaseTest.
  *
  * @coversDefaultClass \Kicaj\Test\Helper\TestCase\DbTestCase
- *
- * @author Rafal Zajac <rzajac@gmail.com>
  */
-class DbTestCaseTest extends \PHPUnit_Framework_TestCase
+class DbTestCaseTest extends TestCase
 {
     /**
      * @test
@@ -41,29 +40,31 @@ class DbTestCaseTest extends \PHPUnit_Framework_TestCase
 
         // Then
         $this->assertSame(9, count($dbConfig));
-        $this->assertArrayHasKey(DbConnector::DB_CFG_DRIVER, $dbConfig);
-        $this->assertArrayHasKey(DbConnector::DB_CFG_HOST, $dbConfig);
-        $this->assertArrayHasKey(DbConnector::DB_CFG_USERNAME, $dbConfig);
-        $this->assertArrayHasKey(DbConnector::DB_CFG_PASSWORD, $dbConfig);
-        $this->assertArrayHasKey(DbConnector::DB_CFG_DATABASE, $dbConfig);
-        $this->assertArrayHasKey(DbConnector::DB_CFG_PORT, $dbConfig);
-        $this->assertArrayHasKey(DbConnector::DB_CFG_CONNECT, $dbConfig);
-        $this->assertArrayHasKey(DbConnector::DB_CFG_TIMEZONE, $dbConfig);
-        $this->assertArrayHasKey(DbConnector::DB_CFG_DEBUG, $dbConfig);
+        $this->assertArrayHasKey(DbItf::DB_CFG_DRIVER, $dbConfig);
+        $this->assertArrayHasKey(DbItf::DB_CFG_HOST, $dbConfig);
+        $this->assertArrayHasKey(DbItf::DB_CFG_USERNAME, $dbConfig);
+        $this->assertArrayHasKey(DbItf::DB_CFG_PASSWORD, $dbConfig);
+        $this->assertArrayHasKey(DbItf::DB_CFG_DATABASE, $dbConfig);
+        $this->assertArrayHasKey(DbItf::DB_CFG_PORT, $dbConfig);
+        $this->assertArrayHasKey(DbItf::DB_CFG_CONNECT, $dbConfig);
+        $this->assertArrayHasKey(DbItf::DB_CFG_TIMEZONE, $dbConfig);
+        $this->assertArrayHasKey(DbItf::DB_CFG_DEBUG, $dbConfig);
 
-        $this->assertSame('192.168.42.42', $dbConfig[DbConnector::DB_CFG_HOST]);
-        $this->assertSame('testUser', $dbConfig[DbConnector::DB_CFG_USERNAME]);
-        $this->assertSame('testUserPass', $dbConfig[DbConnector::DB_CFG_PASSWORD]);
-        $this->assertSame('testHelper1', $dbConfig[DbConnector::DB_CFG_DATABASE]);
-        $this->assertSame('3306', $dbConfig[DbConnector::DB_CFG_PORT]);
-        $this->assertSame('UTC', $dbConfig[DbConnector::DB_CFG_TIMEZONE]);
-        $this->assertSame('mysql', $dbConfig[DbConnector::DB_CFG_DRIVER]);
+        $this->assertSame('localhost', $dbConfig[DbItf::DB_CFG_HOST]);
+        $this->assertSame('testUser', $dbConfig[DbItf::DB_CFG_USERNAME]);
+        $this->assertSame('testUserPass', $dbConfig[DbItf::DB_CFG_PASSWORD]);
+        $this->assertSame('testHelper1', $dbConfig[DbItf::DB_CFG_DATABASE]);
+        $this->assertSame(3306, $dbConfig[DbItf::DB_CFG_PORT]);
+        $this->assertSame('UTC', $dbConfig[DbItf::DB_CFG_TIMEZONE]);
+        $this->assertSame('mysql', $dbConfig[DbItf::DB_CFG_DRIVER]);
     }
 
     /**
      * @test
      *
      * @covers ::dbGetHelper
+     *
+     * @throws \Kicaj\Test\Helper\Database\DatabaseEx
      */
     public function dbGetHelper()
     {
@@ -78,6 +79,8 @@ class DbTestCaseTest extends \PHPUnit_Framework_TestCase
      * @test
      *
      * @covers ::dbGetFixtureLoader
+     *
+     * @throws \Kicaj\Test\Helper\Database\DatabaseEx
      */
     public function dbGetFixtureLoaderNoDb()
     {
@@ -93,6 +96,8 @@ class DbTestCaseTest extends \PHPUnit_Framework_TestCase
      * @test
      *
      * @covers ::dbGetFixtureLoader
+     *
+     * @throws \Kicaj\Test\Helper\Database\DatabaseEx
      */
     public function dbGetFixtureLoaderDb()
     {

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -15,20 +15,21 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+
 namespace Kicaj\Test\TestHelperTest\MySQL\TestCase;
 
 use Kicaj\Test\Helper\TestCase\DbTestCase;
 use Kicaj\Test\TestHelperTest\MySQLHelper;
+use PHPUnit\Framework\TestCase;
 
 /**
  * DbTestCaseTest.
  *
  * @coversDefaultClass \Kicaj\Test\Helper\TestCase\DbTestCase
- *
- * @author Rafal Zajac <rzajac@gmail.com>
  */
-class DbTestCaseTest extends \PHPUnit_Framework_TestCase
+class DbTestCaseTest extends TestCase
 {
+    /** @inheritdoc */
     public static function setUpBeforeClass()
     {
         MySQLHelper::resetMySQLDatabases();
@@ -38,6 +39,8 @@ class DbTestCaseTest extends \PHPUnit_Framework_TestCase
      * @test
      *
      * @covers ::dbTableExists
+     *
+     * @throws \Kicaj\Test\Helper\Database\DatabaseEx
      */
     public function dbTableExistsDoesNotExist()
     {
@@ -52,6 +55,8 @@ class DbTestCaseTest extends \PHPUnit_Framework_TestCase
      * @test
      *
      * @covers ::dbTableExists
+     *
+     * @throws \Kicaj\Test\Helper\Database\DatabaseEx
      */
     public function dbTableExistsExist()
     {

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -15,23 +15,24 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+
 namespace Kicaj\Test\TestHelperTest\Loader;
 
+use Kicaj\Test\Helper\Database\DatabaseEx;
 use Kicaj\Test\Helper\Database\DbGet;
 use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\Loader\FixtureLoader;
-use Kicaj\Test\Helper\Loader\FixtureLoaderException;
+use Kicaj\Test\Helper\Loader\FixtureLoaderEx;
 use Kicaj\Test\TestHelperTest\MySQLHelper;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
 
 /**
  * FixtureLoaderMySQLTest.
  *
  * @coversDefaultClass \Kicaj\Test\Helper\Loader\FixtureLoader
- *
- * @author Rafal Zajac <rzajac@gmail.com>
  */
-class FixtureLoaderMySQLTest extends \PHPUnit_Framework_TestCase
+class FixtureLoaderMySQLTest extends TestCase
 {
     /**
      * Fixtures root directory.
@@ -71,6 +72,8 @@ class FixtureLoaderMySQLTest extends \PHPUnit_Framework_TestCase
      *
      * @covers ::__construct
      * @covers ::isDbSet
+     *
+     * @throws \Kicaj\Test\Helper\Database\DatabaseEx
      */
     public function construct()
     {
@@ -95,7 +98,7 @@ class FixtureLoaderMySQLTest extends \PHPUnit_Framework_TestCase
      * @param string $fixturePath
      * @param string $expected
      *
-     * @throws FixtureLoaderException
+     * @throws FixtureLoaderEx
      */
     public function detectFormat($fixturePath, $expected)
     {
@@ -165,7 +168,7 @@ class FixtureLoaderMySQLTest extends \PHPUnit_Framework_TestCase
      * @param string $fixtureName
      * @param mixed  $expected
      *
-     * @throws FixtureLoaderException
+     * @throws FixtureLoaderEx
      */
     public function loadFixtureFile($fixtureName, $expected)
     {
@@ -235,6 +238,9 @@ class FixtureLoaderMySQLTest extends \PHPUnit_Framework_TestCase
      * @test
      *
      * @covers ::loadDbFixture
+     *
+     * @throws DatabaseEx
+     * @throws FixtureLoaderEx
      */
     public function loadFixture()
     {
@@ -258,6 +264,9 @@ class FixtureLoaderMySQLTest extends \PHPUnit_Framework_TestCase
      * @test
      *
      * @covers ::loadDbFixtures
+     *
+     * @throws DatabaseEx
+     * @throws FixtureLoaderEx
      */
     public function loadFixtures()
     {

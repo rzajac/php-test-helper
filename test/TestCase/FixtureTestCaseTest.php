@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -21,15 +21,14 @@ namespace Kicaj\Test\TestHelperTest\TestCase;
 
 use Kicaj\Test\Helper\Database\Driver\MySQL;
 use Kicaj\Test\Helper\TestCase\FixtureTestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * FixtureTestCaseTest.
  *
  * @coversDefaultClass \Kicaj\Test\Helper\TestCase\FixtureTestCase
- *
- * @author Rafal Zajac <rzajac@gmail.com>
  */
-class FixtureTestCaseTest extends \PHPUnit_Framework_TestCase
+class FixtureTestCaseTest extends TestCase
 {
     /**
      * @test
@@ -62,6 +61,8 @@ class FixtureTestCaseTest extends \PHPUnit_Framework_TestCase
      * @test
      *
      * @covers ::getFixtureLoader
+     *
+     * @throws \Kicaj\Test\Helper\Database\DatabaseEx
      */
     public function getFixtureLoaderDbSet()
     {
@@ -81,6 +82,8 @@ class FixtureTestCaseTest extends \PHPUnit_Framework_TestCase
      * @test
      *
      * @covers ::getFixtureData
+     *
+     * @throws \Kicaj\Test\Helper\Loader\FixtureLoaderEx
      */
     public function getFixtureData()
     {

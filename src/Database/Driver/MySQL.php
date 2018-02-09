@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -15,16 +15,14 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+
 namespace Kicaj\Test\Helper\Database\Driver;
 
-use Kicaj\DbKit\DatabaseException;
-use Kicaj\DbKit\DbConnector;
+use Kicaj\Test\Helper\Database\DatabaseEx;
 use Kicaj\Test\Helper\Database\DbItf;
 
 /**
  * MySQL database driver.
- *
- * @author Rafal Zajac <rzajac@gmail.com>
  */
 class MySQL implements DbItf
 {
@@ -56,6 +54,7 @@ class MySQL implements DbItf
      */
     private $sqlSetTimezone = 'SET time_zone = "%s"';
 
+    /** @inheritdoc */
     public function dbSetup(array $config)
     {
         $this->config = $config;
@@ -63,6 +62,7 @@ class MySQL implements DbItf
         return $this;
     }
 
+    /** @inheritdoc */
     public function dbConnect()
     {
         if ($this->isConnected) {
@@ -73,23 +73,23 @@ class MySQL implements DbItf
 
         try {
             $this->mysql = new \mysqli(
-                $this->config[DbConnector::DB_CFG_HOST],
-                $this->config[DbConnector::DB_CFG_USERNAME],
-                $this->config[DbConnector::DB_CFG_PASSWORD],
-                $this->config[DbConnector::DB_CFG_DATABASE],
-                $this->config[DbConnector::DB_CFG_PORT]);
+                $this->config[DbItf::DB_CFG_HOST],
+                $this->config[DbItf::DB_CFG_USERNAME],
+                $this->config[DbItf::DB_CFG_PASSWORD],
+                $this->config[DbItf::DB_CFG_DATABASE],
+                $this->config[DbItf::DB_CFG_PORT]);
             $this->mysql->set_charset('utf8');
         } catch (\Exception $e) {
-            throw DatabaseException::makeFromException($e);
+            throw DatabaseEx::makeFromException($e);
         }
 
-        $timezone = $this->config[DbConnector::DB_CFG_TIMEZONE];
+        $timezone = $this->config[DbItf::DB_CFG_TIMEZONE];
         if ($timezone) {
             $sql = sprintf($this->sqlSetTimezone, $timezone);
             if (!$this->mysql->query($sql)) {
                 $msg = sprintf('Setting timezone (%s) for MySQL driver failed. Please load timezone information using mysql_tzinfo_to_sql.',
                     $timezone);
-                throw new DatabaseException($msg);
+                throw new DatabaseEx($msg);
             }
         }
         $this->isConnected = true;
@@ -107,6 +107,7 @@ class MySQL implements DbItf
         return $this->isConnected;
     }
 
+    /** @inheritdoc */
     public function dbDropTables($tableNames)
     {
         if (is_string($tableNames)) {
@@ -118,6 +119,7 @@ class MySQL implements DbItf
         }
     }
 
+    /** @inheritdoc */
     public function dbDropViews($viewNames)
     {
         if (is_string($viewNames)) {
@@ -129,6 +131,7 @@ class MySQL implements DbItf
         }
     }
 
+    /** @inheritdoc */
     public function dbTruncateTables($tableNames)
     {
         if (is_string($tableNames)) {
@@ -143,7 +146,8 @@ class MySQL implements DbItf
         }
     }
 
-    public function dbCountTableRows($tableName)
+    /** @inheritdoc */
+    public function dbCountTableRows(string $tableName): int
     {
         $resp = $this->dbRunQuery(sprintf('SELECT COUNT(1) AS c FROM `%s`', $tableName));
 
@@ -153,11 +157,11 @@ class MySQL implements DbItf
     /**
      * Return table and view names form the database.
      *
-     * @throws DatabaseException
+     * @throws DatabaseEx
      *
      * @return array
      */
-    protected function getTableNames()
+    protected function getTableNames(): array
     {
         $dbName = $this->config[DbItf::DB_CFG_DATABASE];
         $resp = $this->dbRunQuery(sprintf('SHOW FULL TABLES FROM `%s`', $dbName));
@@ -170,7 +174,8 @@ class MySQL implements DbItf
         return $tableAndViewNames;
     }
 
-    public function dbGetTableNames()
+    /** @inheritdoc */
+    public function dbGetTableNames(): array
     {
         $tableAndViewNames = $this->getTableNames();
 
@@ -185,7 +190,8 @@ class MySQL implements DbItf
         return $tableNames;
     }
 
-    public function dbGetViewNames()
+    /** @inheritdoc */
+    public function dbGetViewNames(): array
     {
         $tableAndViewNames = $this->getTableNames();
 
@@ -200,7 +206,8 @@ class MySQL implements DbItf
         return $viewNames;
     }
 
-    public function dbGetTableData($tableName)
+    /** @inheritdoc */
+    public function dbGetTableData(string $tableName): array
     {
         $resp = $this->dbRunQuery('SELECT * FROM ' . $tableName);
 
@@ -212,6 +219,7 @@ class MySQL implements DbItf
         return $data;
     }
 
+    /** @inheritdoc */
     public function dbRunQuery($query)
     {
         $queries = is_array($query) ? $query : [$query];
@@ -220,22 +228,24 @@ class MySQL implements DbItf
         foreach ($queries as $sql) {
             $resp = $this->mysql->query($sql);
             if (!$resp) {
-                throw new DatabaseException($this->mysql->error);
+                throw new DatabaseEx($this->mysql->error);
             }
         }
 
         return $resp;
     }
 
-    public function dbLoadFixture($fixtureFormat, $fixtureData)
+    /** @inheritdoc */
+    public function dbLoadFixture(string $fixtureFormat, $fixtureData)
     {
         if ($fixtureFormat != DbItf::FIXTURE_FORMAT_SQL) {
-            throw new DatabaseException('MySQL driver currently supports only SQL fixture format.');
+            throw new DatabaseEx('MySQL driver currently supports only SQL fixture format.');
         }
 
         $this->dbRunQuery($fixtureData);
     }
 
+    /** @inheritdoc */
     public function dbClose()
     {
         $this->isConnected = false;

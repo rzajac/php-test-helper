@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -15,14 +15,14 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+
 namespace Kicaj\Test\Helper\TestCase;
 
-use Kicaj\DbKit\DatabaseException;
-use Kicaj\DbKit\DbConnect;
+use Kicaj\Test\Helper\Database\DatabaseEx;
 use Kicaj\Test\Helper\Database\DbGet;
 use Kicaj\Test\Helper\Database\DbItf;
 use Kicaj\Test\Helper\Loader\FixtureLoader;
-use Kicaj\Test\Helper\Loader\FixtureLoaderException;
+use Kicaj\Test\Helper\Loader\FixtureLoaderEx;
 
 /**
  * Database test case.
@@ -30,8 +30,6 @@ use Kicaj\Test\Helper\Loader\FixtureLoaderException;
  * It manages database and fixtures.
  *
  * All methods are static so they can be called from setUpBeforeClass or tearDownAfterClass.
- *
- * @author Rafal Zajac <rzajac@gmail.com>
  */
 abstract class DbTestCase extends FixtureTestCase
 {
@@ -44,21 +42,25 @@ abstract class DbTestCase extends FixtureTestCase
      *
      * @return array
      */
-    public static function dbGetConfig($testDbName, $connect = true, $debug = true)
+    public static function dbGetConfig(string $testDbName, bool $connect = true, bool $debug = true)
     {
         $timezone = isset($GLOBALS['TEST_DB_' . $testDbName . '_TIMEZONE']) ? $GLOBALS['TEST_DB_' . $testDbName . '_TIMEZONE'] : '';
 
-        return DbConnect::getCfg(
-            $GLOBALS['TEST_DB_' . $testDbName . '_DRIVER'],
-            $GLOBALS['TEST_DB_' . $testDbName . '_HOST'],
-            $GLOBALS['TEST_DB_' . $testDbName . '_USERNAME'],
-            $GLOBALS['TEST_DB_' . $testDbName . '_PASSWORD'],
-            $GLOBALS['TEST_DB_' . $testDbName . '_DATABASE'],
-            $GLOBALS['TEST_DB_' . $testDbName . '_PORT'],
-            $connect,
-            $timezone,
-            $debug
-        );
+        if ($timezone == '') {
+            $timezone = 'UTC';
+        }
+
+        return [
+            DbItf::DB_CFG_DRIVER => $GLOBALS['TEST_DB_' . $testDbName . '_DRIVER'],
+            DbItf::DB_CFG_HOST => $GLOBALS['TEST_DB_' . $testDbName . '_HOST'],
+            DbItf::DB_CFG_USERNAME => $GLOBALS['TEST_DB_' . $testDbName . '_USERNAME'],
+            DbItf::DB_CFG_PASSWORD => $GLOBALS['TEST_DB_' . $testDbName . '_PASSWORD'],
+            DbItf::DB_CFG_DATABASE => $GLOBALS['TEST_DB_' . $testDbName . '_DATABASE'],
+            DbItf::DB_CFG_PORT => (int)$GLOBALS['TEST_DB_' . $testDbName . '_PORT'],
+            DbItf::DB_CFG_CONNECT => $connect,
+            DbItf::DB_CFG_TIMEZONE => $timezone,
+            DbItf::DB_CFG_DEBUG => $debug
+        ];
     }
 
     /**
@@ -66,11 +68,11 @@ abstract class DbTestCase extends FixtureTestCase
      *
      * @param string $testDbName The name of database connection details form phpunit.xml.
      *
-     * @throws DatabaseException
+     * @throws DatabaseEx
      *
      * @return DbItf
      */
-    public static function dbGetHelper($testDbName)
+    public static function dbGetHelper(string $testDbName): DbItf
     {
         return DbGet::factory(self::dbGetConfig($testDbName));
     }
@@ -80,11 +82,11 @@ abstract class DbTestCase extends FixtureTestCase
      *
      * @param string $testDbName The name of database connection details form phpunit.xml.
      *
-     * @throws DatabaseException
+     * @throws DatabaseEx
      *
      * @return FixtureLoader
      */
-    public static function dbGetFixtureLoader($testDbName = '')
+    public static function dbGetFixtureLoader(string $testDbName = ''): FixtureLoader
     {
         $db = $testDbName ? self::dbGetHelper($testDbName) : null;
 
@@ -97,10 +99,10 @@ abstract class DbTestCase extends FixtureTestCase
      * @param string          $testDbName   The name of database connection details form phpunit.xml.
      * @param string|string[] $fixturePaths The array of fixture paths to load to database.
      *
-     * @throws DatabaseException
-     * @throws FixtureLoaderException
+     * @throws DatabaseEx
+     * @throws FixtureLoaderEx
      */
-    public static function dbLoadFixtures($testDbName, $fixturePaths)
+    public static function dbLoadFixtures(string $testDbName, $fixturePaths)
     {
         if (is_string($fixturePaths)) {
             $fixturePaths = [$fixturePaths];
@@ -116,9 +118,9 @@ abstract class DbTestCase extends FixtureTestCase
      * @param string          $testDbName The name of database connection details form phpunit.xml.
      * @param string|string[] $tableNames The table or tables to drop from the database.
      *
-     * @throws DatabaseException
+     * @throws DatabaseEx
      */
-    public static function dbDropTables($testDbName, $tableNames)
+    public static function dbDropTables(string $testDbName, $tableNames)
     {
         if (is_string($tableNames)) {
             $tableNames = [$tableNames];
@@ -133,9 +135,9 @@ abstract class DbTestCase extends FixtureTestCase
      * @param string          $testDbName The name of database connection details form phpunit.xml.
      * @param string|string[] $viewNames  The view or views to drop from the database.
      *
-     * @throws DatabaseException
+     * @throws DatabaseEx
      */
-    public static function dbDropViews($testDbName, $viewNames)
+    public static function dbDropViews(string $testDbName, $viewNames)
     {
         if (is_string($viewNames)) {
             $viewNames = [$viewNames];
@@ -149,9 +151,9 @@ abstract class DbTestCase extends FixtureTestCase
      *
      * @param string $testDbName The name of database connection details form phpunit.xml.
      *
-     * @throws DatabaseException
+     * @throws DatabaseEx
      */
-    public static function dbDropAllTables($testDbName)
+    public static function dbDropAllTables(string $testDbName)
     {
         $db = self::dbGetHelper($testDbName);
 
@@ -163,9 +165,9 @@ abstract class DbTestCase extends FixtureTestCase
      *
      * @param string $testDbName The name of database connection details form phpunit.xml.
      *
-     * @throws DatabaseException
+     * @throws DatabaseEx
      */
-    public static function dbDropAllViews($testDbName)
+    public static function dbDropAllViews(string $testDbName)
     {
         $db = self::dbGetHelper($testDbName);
 
@@ -178,11 +180,11 @@ abstract class DbTestCase extends FixtureTestCase
      * @param string $testDbName The name of database connection details form phpunit.xml.
      * @param string $tableName  The table name to check.
      *
-     * @throws DatabaseException
+     * @throws DatabaseEx
      *
      * @return bool
      */
-    public static function dbTableExists($testDbName, $tableName)
+    public static function dbTableExists(string $testDbName, string $tableName): bool
     {
         $tableNames = self::dbGetHelper($testDbName)->dbGetTableNames();
 
@@ -195,11 +197,11 @@ abstract class DbTestCase extends FixtureTestCase
      * @param string $testDbName The name of database connection details form phpunit.xml.
      * @param string $viewName   The view name to check.
      *
-     * @throws DatabaseException
+     * @throws DatabaseEx
      *
      * @return bool
      */
-    public static function dbViewExists($testDbName, $viewName)
+    public static function dbViewExists(string $testDbName, string $viewName): bool
     {
         $viewNames = self::dbGetHelper($testDbName)->dbGetViewNames();
 

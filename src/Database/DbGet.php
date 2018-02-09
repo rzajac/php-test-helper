@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -15,17 +15,13 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
+
 namespace Kicaj\Test\Helper\Database;
 
-use Kicaj\DbKit\DatabaseException;
-use Kicaj\DbKit\DbConnect;
-use Kicaj\DbKit\DbConnector;
 use Kicaj\Test\Helper\Database\Driver\MySQL;
 
 /**
  * DbGet helper class for getting database driver.
- *
- * @author Rafal Zajac <rzajac@gmail.com>
  */
 final class DbGet
 {
@@ -36,11 +32,11 @@ final class DbGet
      *
      * @param array $dbConfig The database configuration
      *
-     * @throws DatabaseException
+     * @throws DatabaseEx
      *
      * @return DbItf
      */
-    public static function factory(array $dbConfig)
+    public static function factory(array $dbConfig): DbItf
     {
         /** @var DbItf[] $instances */
         static $instances = [];
@@ -51,18 +47,19 @@ final class DbGet
             return $instances[$key];
         }
 
-        switch (DbConnect::getDriver($dbConfig)) {
-            case DbConnector::DB_DRIVER_MYSQL:
+        switch ($dbConfig[DbItf::DB_CFG_DRIVER]) {
+            case DbItf::DB_DRIVER_MYSQL:
                 $instances[$key] = new MySQL();
+                $dbConfig[DbItf::DB_CFG_PORT] = (int)$dbConfig[DbItf::DB_CFG_PORT];
                 break;
 
             default:
-                throw new DatabaseException('Unknown database driver name: ' . DbConnect::getDriver($dbConfig));
+                throw new DatabaseEx('Unknown database driver name: ' . $dbConfig[DbItf::DB_CFG_DRIVER]);
         }
 
         $instances[$key]->dbSetup($dbConfig);
 
-        if ($dbConfig[DbConnector::DB_CFG_CONNECT]) {
+        if ($dbConfig[DbItf::DB_CFG_CONNECT]) {
             $instances[$key]->dbConnect();
         }
 

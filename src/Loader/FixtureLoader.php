@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -17,14 +17,12 @@
  */
 namespace Kicaj\Test\Helper\Loader;
 
-use Kicaj\DbKit\DatabaseException;
+use Kicaj\Test\Helper\Database\DatabaseEx;
 use Kicaj\Test\Helper\Database\DbItf;
 use SplFileInfo;
 
 /**
  * Class FixtureLoader.
- *
- * @author Rafal Zajac <rzajac@gmail.com>
  */
 class FixtureLoader
 {
@@ -48,7 +46,7 @@ class FixtureLoader
      * @param string $fixturesRootPath The path to fixture files root folder.
      * @param DbItf  $database         The database to load fixtures to.
      */
-    public function __construct($fixturesRootPath, DbItf $database = null)
+    public function __construct(string $fixturesRootPath, DbItf $database = null)
     {
         $this->fixturesRootPath = $fixturesRootPath;
         $this->db = $database;
@@ -59,7 +57,7 @@ class FixtureLoader
      *
      * @return bool
      */
-    public function isDbSet()
+    public function isDbSet(): bool
     {
         return (bool)$this->db;
     }
@@ -69,10 +67,10 @@ class FixtureLoader
      *
      * @param string $fixturePath The fixture path relative to fixturesRootPath.
      *
-     * @throws DatabaseException
-     * @throws FixtureLoaderException
+     * @throws DatabaseEx
+     * @throws FixtureLoaderEx
      */
-    public function loadDbFixture($fixturePath)
+    public function loadDbFixture(string $fixturePath)
     {
         list($fixtureFormat, $fixtureData) = $this->loadFixtureData($fixturePath);
 
@@ -87,8 +85,8 @@ class FixtureLoader
      *
      * @param array $fixtureNames The array of fixture paths to load to database.
      *
-     * @throws DatabaseException
-     * @throws FixtureLoaderException
+     * @throws DatabaseEx
+     * @throws FixtureLoaderEx
      */
     public function loadDbFixtures(array $fixtureNames)
     {
@@ -102,11 +100,11 @@ class FixtureLoader
      *
      * @param string $fixturePath The fixture path relative to fixturesRootPath.
      *
-     * @throws FixtureLoaderException
+     * @throws FixtureLoaderEx
      *
      * @return mixed
      */
-    public function getFixtureData($fixturePath)
+    public function getFixtureData(string $fixturePath)
     {
         return $this->loadFixtureData($fixturePath)[1];
     }
@@ -118,7 +116,7 @@ class FixtureLoader
      *
      * @return string
      */
-    public function getFixtureRawData($fixturePath)
+    public function getFixtureRawData(string $fixturePath)
     {
         $fixturePath = $this->fixturesRootPath . '/' . $fixturePath;
 
@@ -130,11 +128,11 @@ class FixtureLoader
      *
      * @param string $fixturePath The path to fixture file.
      *
-     * @throws FixtureLoaderException
+     * @throws FixtureLoaderEx
      *
      * @return array The array where index 0 holds fixture format and index 1 holds the fixture content.
      */
-    public function loadFixtureData($fixturePath)
+    public function loadFixtureData(string $fixturePath): array
     {
         $fixturePath = $this->fixturesRootPath . '/' . $fixturePath;
         $fixtureFormat = $this->detectFormat($fixturePath);
@@ -168,11 +166,11 @@ class FixtureLoader
      *
      * @param string $fixturePath The path to fixture file.
      *
-     * @throws FixtureLoaderException
+     * @throws FixtureLoaderEx
      *
      * @return string The one of self::FORMAT_* constants
      */
-    public function detectFormat($fixturePath)
+    public function detectFormat(string $fixturePath): string
     {
         $info = new SplFileInfo($fixturePath);
         $extension = $info->getExtension();
@@ -184,7 +182,7 @@ class FixtureLoader
         ];
 
         if (!in_array($extension, $knownFormats)) {
-            throw new FixtureLoaderException("Unknown fixture format: $extension.");
+            throw new FixtureLoaderEx("Unknown fixture format: $extension.");
         }
 
         return $extension;
@@ -195,14 +193,14 @@ class FixtureLoader
      *
      * @param string $fixturePath The fixture path.
      *
-     * @throws FixtureLoaderException
+     * @throws FixtureLoaderEx
      *
      * @return string
      */
-    public function loadTxt($fixturePath)
+    public function loadTxt(string $fixturePath): string
     {
         if (!file_exists($fixturePath)) {
-            throw new FixtureLoaderException("Fixture $fixturePath does not exist.");
+            throw new FixtureLoaderEx("Fixture $fixturePath does not exist.");
         }
 
         return file_get_contents($fixturePath);
@@ -213,14 +211,14 @@ class FixtureLoader
      *
      * @param string $fixturePath The fixture path.
      *
-     * @throws FixtureLoaderException
+     * @throws FixtureLoaderEx
      *
      * @return string
      */
-    public function loadJson($fixturePath)
+    public function loadJson(string $fixturePath): string
     {
         if (!file_exists($fixturePath)) {
-            throw new FixtureLoaderException("Fixture $fixturePath does not exist.");
+            throw new FixtureLoaderEx("Fixture $fixturePath does not exist.");
         }
 
         $lines = file($fixturePath);
@@ -245,20 +243,20 @@ class FixtureLoader
      *
      * @param string $fixturePath The fixture path.
      *
-     * @throws FixtureLoaderException
+     * @throws FixtureLoaderEx
      *
      * @return array
      */
-    public function loadSql($fixturePath)
+    public function loadSql(string $fixturePath): array
     {
         if (!file_exists($fixturePath)) {
-            throw new FixtureLoaderException("Fixture $fixturePath does not exist.");
+            throw new FixtureLoaderEx("Fixture $fixturePath does not exist.");
         }
 
         $handle = @fopen($fixturePath, 'r');
 
         if (!$handle) {
-            throw new FixtureLoaderException("Error opening fixture $fixturePath.");
+            throw new FixtureLoaderEx("Error opening fixture $fixturePath.");
         }
 
         $sqlArr = [];
@@ -300,9 +298,9 @@ class FixtureLoader
      *
      * @return mixed
      *
-     * @throws FixtureLoaderException If passed $json string is not JSON
+     * @throws FixtureLoaderEx If passed $json string is not JSON
      */
-    public function decode($json, $asClass = false, $depth = 512, $options = 0)
+    public function decode(string $json, bool $asClass = false, int $depth = 512, int $options = 0)
     {
         $result = json_decode($json, !$asClass, $depth, $options);
 
@@ -311,14 +309,14 @@ class FixtureLoader
             case JSON_ERROR_NONE:
                 return $result;
             case JSON_ERROR_DEPTH:
-                throw new FixtureLoaderException('Maximum stack depth exceeded', $le);
+                throw new FixtureLoaderEx('Maximum stack depth exceeded', $le);
             case JSON_ERROR_SYNTAX:
             case JSON_ERROR_STATE_MISMATCH:
             case JSON_ERROR_CTRL_CHAR:
             case JSON_ERROR_UTF8:
-                throw new FixtureLoaderException('JSON decoding error', $le);
+                throw new FixtureLoaderEx('JSON decoding error', $le);
             default:
-                throw new FixtureLoaderException('Unknown error ' . $le);
+                throw new FixtureLoaderEx('Unknown error ' . $le);
         }
     }
 }

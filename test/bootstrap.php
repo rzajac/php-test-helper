@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Copyright 2015 Rafal Zajac <rzajac@gmail.com>.
@@ -16,7 +16,7 @@
  * under the License.
  */
 
-use Kicaj\DbKit\DbConnector;
+use Kicaj\Test\Helper\Database\DbItf;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -32,15 +32,15 @@ function getUnitTestDbConfig($dbName)
     $timezone = ArrGet($GLOBALS, 'TEST_DB_' . $dbName . '_TIMEZONE', '');
 
     return [
-        DbConnector::DB_CFG_DRIVER   => ArrGet($GLOBALS, 'TEST_DB_' . $dbName . '_DRIVER', ''),
-        DbConnector::DB_CFG_HOST     => ArrGet($GLOBALS, 'TEST_DB_' . $dbName . '_HOST', ''),
-        DbConnector::DB_CFG_USERNAME => ArrGet($GLOBALS, 'TEST_DB_' . $dbName . '_USERNAME', ''),
-        DbConnector::DB_CFG_PASSWORD => ArrGet($GLOBALS, 'TEST_DB_' . $dbName . '_PASSWORD', ''),
-        DbConnector::DB_CFG_DATABASE => ArrGet($GLOBALS, 'TEST_DB_' . $dbName . '_DATABASE', ''),
-        DbConnector::DB_CFG_PORT     => ArrGet($GLOBALS, 'TEST_DB_' . $dbName . '_PORT', 3306),
-        DbConnector::DB_CFG_CONNECT  => true,
-        DbConnector::DB_CFG_TIMEZONE => $timezone,
-        DbConnector::DB_CFG_DEBUG    => true,
+        DbItf::DB_CFG_DRIVER => ArrGet($GLOBALS, 'TEST_DB_' . $dbName . '_DRIVER', ''),
+        DbItf::DB_CFG_HOST => ArrGet($GLOBALS, 'TEST_DB_' . $dbName . '_HOST', ''),
+        DbItf::DB_CFG_USERNAME => ArrGet($GLOBALS, 'TEST_DB_' . $dbName . '_USERNAME', ''),
+        DbItf::DB_CFG_PASSWORD => ArrGet($GLOBALS, 'TEST_DB_' . $dbName . '_PASSWORD', ''),
+        DbItf::DB_CFG_DATABASE => ArrGet($GLOBALS, 'TEST_DB_' . $dbName . '_DATABASE', ''),
+        DbItf::DB_CFG_PORT => (int)ArrGet($GLOBALS, 'TEST_DB_' . $dbName . '_PORT', 3306),
+        DbItf::DB_CFG_CONNECT => true,
+        DbItf::DB_CFG_TIMEZONE => $timezone,
+        DbItf::DB_CFG_DEBUG => true,
     ];
 }
 
