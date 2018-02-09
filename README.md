@@ -18,7 +18,7 @@ Unit testing helper.
 ```json
 {
     "require": {
-        "rzajac/php-test-helper": "^1.0"
+        "rzajac/php-test-helper": "^2.0"
     }
 }
 ```
